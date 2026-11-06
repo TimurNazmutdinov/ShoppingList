@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, SectionList, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,7 +8,8 @@ import { t, tl } from '@/i18n';
 import { useSettings } from '@/AppSettings';
 import { ScheduledItem, loadScheduledRange, toggleBought } from '@/logic/shopping';
 import { formatDayTitle, todayIso } from '@/logic/dates';
-import { buildMonth, dayMarks, monthRange } from '@/logic/schedule';
+import { buildMonth, dayMarks, groupByList, monthRange } from '@/logic/schedule';
+import { ListGroupHeader } from '@/components/ListGroupHeader';
 import { ScheduledRow } from '@/components/ScheduledRow';
 
 // «Календарь»: месяц с точками цветом списка, под ним — покупки выбранного дня.
@@ -34,7 +35,8 @@ export default function CalendarScreen() {
   );
 
   const marks = dayMarks(items.map((i) => ({ date: i.effectiveDate, color: i.listColor })));
-  const dayItems = items.filter((i) => i.effectiveDate === selected);
+  const sections = groupByList(items.filter((i) => i.effectiveDate === selected)).map((g) => ({ key: String(g.listId), listId: g.listId, title: g.title, color: g.color, data: g.items }));
+  const openList = (listId: number) => router.push({ pathname: '/list/[id]', params: { id: String(listId) } } as never);
   const weeks = buildMonth(cursor.y, cursor.m);
   const weekdays = [1, 2, 3, 4, 5, 6, 0].map((d) => tl('weekdaysShort')[d]);
 
@@ -93,8 +95,8 @@ export default function CalendarScreen() {
 
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
-      <FlatList
-        data={dayItems}
+      <SectionList
+        sections={sections}
         keyExtractor={(i) => String(i.id)}
         renderItem={({ item }) => (
           <ScheduledRow
@@ -104,11 +106,15 @@ export default function CalendarScreen() {
                 .then(reload)
                 .catch((e) => console.warn(e));
             }}
-            onOpen={(it) => router.push({ pathname: '/list/[id]', params: { id: String(it.listId) } } as never)}
+            onOpen={(it) => openList(it.listId)}
           />
+        )}
+        renderSectionHeader={({ section }) => (
+          <ListGroupHeader title={section.title} color={section.color} count={section.data.length} onPress={() => openList(section.listId)} />
         )}
         ListHeaderComponent={grid}
         ListEmptyComponent={<Text style={styles.empty}>{t('cal.dayEmpty')}</Text>}
+        stickySectionHeadersEnabled={false}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.content}
       />

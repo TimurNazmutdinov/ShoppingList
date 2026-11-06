@@ -44,7 +44,11 @@ export const kk: Dictionary = {
     'theme.dark': 'Қараңғы',
     'theme.system': 'Жүйедегідей',
     'theme.profile': 'Түс профилі',
-    'theme.profileHint': 'Профиль экрандардың, логотиптің және қарсы алу экранының түстерін анықтайды',
+    'theme.scope': 'Профиль түстерін қолдану',
+    'theme.scopeScreens': 'Тек экрандарға',
+    'theme.scopeAll': 'Бәріне',
+    'theme.scopeScreensHint': 'Логотип пен қарсы алу экраны — фирмалық, кәріптас түсті',
+    'theme.scopeAllHint': 'Экрандар, логотип және қарсы алу экраны — профиль түсінде',
     'theme.systemHint': 'Жарық немесе қараңғы профиль — телефон тақырыбына сай',
     'language.system': 'Жүйедегідей',
 
@@ -194,7 +198,7 @@ export const kk: Dictionary = {
     'proto.badge': 'Прототип',
     'splash.continue': 'Жалғастыру үшін бас',
     'splash.name': 'ShoppingList',
-    'splash.slogan': 'Қостың — сатып алдың — сырғыттың',
+    'splash.slogan': 'Қостың — Сатып алдың — Сырғыттың',
 
     'error.title': 'Бірдеңе дұрыс болмады',
     'error.restart': 'Қайта іске қосу',

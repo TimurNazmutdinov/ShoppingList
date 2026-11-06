@@ -38,7 +38,7 @@ powershell -ExecutionPolicy Bypass -File scripts\build-apk.ps1
 ## Релиз
 Репозиторий релизов: `TimurNazmutdinov/ShoppingList-android-apk` (публичный).
 1. `gh release create v<версия> release\ShoppingList-<версия>.apk --repo TimurNazmutdinov/ShoppingList-android-apk --title ... --notes ...`
-2. Обновить `latest.json` в `main` репозитория APK: `{ "version", "versionCode", "url", "apkUrl", "size", "notes": { "ru": [], "kk": [], "en": [] } }`. `size` и SHA-256 — только из готового файла.
+2. `powershell -ExecutionPolicy Bypass -File scripts\make-latest.ps1` создаёт `latest.json` в `C:\Projects\ShoppingList-android-apk` из готового APK (размер берётся из файла) и заметок `docs\release-notes\<версия>.json`. Затем обновить `latest.json` в `main` репозитория APK: `{ "version", "versionCode", "url", "apkUrl", "size", "notes": { "ru": [], "kk": [], "en": [] } }`. `size` и SHA-256 — только из готового файла.
 3. Push репозитория APK, затем тег и push основного репозитория.
 Перед публикацией — вопрос пользователю.
 

@@ -4,13 +4,15 @@ import { StatusBar } from 'expo-status-bar';
 import { useLocales } from 'expo-localization';
 import * as SystemUI from 'expo-system-ui';
 import { Lang, LanguageSetting, resolveLanguage, setLanguage } from '@/i18n';
-import { SchemeKey, SchemeSetting, ThemeProvider, buildPalette, schemeDefs } from '@/theme';
-import { Appearance, saveLanguage, saveRememberItems, saveScheme } from '@/db/appearance';
+import { ApplyScope, SchemeKey, SchemeSetting, ThemeProvider, buildPalette, schemeDefs } from '@/theme';
+import { Appearance, saveApplyScope, saveLanguage, saveRememberItems, saveScheme } from '@/db/appearance';
 import { activeSchemeKey } from '@/logic/schemes';
 
 type Settings = {
   schemeSetting: SchemeSetting;
   schemeKey: SchemeKey; // активный профиль
+  applyScope: ApplyScope;
+  setApplyScope: (scope: ApplyScope) => void;
   languageSetting: LanguageSetting;
   language: Lang;
   rememberItems: boolean;
@@ -32,6 +34,7 @@ type Props = { initial: Appearance; children: ReactNode };
 // Профиль и язык: читаются при запуске до показа экранов, переключаются сразу.
 export function AppSettingsProvider({ initial, children }: Props) {
   const [schemeSetting, setSchemeSettingState] = useState(initial.scheme);
+  const [applyScope, setApplyScopeState] = useState(initial.applyScope);
   const [languageSetting, setLanguageSettingState] = useState(initial.language);
   const [rememberItems, setRememberItemsState] = useState(initial.rememberItems);
   const system = useColorScheme();
@@ -53,6 +56,10 @@ export function AppSettingsProvider({ initial, children }: Props) {
     setSchemeSettingState(setting);
     saveScheme(setting).catch((e) => console.warn(e));
   }, []);
+  const setApplyScope = useCallback((scope: ApplyScope) => {
+    setApplyScopeState(scope);
+    saveApplyScope(scope).catch((e) => console.warn(e));
+  }, []);
   const setRememberItems = useCallback((value: boolean) => {
     setRememberItemsState(value);
     saveRememberItems(value).catch((e) => console.warn(e));
@@ -63,8 +70,8 @@ export function AppSettingsProvider({ initial, children }: Props) {
   }, []);
 
   const value = useMemo(
-    () => ({ schemeSetting, schemeKey, languageSetting, language, rememberItems, setSchemeSetting, setRememberItems, setLanguageSetting }),
-    [schemeSetting, schemeKey, languageSetting, language, rememberItems, setSchemeSetting, setRememberItems, setLanguageSetting],
+    () => ({ schemeSetting, schemeKey, applyScope, setApplyScope, languageSetting, language, rememberItems, setSchemeSetting, setRememberItems, setLanguageSetting }),
+    [schemeSetting, schemeKey, applyScope, setApplyScope, languageSetting, language, rememberItems, setSchemeSetting, setRememberItems, setLanguageSetting],
   );
 
   return (

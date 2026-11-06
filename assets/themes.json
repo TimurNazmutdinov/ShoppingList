@@ -1,7 +1,8 @@
 {
- "note": "Цветовые профили ShoppingList (14: 7 светлых, 7 тёмных). Один профиль задаёт экраны, логотип и заставку (schemes[*].mark = градиент знака). «Как в системе» берёт defaults.lightScheme / darkScheme по теме телефона. Контраст проверен тестами.",
+ "note": "Цветовые профили ShoppingList (14: 7 светлых, 7 тёмных) + «Как в системе» (defaults.lightScheme / darkScheme по теме телефона). applyScope: «screens» — цвета профиля только у экранов, логотип и заставка фирменные («Янтарь»: defaults.lightScheme / darkScheme); «all» — логотип и заставка в цвет профиля (schemes[*].mark). Контраст проверен тестами.",
  "defaults": {
   "schemeSetting": "system",
+  "applyScope": "screens",
   "lightScheme": "vanilla",
   "darkScheme": "cocoa"
  },

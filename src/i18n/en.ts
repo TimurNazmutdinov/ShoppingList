@@ -43,7 +43,11 @@ export const en: Dictionary = {
     'theme.dark': 'Dark',
     'theme.system': 'System',
     'theme.profile': 'Color profile',
-    'theme.profileHint': 'The profile sets the colors of screens, logo and splash',
+    'theme.scope': 'Apply profile colors to',
+    'theme.scopeScreens': 'Screens only',
+    'theme.scopeAll': 'Everything',
+    'theme.scopeScreensHint': 'Logo and splash stay in the brand amber',
+    'theme.scopeAllHint': 'Screens, logo and splash use the profile colors',
     'theme.systemHint': 'A light or dark profile, following the phone theme',
     'language.system': 'System default',
 

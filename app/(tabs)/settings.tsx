@@ -3,7 +3,8 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Palette, darkSchemeKeys, lightSchemeKeys, radius, schemeDefs, useTheme } from '@/theme';
+import { ApplyScope, Palette, darkSchemeKeys, lightSchemeKeys, radius, schemeDefs, useTheme } from '@/theme';
+import { logoSchemeKey } from '@/logic/schemes';
 import { LanguageSetting, languageNames, languages, t } from '@/i18n';
 import { AppSwitch } from '@/components/AppSwitch';
 import { SchemeThumb } from '@/components/SchemeThumb';
@@ -60,8 +61,8 @@ export default function SettingsScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
         <Text style={styles.section}>{t('theme.profile')}</Text>
         <View style={styles.preview}>
-          <LogoMark size={64} colors={schemeDefs[s.schemeKey].mark} />
-          <Text style={styles.hint}>{t('theme.profileHint')}</Text>
+          <LogoMark size={64} colors={schemeDefs[logoSchemeKey(s.applyScope, s.schemeKey)].mark} />
+          <Text style={styles.hint}>{s.applyScope === 'all' ? t('theme.scopeAllHint') : t('theme.scopeScreensHint')}</Text>
         </View>
 
         <Pressable
@@ -90,6 +91,26 @@ export default function SettingsScreen() {
           {darkSchemeKeys.map((k) => (
             <SchemeThumb key={k} schemeKey={k} selected={s.schemeSetting === k} onPress={() => s.setSchemeSetting(k)} />
           ))}
+        </View>
+
+        <Text style={styles.label}>{t('theme.scope')}</Text>
+        <View style={styles.segments}>
+          {(['screens', 'all'] as ApplyScope[]).map((scope) => {
+            const active = s.applyScope === scope;
+            const label = scope === 'all' ? t('theme.scopeAll') : t('theme.scopeScreens');
+            return (
+              <Pressable
+                key={scope}
+                style={[styles.segment, active && styles.segmentActive]}
+                onPress={() => s.setApplyScope(scope)}
+                accessibilityRole="radio"
+                accessibilityState={{ selected: active }}
+                accessibilityLabel={label}
+              >
+                <Text style={[styles.segmentText, active && styles.segmentTextActive]}>{label}</Text>
+              </Pressable>
+            );
+          })}
         </View>
 
         <Pressable
@@ -208,6 +229,11 @@ const createStyles = (colors: Palette) =>
       paddingHorizontal: 14,
       paddingVertical: 10,
     },
+    segments: { flexDirection: 'row', backgroundColor: colors.cardStrong, borderRadius: radius.button, padding: 4, gap: 4 },
+    segment: { flex: 1, minHeight: 48, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4, borderRadius: radius.button - 3 },
+    segmentActive: { backgroundColor: colors.primary, borderWidth: 1, borderColor: colors.outline },
+    segmentText: { color: colors.text, fontSize: 14, textAlign: 'center' },
+    segmentTextActive: { color: colors.onPrimary, fontWeight: '600' },
     systemRowActive: { borderWidth: 3, borderColor: colors.primaryStrong },
     row: {
       flexDirection: 'row',

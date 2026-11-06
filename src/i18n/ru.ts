@@ -47,7 +47,11 @@ const strings = {
   'theme.dark': 'Тёмная',
   'theme.system': 'Как в системе',
   'theme.profile': 'Цветовой профиль',
-  'theme.profileHint': 'Профиль задаёт цвета экранов, логотипа и заставки',
+  'theme.scope': 'Цвета профиля применять',
+  'theme.scopeScreens': 'Только к экранам',
+  'theme.scopeAll': 'Ко всему',
+  'theme.scopeScreensHint': 'Логотип и заставка — фирменные, янтарные',
+  'theme.scopeAllHint': 'Экраны, логотип и заставка — в цвет профиля',
   'theme.systemHint': 'Светлый или тёмный профиль — по теме телефона',
   'language.system': 'Как в системе',
 
@@ -199,7 +203,7 @@ const strings = {
   'proto.badge': 'Прототип',
   'splash.continue': 'Коснись, чтобы продолжить',
   'splash.name': 'ShoppingList',
-  'splash.slogan': 'Добавил — купил — смахнул',
+  'splash.slogan': 'Добавил — Купил — Смахнул',
 
   // ошибки
   'error.title': 'Что-то пошло не так',

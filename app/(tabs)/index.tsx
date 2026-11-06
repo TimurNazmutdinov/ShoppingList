@@ -7,12 +7,16 @@ import { t } from '@/i18n';
 import { useSettings } from '@/AppSettings';
 import { ScheduledItem, loadDue, toggleBought } from '@/logic/shopping';
 import { formatDayTitle, todayIso } from '@/logic/dates';
-import { splitDue } from '@/logic/schedule';
+import { groupByList, splitDue } from '@/logic/schedule';
+import { ListGroupHeader } from '@/components/ListGroupHeader';
 import { ScheduledRow } from '@/components/ScheduledRow';
 
-type Section = { key: 'today' | 'overdue'; title: string; data: ScheduledItem[] };
+// Секция экрана: заголовок дня («Купить сегодня») без товаров или список с его товарами.
+type Section =
+  | { key: string; kind: 'day'; title: string; data: ScheduledItem[] }
+  | { key: string; kind: 'list'; listId: number; title: string; color: string; data: ScheduledItem[] };
 
-// «Сегодня»: что купить сегодня и не купленное с прошлых дней (без упрёков).
+// «Сегодня»: что купить сегодня и не купленное с прошлых дней (без упрёков); внутри — по спискам.
 export default function TodayScreen() {
   const colors = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
@@ -29,10 +33,18 @@ export default function TodayScreen() {
   );
 
   const split = splitDue(items, today);
-  const sections: Section[] = [
-    { key: 'today', title: `${t('today.buy')} · ${split.today.length}`, data: split.today },
-    { key: 'overdue', title: `${t('today.overdue')} · ${split.overdue.length}`, data: split.overdue },
-  ].filter((s) => s.data.length > 0) as Section[];
+  const sections: Section[] = [];
+  const addBlock = (key: 'today' | 'overdue', title: string, block: ScheduledItem[]) => {
+    if (block.length === 0) return;
+    sections.push({ key, kind: 'day', title: `${title} · ${block.length}`, data: [] });
+    for (const g of groupByList(block)) {
+      sections.push({ key: `${key}-${g.listId}`, kind: 'list', listId: g.listId, title: g.title, color: g.color, data: g.items });
+    }
+  };
+  addBlock('today', t('today.buy'), split.today);
+  addBlock('overdue', t('today.overdue'), split.overdue);
+
+  const openList = (listId: number) => router.push({ pathname: '/list/[id]', params: { id: String(listId) } } as never);
 
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
@@ -40,7 +52,7 @@ export default function TodayScreen() {
       <Text style={styles.date}>{formatDayTitle(today)}</Text>
       <SectionList
         sections={sections}
-        keyExtractor={(i) => String(i.id)}
+        keyExtractor={(i, index) => `${i.id}-${index}`}
         renderItem={({ item }) => (
           <ScheduledRow
             item={item}
@@ -49,10 +61,16 @@ export default function TodayScreen() {
                 .then(reload)
                 .catch((e) => console.warn(e));
             }}
-            onOpen={(it) => router.push({ pathname: '/list/[id]', params: { id: String(it.listId) } } as never)}
+            onOpen={(it) => openList(it.listId)}
           />
         )}
-        renderSectionHeader={({ section }) => <Text style={styles.section}>{section.title}</Text>}
+        renderSectionHeader={({ section }) =>
+          section.kind === 'day' ? (
+            <Text style={styles.section}>{section.title}</Text>
+          ) : (
+            <ListGroupHeader title={section.title} color={section.color} count={section.data.length} onPress={() => openList(section.listId)} />
+          )
+        }
         ListEmptyComponent={<Text style={styles.empty}>{t('today.empty')}</Text>}
         ListFooterComponent={split.overdue.length > 0 ? <Text style={styles.hint}>{t('today.overdueHint')}</Text> : undefined}
         stickySectionHeadersEnabled={false}
@@ -69,7 +87,7 @@ const createStyles = (colors: Palette) =>
     title: { color: colors.text, fontSize: 26, fontWeight: '700' },
     date: { color: colors.textMuted, fontSize: 14, marginTop: 2 },
     content: { paddingTop: 8, paddingBottom: 24 },
-    section: { color: colors.primaryStrong, fontSize: 12, fontWeight: '700', letterSpacing: 0.4, marginTop: 16, marginBottom: 8 },
+    section: { color: colors.primaryStrong, fontSize: 12, fontWeight: '700', letterSpacing: 0.4, marginTop: 16, marginBottom: 2 },
     empty: { color: colors.textMuted, fontSize: 15, marginTop: 24 },
     hint: { color: colors.textMuted, fontSize: 13, textAlign: 'center', marginTop: 12 },
   });

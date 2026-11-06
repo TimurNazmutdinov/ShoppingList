@@ -4,6 +4,8 @@ import themes from './themes.json';
 // Единственный источник цветов — themes.json (схемы, знак, цвета целей).
 export type Scheme = 'light' | 'dark';
 export type SchemeKey = keyof typeof themes.schemes;
+// Куда применять цвета профиля: только к экранам (логотип и заставка фирменные) или ко всему (и логотип, и заставка).
+export type ApplyScope = 'screens' | 'all';
 
 export type LocalizedName = { ru: string; kk: string; en: string };
 export type MarkColors = { from: string; to: string };
@@ -31,12 +33,17 @@ export type SchemeSetting = 'system' | SchemeKey;
 
 export const themeDefaults = themes.defaults as {
   schemeSetting: SchemeSetting;
+  applyScope: ApplyScope;
   lightScheme: SchemeKey; // для «Как в системе» при светлой теме телефона
   darkScheme: SchemeKey; // для «Как в системе» при тёмной теме телефона
 };
 
 export function isSchemeKey(value: unknown): value is SchemeKey {
   return typeof value === 'string' && value in schemeDefs;
+}
+
+export function isApplyScope(value: unknown): value is ApplyScope {
+  return value === 'screens' || value === 'all';
 }
 
 export function isSchemeSetting(value: unknown): value is SchemeSetting {

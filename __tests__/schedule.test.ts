@@ -1,4 +1,4 @@
-import { buildMonth, cardDateLabel, dayMarks, effectiveDate, monthRange, splitDue } from '@/logic/schedule';
+import { buildMonth, cardDateLabel, dayMarks, effectiveDate, groupByList, monthRange, splitDue } from '@/logic/schedule';
 import { Category, categoryName, groupByCategory } from '@/logic/categories';
 
 beforeEach(() => {
@@ -79,5 +79,19 @@ describe('категории', () => {
   it('названия: встроенная — из словаря, своя — как есть', () => {
     expect(categoryName(cats[0])).toBe('Овощи и фрукты');
     expect(categoryName(cats[2])).toBe('Для кошки');
+  });
+});
+
+describe('groupByList', () => {
+  const row = (id: number, listId: number, listTitle: string) => ({ id, listId, listTitle, listColor: 'green' });
+
+  test('товары собираются по спискам, порядок сохраняется', () => {
+    const groups = groupByList([row(1, 10, 'Продукты'), row(2, 20, 'Хозтовары'), row(3, 10, 'Продукты'), row(4, 20, 'Хозтовары')]);
+    expect(groups.map((g) => [g.listId, g.items.map((x) => x.id)])).toEqual([[10, [1, 3]], [20, [2, 4]]]);
+    expect(groups[0]).toMatchObject({ title: 'Продукты', color: 'green' });
+  });
+
+  test('пусто → пусто', () => {
+    expect(groupByList([])).toEqual([]);
   });
 });

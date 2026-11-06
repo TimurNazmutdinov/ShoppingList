@@ -50,3 +50,16 @@ export function splitDue<T extends { effectiveDate: string }>(items: readonly T[
     overdue: items.filter((i) => i.effectiveDate < today),
   };
 }
+
+export type ListGroup<T> = { listId: number; title: string; color: string; items: T[] };
+
+// Товары по спискам: списки в порядке первого появления, порядок товаров внутри сохраняется.
+export function groupByList<T extends { listId: number; listTitle: string; listColor: string }>(items: readonly T[]): ListGroup<T>[] {
+  const groups = new Map<number, ListGroup<T>>();
+  for (const item of items) {
+    const group = groups.get(item.listId);
+    if (group) group.items.push(item);
+    else groups.set(item.listId, { listId: item.listId, title: item.listTitle, color: item.listColor, items: [item] });
+  }
+  return [...groups.values()];
+}

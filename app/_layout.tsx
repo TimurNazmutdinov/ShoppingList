@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { ErrorBoundaryProps, Stack } from 'expo-router';
 import * as NativeSplash from 'expo-splash-screen';
@@ -12,12 +12,9 @@ import { useReminderSync } from '@/notifications';
 import { UpdatesProvider, useUpdates } from '@/Updates';
 import { UpdateScreen } from '@/components/UpdateScreen';
 import { SplashScreen } from '@/components/SplashScreen';
-import { IS_PROTOTYPE } from '@/config';
 import { PrimaryButton } from '@/components/PrimaryButton';
 
-const SPLASH_MS = 2000;
-
-// Нативная заставка (только фон) закрывается, когда живая заставка отрисовала знак.
+// Нативная заставка (только фон) закрывается, когда живая заставка загрузила настройки и отрисовала первый кадр.
 NativeSplash.preventAutoHideAsync().catch(() => {});
 const hideNativeSplash = () => NativeSplash.hideAsync().catch(() => {});
 
@@ -37,9 +34,9 @@ export function ErrorBoundary({ retry }: ErrorBoundaryProps) {
 export default function RootLayout() {
   const [appearance, setAppearance] = useState<Appearance | null>(null);
   const [error, setError] = useState<string | null>(null);
-  // В прототипе заставка ждёт касания; иначе закрывается сама через SPLASH_MS.
-  const [tapped, setTapped] = useState(!IS_PROTOTYPE);
-  const [minDone, setMinDone] = useState(false);
+  // Живая заставка сообщает, что закончилась (по окончании анимации или по касанию).
+  const [splashDone, setSplashDone] = useState(false);
+  const onSplashFinished = useCallback(() => setSplashDone(true), []);
 
   useEffect(() => {
     // Тема и язык читаются до показа экранов, чтобы не было «мигания».
@@ -50,16 +47,14 @@ export default function RootLayout() {
         console.warn(e);
         setError(t('error.migration'));
       });
-    const timer = setTimeout(() => setMinDone(true), IS_PROTOTYPE ? 0 : SPLASH_MS);
-    return () => clearTimeout(timer);
   }, []);
 
   if (error) {
     hideNativeSplash();
     throw new Error(error);
   }
-  if (!appearance || !minDone || !tapped) {
-    return <SplashScreen appearance={appearance} onReady={hideNativeSplash} onContinue={IS_PROTOTYPE ? () => setTapped(true) : undefined} />;
+  if (!appearance || !splashDone) {
+    return <SplashScreen appearance={appearance} onShown={hideNativeSplash} onFinished={onSplashFinished} />;
   }
 
   return (

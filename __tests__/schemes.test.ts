@@ -1,5 +1,5 @@
 import { contrastRatio } from '@/logic/color';
-import { activeSchemeKey } from '@/logic/schemes';
+import { activeSchemeKey, logoSchemeKey, splashSchemeKey } from '@/logic/schemes';
 import {
   SchemeKey,
   buildPalette,
@@ -111,5 +111,25 @@ describe('активный профиль', () => {
     expect(activeSchemeKey('system', 'dark')).toBe(themeDefaults.darkScheme);
     expect(activeSchemeKey('system', null)).toBe(themeDefaults.darkScheme);
     expect(activeSchemeKey('system', undefined)).toBe(themeDefaults.darkScheme);
+  });
+});
+
+describe('куда применять цвета профиля', () => {
+  it('по умолчанию — только к экранам', () => {
+    expect(themeDefaults.applyScope).toBe('screens');
+  });
+
+  it('«Ко всему»: логотип и заставка — в цвет активного профиля', () => {
+    expect(logoSchemeKey('all', 'powder')).toBe('powder');
+    expect(splashSchemeKey('all', 'berry', 'light')).toBe('berry');
+    expect(splashSchemeKey('all', 'system', 'dark')).toBe(themeDefaults.darkScheme);
+  });
+
+  it('«Только к экранам»: логотип и заставка — фирменный «Янтарь»', () => {
+    expect(logoSchemeKey('screens', 'powder')).toBe(themeDefaults.lightScheme);
+    expect(logoSchemeKey('screens', 'berry')).toBe(themeDefaults.darkScheme);
+    expect(splashSchemeKey('screens', 'berry', 'light')).toBe(themeDefaults.lightScheme);
+    expect(splashSchemeKey('screens', 'powder', 'dark')).toBe(themeDefaults.darkScheme);
+    expect(splashSchemeKey('screens', 'powder', null)).toBe(themeDefaults.darkScheme);
   });
 });
