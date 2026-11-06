@@ -1,0 +1,267 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ShoppingList — живая заставка (эскиз)</title>
+<style>
+body{margin:0;background:#F1EFE8;font-family:Roboto,"Segoe UI",Arial,sans-serif;color:#2C2C2A;padding:16px}
+h1{font-size:20px;margin:0 0 4px;font-weight:600}
+.sub{font-size:13px;color:#555;margin:0 0 14px;max-width:760px;line-height:1.4}
+.wrap{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+.stage{display:flex;flex-direction:column;align-items:center;gap:6px}
+.phone{width:330px;height:660px;box-sizing:border-box;border-radius:44px;border:8px solid #1F1E24;box-shadow:0 18px 50px rgba(0,0,0,.25);position:relative;overflow:hidden;cursor:pointer;background:var(--bg);user-select:none}
+.notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:90px;height:22px;border-radius:12px;background:#1F1E24;z-index:2}
+.col{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+#mark{width:140px;height:140px;overflow:visible;display:block}
+.name{font-size:28px;font-weight:700;margin-top:8px;color:var(--text);opacity:0}
+.slogan{font-size:15px;color:var(--muted);opacity:0}
+.badge{background:#FAC775;border-radius:8px;padding:3px 10px;margin-top:14px;color:#412402;font-size:12px;font-weight:700;opacity:0}
+.hint{position:absolute;bottom:48px;left:0;right:0;text-align:center;font-size:14px;color:var(--muted);opacity:0}
+.cap{font-size:12px;color:#666;text-align:center;max-width:330px}
+.panel{flex:1;min-width:290px;max-width:520px;display:flex;flex-direction:column;gap:12px}
+.card{background:#fff;border-radius:14px;padding:12px}
+.card h2{font-size:13px;margin:0 0 8px;color:#7A6A4F;letter-spacing:.3px;text-transform:uppercase}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;font-size:13px;border:1px solid #D9D4C4;background:#fff;color:#2C2C2A;border-radius:10px;padding:8px 12px;cursor:pointer;min-height:36px}
+button.on{background:#2C2C2A;color:#fff;border-color:#2C2C2A}
+.scrub{display:flex;align-items:center;gap:10px}
+.scrub input{flex:1}
+.scrub span{font-size:12px;color:#555;min-width:58px;text-align:right;font-variant-numeric:tabular-nums}
+.grp{font-size:12px;color:#777;margin:6px 0 4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:flex;align-items:center;gap:6px;padding:5px 9px 5px 5px;border-radius:16px;border:1px solid #E2DDCD;background:#fff;font-size:12px;cursor:pointer}
+.chip.on{border-color:#2C2C2A;box-shadow:0 0 0 1px #2C2C2A}
+.chip i{width:20px;height:20px;border-radius:50%;display:block;border:1px solid rgba(0,0,0,.08)}
+ol{margin:0;padding-left:20px;font-size:13px;line-height:1.55}
+ol b{font-variant-numeric:tabular-nums;font-weight:500;color:#7A6A4F}
+.note{font-size:12px;color:#666;line-height:1.45;margin-top:6px}
+</style></head><body>
+<h1>ShoppingList — живая заставка, эскиз</h1>
+<p class="sub">Продукты по очереди залетают в пакет, и пакет с каждым становится больше. Когда все внутри — пакет подпрыгивает, при приземлении сдувается до обычного размера. Потом появляется улыбка и превращается в галочку. Касание экрана во время анимации — сразу готовый кадр (как в приложении), после — повтор.</p>
+<div class="wrap">
+ <div class="stage">
+  <div class="phone" id="phone"><div class="notch"></div>
+   <div class="col">
+    <svg id="mark" viewBox="0 0 120 120" aria-hidden="true">
+     <defs>
+      <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop id="gs0" offset="0"/><stop id="gs1" offset="1"/></linearGradient>
+      <linearGradient id="sh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/></linearGradient>
+      <radialGradient id="glowg"><stop id="gl0" offset="0" stop-opacity=".45"/><stop id="gl1" offset="1" stop-opacity="0"/></radialGradient>
+      <linearGradient id="sh2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset=".306" stop-color="#fff" stop-opacity="0"/></linearGradient>
+     </defs>
+     <circle id="glow" cx="60" cy="68" r="64" fill="url(#glowg)" opacity="0" style="transform-box:view-box;transform-origin:60px 68px"/>
+     <ellipse id="shadow" cx="60" cy="105" rx="30" ry="3.2" opacity="0" style="transform-box:view-box;transform-origin:60px 105px"/>
+     <!-- ручка (задняя часть пакета) -->
+     <g id="handleG" class="bag"><path id="handleP" d="M45 48 C45 13 75 13 75 48" fill="none" stroke="url(#g)" stroke-width="7" stroke-linecap="round"/></g>
+     <!-- продукты: между ручкой и корпусом, поэтому «уходят» за край пакета -->
+     <g id="items">
+      <g class="item" id="apple"><g transform="scale(1.55)">
+       <path d="M0 -6 C-3 -9.5 -11 -9.5 -11 -1 C-11 7 -5.5 11 -2.5 11 C-1.2 11 -.8 10.2 0 10.2 C.8 10.2 1.2 11 2.5 11 C5.5 11 11 7 11 -1 C11 -9.5 3 -9.5 0 -6 Z" fill="#E5483D"/>
+       <ellipse cx="-5" cy="-1.5" rx="2.2" ry="3.6" fill="#fff" opacity=".35" transform="rotate(20 -5 -1.5)"/>
+       <path d="M0 -6 Q.4 -10 2.2 -12.5" fill="none" stroke="#6B3E1E" stroke-width="1.8" stroke-linecap="round"/>
+       <path d="M1.6 -9.6 Q6.2 -13.6 9.6 -10.4 Q5.4 -7.2 1.6 -9.6 Z" fill="#43A047"/>
+      </g></g>
+      <g class="item" id="milk"><g transform="scale(1.45)">
+       <path d="M-9 -2 H3 V15 H-9 Z" fill="#FFFFFF"/>
+       <path d="M3 -2 L9 -5 V12 L3 15 Z" fill="#D6E2F0"/>
+       <path d="M-9 7 H3 V15 H-9 Z" fill="#4A90E2"/>
+       <path d="M3 7 L9 4 V12 L3 15 Z" fill="#2F6FC0"/>
+       <path d="M-9 -2 L-3 -9 L3 -2 Z" fill="#4A90E2"/>
+       <path d="M3 -2 L-3 -9 L3 -12 L9 -5 Z" fill="#2F6FC0"/>
+       <path d="M-3 -9 V-11.5 L3 -14.5 V-12 Z" fill="#245A9E"/>
+       <path d="M-3 0.5 Q-5 3.2 -5 4.2 A2 2 0 0 0 -1 4.2 Q-1 3.2 -3 0.5 Z" fill="#4A90E2"/>
+       <path d="M-9 -2 L-3 -9 V-11.5 L3 -14.5 V-12 L9 -5 V12 L3 15 H-9 Z" fill="none" stroke="#1F3A5F" stroke-opacity=".35" stroke-width=".8" stroke-linejoin="round"/>
+      </g></g>
+      <g class="item" id="bread"><g transform="scale(1.25)">
+       <rect x="-21" y="-5.5" width="42" height="11" rx="5.5" fill="#CF8A3B"/>
+       <rect x="-18" y="-5" width="36" height="5" rx="2.5" fill="#E6AA5E"/>
+       <path d="M-14 -3.2 L-10 2.6 M-4.5 -3.4 L-.5 2.6 M5 -3.2 L9 2.6" stroke="#F7DBA6" stroke-width="1.8" stroke-linecap="round"/>
+      </g></g>
+      <g class="item" id="carrot"><g transform="scale(1.45)">
+       <path d="M0 -8 Q-4 -13 -7 -16 M0 -8 Q0 -14 -.5 -19 M0 -8 Q4 -13 6.5 -15.5" stroke="#3E9B47" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+       <path d="M-5.5 -7 Q0 -10 5.5 -7 Q4 4 .8 16 Q0 17.5 -.8 16 Q-4 4 -5.5 -7 Z" fill="#F28A1E"/>
+       <path d="M-3.6 -1 L-.6 -.5 M3.1 4 L.6 4.5 M-2.4 9 L-.3 9.3" stroke="#C9610C" stroke-width="1.1" stroke-linecap="round"/>
+      </g></g>
+     </g>
+     <!-- корпус пакета, блик, улыбка→галочка (линия цветом фона = вырез, как в логотипе) -->
+     <g id="bodyG" class="bag">
+      <path id="body" d="M27 41 H93 Q95 41 95.5 44 L90.5 95 Q90 102 83 102 H37 Q30 102 29.5 95 L24.5 44 Q25 41 27 41 Z" fill="url(#g)"/>
+      <path id="shine" d="M27 41 H93 Q95 41 95.5 44 L90.5 95 Q90 102 83 102 H37 Q30 102 29.5 95 L24.5 44 Q25 41 27 41 Z" fill="url(#sh2)"/>
+      <path id="check" d="M42 68 C44 77 51 82 60 82 C69 82 76 77 78 68" fill="none" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+     </g>
+    </svg>
+    <div class="name" id="name">ShoppingList</div>
+    <div class="slogan" id="slogan">Добавил — купил — смахнул</div>
+    <div class="badge" id="badge">Прототип</div>
+   </div>
+   <div class="hint" id="hint">Коснись, чтобы продолжить</div>
+  </div>
+  <div class="cap" id="cap"></div>
+ </div>
+ <div class="panel">
+  <div class="card"><h2>Анимация</h2>
+   <div class="btns">
+    <button id="replay">▶ Повторить</button>
+    <button data-sp="0.75">Быстрее</button><button data-sp="1" class="on">Обычно</button><button data-sp="3">Медленно ×3</button>
+    <button id="still">Без анимации</button>
+   </div>
+   <div class="scrub" style="margin-top:10px"><input type="range" id="scrub" min="0" max="1000" value="0" aria-label="Перемотка"><span id="tm">0,00 с</span></div>
+   <div class="note">Перемотка: потяните ползунок — анимация встанет на паузу на выбранном кадре.</div>
+  </div>
+  <div class="card"><h2>Цветовой профиль</h2>
+   <div class="grp">Светлые</div><div class="chips" id="cl"></div>
+   <div class="grp">Тёмные</div><div class="chips" id="cd"></div>
+   <div class="note">По умолчанию «Как в системе»: светлый телефон → «Янтарь», тёмный → «Какао».</div>
+  </div>
+  <div class="card"><h2>Этапы (при обычной скорости)</h2><ol id="legend"></ol>
+   <div class="note">Продукты — по одному на категорию: фрукты, молочное, хлеб, овощи. Цвета продуктов одинаковые во всех профилях. Последний кадр совпадает с логотипом.</div>
+  </div>
+ </div>
+</div>
+<script>
+const S={"white":["Белая","light","#FFFFFF","#16142B","#5C5977","#1EC8F2","#2433F5"],"powder":["Пудра","light","#FBF1F4","#3A1E2B","#85596B","#FF8A7A","#D8306E"],"beige":["Беж","light","#F6F0E7","#3A2E22","#76634F","#E2BB8E","#A86F3E"],"vanilla":["Янтарь","light","#FFF8E6","#3B3216","#776839","#FFC83D","#F0702A"],"peach":["Персик","light","#FFF3EC","#3D2219","#80574A","#FFA24C","#E8403A"],"mint":["Мята","light","#EDF8F3","#12352B","#4A7466","#3DD6A6","#0B7F7A"],"sky":["Небо","light","#EEF5FC","#13283F","#4B6785","#8CC2F7","#2F6FCB"],"night":["Ночь","dark","#1B1740","#FFFFFF","#AFA9EC","#1EC8F2","#2433F5"],"dusk":["Сумерки","dark","#2B2840","#F4F2FF","#BEB8DB","#C6B8FF","#7B63F0"],"graphite":["Графит","dark","#262A33","#F2F4F8","#AAB2C3","#86E6C8","#2FAF8A"],"sea":["Глубокое море","dark","#1E3236","#EEF8F7","#A2C5C0","#8CF0CF","#2BB8A8"],"emerald":["Изумруд","dark","#17332B","#ECFBF5","#A3D3C1","#8CF0CF","#2BB8A8"],"berry":["Ягода","dark","#33232E","#FFF2F7","#D8B1C4","#FFB3A8","#FF6B9B"],"cocoa":["Какао","dark","#2F2722","#FBF4EC","#CFBBA7","#FFE07A","#FF9A55"]};
+const $=id=>document.getElementById(id);
+
+// ---------- Тайминги (мс, при обычной скорости) ----------
+const T={
+ bagIn:300,            // пакет появляется с пружинкой
+ itemStart:200,        // первый продукт вылетает
+ itemGap:220,          // интервал между продуктами
+ itemFly:400,          // полёт одного продукта
+ itemEnter:.85,        // доля полёта, когда продукт «внутри» → пакет раздувается
+ inflateX:.065, inflateY:.04, // прибавка размера за каждый продукт: +6,5% ширина, +4% высота (после 4-х: ×1,26 / ×1,16)
+ jumpHeight:22,        // высота прыжка, в единицах сетки знака 120
+ smileDraw:320, smileHold:800, morph:320, text:420 // улыбка рисуется → пауза → превращается в галочку
+};
+// Траектории: старт за краем экрана, «вершина» над ручкой, финиш внутри пакета (сетка 120×120).
+const ITEMS=[
+ {id:'apple', from:[-100,60], apex:-22, to:[47,74], rot:[-40,15]},
+ {id:'milk',  from:[220,40],  apex:-28, to:[66,72], rot:[35,-10]},
+ {id:'bread', from:[-100,20], apex:-34, to:[58,72], rot:[-20,75]},
+ {id:'carrot',from:[220,70],  apex:-22, to:[70,74], rot:[-100,10]}
+];
+function times(){
+ const L=ITEMS.map((_,k)=>T.itemStart+k*T.itemGap+T.itemFly*T.itemEnter); // моменты «влетел»
+ const A=L[L.length-1]+240;                                                // подготовка к прыжку
+ const check=A+600,morph=check+T.smileDraw+T.smileHold,checkEnd=morph+T.morph;
+ return {L,A,apex:A+280,land:A+440,settle:A+760,check,morph,checkEnd,glow:checkEnd-60,
+   name:check+300,slogan:check+440,badge:check+600,hint:checkEnd+200,total:checkEnd+200+T.text};
+}
+
+// ---------- Цвета профиля ----------
+let scheme='vanilla';
+function applyScheme(k){
+ scheme=k;const [,,bg,text,muted,from,to]=S[k];const ph=$('phone');
+ ph.style.setProperty('--bg',bg);ph.style.setProperty('--text',text);ph.style.setProperty('--muted',muted);
+ $('gs0').setAttribute('stop-color',from);$('gs1').setAttribute('stop-color',to);
+ $('gl0').setAttribute('stop-color',from);$('gl1').setAttribute('stop-color',from);
+ $('check').setAttribute('stroke',bg);$('shadow').setAttribute('fill',text);
+ document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.k===k));
+ $('cap').textContent='Профиль «'+S[k][0]+'»';
+}
+Object.entries(S).forEach(([k,v])=>{
+ const c=document.createElement('div');c.className='chip';c.dataset.k=k;
+ c.innerHTML=`<i style="background:linear-gradient(135deg,${v[5]},${v[6]});box-shadow:inset 0 0 0 3px ${v[2]}"></i>${v[0]}`;
+ c.onclick=()=>{applyScheme(k);play();};
+ $(v[1]==='light'?'cl':'cd').appendChild(c);
+});
+
+// ---------- Анимация ----------
+let sp=1,anims=[],master=null,still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Улыбка и галочка — две кубические кривые, одинаковая структура → плавное превращение.
+const SMILE='M42 68 C44 77 51 82 60 82 C69 82 76 77 78 68';
+const CHECKC='M44 72 C47.83 75.83 51.67 79.67 55.5 83.5 C62.67 75.33 69.83 67.17 77 59'; // = M44 72 L55.5 83.5 L77 59
+const SMILE_LEN=$('check').getTotalLength(),LMAX=70;
+$('check').style.strokeDasharray=`${LMAX} ${LMAX+20}`;
+$('check').style.strokeDashoffset=LMAX+1;
+
+function quad(p0,p1,p2,t){const u=1-t;return u*u*p0+2*u*t*p1+t*t*p2;}
+// Ключевые кадры по абсолютному времени → offset 0..1
+function framesAt(list,total){return list.map(f=>{const o={...f,offset:f.t/total};delete o.t;return o;});}
+
+// Шкала пакета: масштаб и сдвиг всей группы (ручка + корпус).
+function bagTimeline(tm){
+ const K=[];const add=(t,sx,sy,ty,easing)=>K.push({t,sx,sy,ty,easing});
+ add(0,.6,.6,0,'cubic-bezier(.34,1.56,.64,1)');
+ add(T.bagIn,1,1,0,'ease-out');
+ let sx=1,sy=1;
+ tm.L.forEach((l,k)=>{
+  const nx=1+T.inflateX*(k+1),ny=1+T.inflateY*(k+1);
+  add(l,sx,sy,0,'ease-out');                // продукт внутри
+  add(l+90,nx+.04,ny-.035,0,'ease-in-out'); // толчок вширь
+  add(l+200,nx,ny,0,'ease-in-out');         // новый размер
+  sx=nx;sy=ny;
+ });
+ const A=tm.A;
+ add(A,sx,sy,0,'ease-in-out');
+ add(A+100,sx+.07,sy-.09,0,'cubic-bezier(.2,.7,.3,1)');       // присел перед прыжком
+ add(tm.apex,sx-.03,sy+.06,-T.jumpHeight,'cubic-bezier(.6,0,.9,.5)'); // в воздухе — ещё большой
+ add(tm.land,sx,sy+.02,0,'ease-out');                          // касание
+ add(tm.land+90,1.09,.9,0,'ease-in-out');                      // приземлился — обычный размер
+ add(tm.land+210,.97,1.04,0,'ease-in-out');
+ add(tm.settle,1,1,0,'linear');                                // = логотип
+ return K;
+}
+
+function play(){
+ anims.forEach(a=>a.cancel());anims=[];
+ const tm=times();const d=ms=>ms*sp;const A=(el,kf,opt)=>{const a=el.animate(kf,{fill:'both',...opt});anims.push(a);return a;};
+ // пакет: ручка и корпус двигаются одинаково (продукты между ними по глубине)
+ const K=bagTimeline(tm),F=K[K.length-1].t,kf=f=>K.map(k=>({offset:k.t/F,easing:k.easing,...f(k)}));
+ document.querySelectorAll('.bag').forEach(el=>{
+  el.style.transformBox='view-box';el.style.transformOrigin='60px 102px';
+  A(el,kf(k=>({transform:`translate(0px,${k.ty}px) scale(${k.sx},${k.sy})`})),{duration:d(F)});
+  A(el,[{opacity:0},{opacity:1}],{duration:d(150)});
+ });
+ // продукты: параболы (квадратичная кривая), вращение, исчезают внутри пакета
+ ITEMS.forEach((it,k)=>{
+  const el=$(it.id);const [x0,y0]=it.from,[x2,y2]=it.to;
+  const x1=(x0+x2)/2,y1=2*it.apex-(y0+y2)/2;const N=16,kf=[];
+  for(let i=0;i<=N;i++){const t=i/N;
+   kf.push({offset:t,opacity:i===N?0:1,transform:`translate(${quad(x0,x1,x2,t)}px,${quad(y0,y1,y2,t)}px) rotate(${it.rot[0]+(it.rot[1]-it.rot[0])*t}deg)`});}
+  el.style.transformBox='view-box';el.style.transformOrigin='0px 0px';
+  A(el,kf,{duration:d(T.itemFly),delay:d(T.itemStart+k*T.itemGap),easing:'linear'});
+ });
+ // тень под пакетом — только во время прыжка
+ const sh=[{t:0,opacity:0,transform:'scale(1,1)'},{t:tm.A,opacity:0,transform:'scale(1,1)'},{t:tm.A+100,opacity:.12,transform:'scale(1.12,1)'},
+  {t:tm.apex,opacity:.05,transform:'scale(.7,1)'},{t:tm.land,opacity:.12,transform:'scale(1.05,1)'},{t:tm.settle,opacity:0,transform:'scale(1,1)'}];
+ A($('shadow'),framesAt(sh,tm.settle),{duration:d(tm.settle)});
+ // улыбка рисуется слева направо, затем превращается в галочку
+ A($('check'),[{strokeDashoffset:LMAX+1},{strokeDashoffset:LMAX-SMILE_LEN,offset:.999},{strokeDashoffset:0}],{duration:d(T.smileDraw),delay:d(tm.check),easing:'cubic-bezier(.4,0,.2,1)'});
+ A($('check'),[{d:`path("${SMILE}")`},{d:`path("${CHECKC}")`}],{duration:d(T.morph),delay:d(tm.morph),easing:'cubic-bezier(.34,1.45,.64,1)'});
+ // мягкое свечение
+ A($('glow'),[{opacity:0,transform:'scale(.7)'},{opacity:1,transform:'scale(1)',offset:.35},{opacity:0,transform:'scale(1.15)'}],{duration:d(620),delay:d(tm.glow),easing:'ease-out'});
+ // тексты
+ const fade=(id,t,dy=10)=>A($(id),[{opacity:0,translate:`0 ${dy}px`},{opacity:1,translate:'0 0'}],{duration:d(T.text),delay:d(t),easing:'cubic-bezier(.2,.8,.2,1)'});
+ fade('name',tm.name);fade('slogan',tm.slogan);fade('badge',tm.badge,0);fade('hint',tm.hint,0);
+ // «часы» для перемотки
+ master=document.body.animate([{},{}],{duration:d(tm.total)});anims.push(master);
+ $('scrub').max=Math.round(d(tm.total));
+ if(still)finishAll();
+ legend(tm);
+}
+function finishAll(){anims.forEach(a=>{a.finish();});}
+function seek(t){anims.forEach(a=>{a.pause();a.currentTime=t;});}
+
+// ---------- Управление ----------
+$('replay').onclick=()=>{still=false;$('still').classList.remove('on');play();};
+$('phone').onclick=()=>{if(master&&master.playState==='running')finishAll();else play();};
+document.querySelectorAll('[data-sp]').forEach(b=>b.onclick=()=>{sp=+b.dataset.sp;document.querySelectorAll('[data-sp]').forEach(x=>x.classList.toggle('on',x===b));still=false;$('still').classList.remove('on');play();});
+$('still').onclick=()=>{still=!still;$('still').classList.toggle('on',still);play();};
+$('scrub').oninput=e=>seek(+e.target.value);
+(function tick(){if(master){const t=master.currentTime??0;if(master.playState!=='paused')$('scrub').value=t;$('tm').textContent=(t/1000).toFixed(2).replace('.',',')+' с';}requestAnimationFrame(tick);})();
+
+const sec=ms=>(ms/1000).toFixed(2).replace('.',',');
+function legend(tm){
+ const last=T.itemStart+(ITEMS.length-1)*T.itemGap+T.itemFly;
+ $('legend').innerHTML=[
+  [0,T.bagIn,'Пакет появляется с пружинкой'],
+  [T.itemStart,last,'Продукты залетают по очереди: яблоко, молоко, багет, морковь. С каждым пакет становится больше (после всех четырёх — +26% в ширину, +16% в высоту)'],
+  [tm.A,tm.land,'Пакет приседает и подпрыгивает, в воздухе ещё большой'],
+  [tm.land,tm.settle,'Приземляется — становится обычного размера'],
+  [tm.check,tm.morph,'Рисуется улыбка и держится ~1 с'],
+  [tm.morph,tm.checkEnd,'Улыбка превращается в галочку'],
+  [tm.name,tm.total,'Название, слоган, «Прототип», подсказка']
+ ].map(([a,b,t])=>`<li><b>${sec(a)}–${sec(b)} с</b> · ${t}</li>`).join('');
+}
+window.__seek=t=>seek(t);window.__times=times;
+if(still)$('still').classList.add('on');
+applyScheme('vanilla');play();
+</script></body></html>

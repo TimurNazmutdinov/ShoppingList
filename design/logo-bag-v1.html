@@ -1,0 +1,58 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ShoppingList — пакет с галочкой</title>
+<style>
+body{margin:0;background:#F1EFE8;font-family:Roboto,Arial,sans-serif;color:#2C2C2A;padding:16px}
+h1{font-size:20px;margin:0 0 4px}
+.grid{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px}
+.card{background:#fff;border-radius:16px;padding:12px;width:260px}
+.big{width:180px;height:180px;display:block;margin:0 auto 8px;filter:drop-shadow(0 3px 6px rgba(0,0,0,.15))}
+.row{display:flex;align-items:center;justify-content:center;gap:10px;background:#E4E1D6;border-radius:10px;padding:8px}
+.row svg{display:block}
+.t{font-weight:700;font-size:14px;margin-top:8px}.d{font-size:12px;color:#555;margin-top:2px}
+</style></head><body>
+<h1>ShoppingList — пакет с галочкой</h1>
+<div style="font-size:13px;color:#555">Ровная форма с лёгким сужением книзу, ручка-петля, галочка по центру корпуса.</div>
+<div class="grid" id="g"></div>
+<script>
+let uid=0;
+const BODY='M27 40 H93 Q95 40 95.5 43 L90.5 94 Q90 101 83 101 H37 Q30 101 29.5 94 L24.5 43 Q25 40 27 40 Z';
+const HANDLE='M45 47 C45 12 75 12 75 47';
+const CHECK='M44 71 L55.5 82.5 L77 58';
+const grad=(id,a,b)=>`<linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient>`;
+const mk=(i,w=9)=>`<mask id="m${i}"><rect width="120" height="120" fill="#fff"/><path d="${CHECK}" fill="none" stroke="#000" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/></mask>`;
+const clip=i=>`<clipPath id="c${i}"><path d="${BODY}"/></clipPath>`;
+const T='transform="translate(0 1)"';
+const marks={
+ solid:(a,b)=>{const i=++uid;return{defs:grad('g'+i,a,b)+mk(i),
+  body:`<g ${T}><path d="${HANDLE}" fill="none" stroke="url(#g${i})" stroke-width="7" stroke-linecap="round"/><path d="${BODY}" fill="url(#g${i})" mask="url(#m${i})"/></g>`}},
+ flat:(c)=>{const i=++uid;return{defs:mk(i),
+  body:`<g ${T}><path d="${HANDLE}" fill="none" stroke="${c}" stroke-width="7" stroke-linecap="round"/><path d="${BODY}" fill="${c}" mask="url(#m${i})"/></g>`}},
+ band:(a,b)=>{const i=++uid;return{defs:grad('g'+i,a,b)+clip(i),
+  body:`<g ${T}><path d="${HANDLE}" fill="none" stroke="url(#g${i})" stroke-width="7" stroke-linecap="round"/><path d="${BODY}" fill="url(#g${i})"/><rect x="20" y="40" width="80" height="11" fill="#fff" opacity=".28" clip-path="url(#c${i})"/><path d="${CHECK}" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g>`}},
+ line:(a,b,acc)=>{const i=++uid;return{defs:grad('g'+i,a,b),
+  body:`<g ${T}><path d="${HANDLE}" fill="none" stroke="url(#g${i})" stroke-width="7" stroke-linecap="round"/><path d="M27.5 43.5 H92.5 L87.5 93 Q87 97.5 82.5 97.5 H37.5 Q33 97.5 32.5 93 Z" fill="none" stroke="url(#g${i})" stroke-width="7" stroke-linejoin="round"/><path d="${CHECK}" fill="none" stroke="${acc}" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g>`}},
+ gusset:(a,b)=>{const i=++uid;return{defs:grad('g'+i,a,b)+clip(i)+mk(i),
+  body:`<g ${T}><path d="${HANDLE}" fill="none" stroke="url(#g${i})" stroke-width="7" stroke-linecap="round"/><g mask="url(#m${i})"><path d="${BODY}" fill="url(#g${i})"/><path d="M80 40 H100 V101 H76 Z" fill="#000" opacity=".16" clip-path="url(#c${i})"/></g></g>`}},
+ soft:(a,b)=>{const i=++uid;return{defs:grad('g'+i,a,b)+clip(i)+mk(i)+`<linearGradient id="h${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/></linearGradient>`,
+  body:`<g ${T}><path d="${HANDLE}" fill="none" stroke="url(#g${i})" stroke-width="7" stroke-linecap="round"/><g mask="url(#m${i})"><path d="${BODY}" fill="url(#g${i})"/><rect x="20" y="40" width="80" height="34" fill="url(#h${i})" clip-path="url(#c${i})"/></g></g>`}}
+};
+const V=[
+ ['1. Сплошной, оранжево-красный','Галочка вырезана в корпусе. Чистая форма.', marks.solid('#FFA24C','#F0483E'),'#fff'],
+ ['2. Белый на цвете','Белый пакет на тёплой плитке, как у большинства иконок.', marks.flat('#fff'),'grad:#FF9A3D:#E8403A'],
+ ['3. С отворотом','Светлая полоса сверху даёт ощущение бумажного пакета; галочка белая.', marks.band('#FF9A3D','#E8403A'),'#fff'],
+ ['4. Линейный','Контур и коралловая галочка зелёного тона. Легче и современнее.', marks.line('#F0603E','#D93A52','#1EB980'),'#fff'],
+ ['5. Боковая складка','Тёмная грань справа — объём без градиентов.', marks.gusset('#FFA24C','#EE4A3C'),'#fff'],
+ ['6. Мягкий объём','Лёгкий блик сверху, как в «Чекпоинте». Галочка вырезана.', marks.soft('#FFA24C','#E8403A'),'#fff']
+];
+const g=document.getElementById('g');
+V.forEach(([t,d,m,bg])=>{
+ let defs=m.defs,fill=bg;
+ if(bg.startsWith('grad:')){const [,a,b]=bg.split(':');const id='t'+(++uid);defs+=grad(id,a,b);fill=`url(#${id})`}
+ const tile=(s,f,r)=>`<svg width="${s}" height="${s}" viewBox="0 0 120 120"><defs>${defs}</defs><rect width="120" height="120" rx="${r}" fill="${f}"/>${m.body}</svg>`;
+ const dark=bg==='#fff'?'#1B1B22':fill;
+ g.insertAdjacentHTML('beforeend',`<div class="card">
+ <div class="big">${tile(180,fill,28)}</div>
+ <div class="row">${tile(56,fill,28)}${tile(56,dark,28)}${tile(56,fill,60)}${tile(36,fill,28)}${tile(24,fill,28)}</div>
+ <div class="t">${t}</div><div class="d">${d}</div></div>`);
+});
+</script></body></html>

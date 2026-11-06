@@ -1,0 +1,77 @@
+import { useMemo } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Palette, radius, useTheme } from '@/theme';
+import { t } from '@/i18n';
+import { Item } from '@/db/items';
+import { itemQtyLabel } from './ItemSheet';
+import { SwipeRow } from './SwipeRow';
+
+type Props = {
+  item: Item;
+  onToggle: (item: Item) => void; // галочка или смахивание вправо
+  onRemove: (item: Item) => void; // смахивание влево
+  onOpen: (item: Item) => void;
+  onSwiped: () => void; // пользователь воспользовался смахиванием (для подсказки)
+};
+
+// Строка товара: галочка, название, заметка, количество; смахивание вправо — куплено/вернуть, влево — удалить.
+export function ItemRow({ item, onToggle, onRemove, onOpen, onSwiped }: Props) {
+  const colors = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+  const done = item.boughtAt !== null;
+  const qty = itemQtyLabel(item);
+  return (
+    <SwipeRow
+      right={{ label: done ? t('list.swipeBack') : t('list.swipeBought'), icon: done ? 'arrow-undo' : 'checkmark', bg: colors.primaryStrong, fg: colors.bg }}
+      left={{ label: t('list.swipeDelete'), icon: 'trash-outline', bg: colors.warn, fg: colors.onWarn }}
+      onSwipeRight={() => {
+        onSwiped();
+        onToggle(item);
+      }}
+      onSwipeLeft={() => {
+        onSwiped();
+        onRemove(item);
+      }}
+    >
+      <Pressable style={styles.row} onPress={() => onOpen(item)} accessibilityRole="button" accessibilityLabel={`${item.title} ${qty}`}>
+        <Pressable
+          style={styles.checkHit}
+          onPress={() => onToggle(item)}
+          accessibilityRole="checkbox"
+          accessibilityState={{ checked: done }}
+          accessibilityLabel={done ? t('a11y.uncheckItem') : t('a11y.checkItem')}
+        >
+          <View style={[styles.check, done && styles.checkDone]}>{done ? <Ionicons name="checkmark" size={16} color={colors.bg} /> : null}</View>
+        </Pressable>
+        <View style={styles.body}>
+          <Text style={[styles.title, done && styles.done]} numberOfLines={2}>{item.title}</Text>
+          {item.note ? <Text style={styles.note} numberOfLines={1}>{item.note}</Text> : null}
+        </View>
+        {qty ? <Text style={styles.qty}>{qty}</Text> : null}
+      </Pressable>
+    </SwipeRow>
+  );
+}
+
+const createStyles = (colors: Palette) =>
+  StyleSheet.create({
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      minHeight: 56,
+      backgroundColor: colors.card,
+      borderWidth: 1,
+      borderColor: colors.cardBorder,
+      borderRadius: radius.card,
+      paddingRight: 14,
+    },
+    checkHit: { width: 52, height: 56, alignItems: 'center', justifyContent: 'center' },
+    check: { width: 26, height: 26, borderRadius: 8, borderWidth: 2, borderColor: colors.outline, alignItems: 'center', justifyContent: 'center' },
+    checkDone: { backgroundColor: colors.primaryStrong, borderColor: colors.primaryStrong },
+    body: { flex: 1, paddingVertical: 8 },
+    title: { color: colors.text, fontSize: 17 },
+    done: { color: colors.textMuted, textDecorationLine: 'line-through' },
+    note: { color: colors.textMuted, fontSize: 13, marginTop: 2 },
+    qty: { color: colors.textMuted, fontSize: 15, marginLeft: 10 },
+  });

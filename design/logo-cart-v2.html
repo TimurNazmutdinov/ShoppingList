@@ -1,0 +1,56 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ShoppingList — тележка, версия 2</title>
+<style>
+body{margin:0;background:#F1EFE8;font-family:Roboto,Arial,sans-serif;color:#2C2C2A;padding:16px}
+h1{font-size:20px;margin:0 0 4px}
+.grid{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px}
+.card{background:#fff;border-radius:16px;padding:12px;width:260px}
+.big{width:180px;height:180px;display:block;margin:0 auto 8px;filter:drop-shadow(0 3px 6px rgba(0,0,0,.15))}
+.row{display:flex;align-items:center;justify-content:center;gap:10px;background:#E4E1D6;border-radius:10px;padding:8px}
+.row svg{display:block}
+.t{font-weight:700;font-size:14px;margin-top:8px}.d{font-size:12px;color:#555;margin-top:2px}
+</style></head><body>
+<h1>ShoppingList — тележка с галочкой, версия 2</h1>
+<div style="font-size:13px;color:#555">Единая толщина линий, галочка вырезана в корзине, знак по центру.</div>
+<div class="grid" id="g"></div>
+<script>
+let uid=0;
+const HANDLE='M12 28 H25 L38 72 H90';
+const BASKET='M28.5 40 H102 Q106 40 105 44.5 L97 66 Q95 72 89 72 H40 Z';
+const CHECK='M53 55 L62 63.5 L80 45';
+const WHEELS=(f)=>`<circle cx="47" cy="89" r="7.5" fill="${f}"/><circle cx="82" cy="89" r="7.5" fill="${f}"/>`;
+const grad=(id,a,b)=>`<linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient>`;
+
+// возвращает {defs, body} знака; tile — цвет подложки для «зазоров»
+const marks={
+ solid:(a,b)=>{const i=++uid;return{defs:grad('g'+i,a,b)+`<mask id="m${i}"><rect width="120" height="120" fill="#fff"/><path d="${CHECK}" fill="none" stroke="#000" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/></mask>`,
+  body:`<g transform="translate(1.5 -.5)"><path d="${HANDLE}" fill="none" stroke="url(#g${i})" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="${BASKET}" fill="url(#g${i})" mask="url(#m${i})"/>${WHEELS(`url(#g${i})`)}</g>`}},
+ flat:(c)=>{const i=++uid;return{defs:`<mask id="m${i}"><rect width="120" height="120" fill="#fff"/><path d="${CHECK}" fill="none" stroke="#000" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/></mask>`,
+  body:`<g transform="translate(1.5 -.5)"><path d="${HANDLE}" fill="none" stroke="${c}" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="${BASKET}" fill="${c}" mask="url(#m${i})"/>${WHEELS(c)}</g>`}},
+ line:(a,b,acc)=>{const i=++uid;return{defs:grad('g'+i,a,b),
+  body:`<g transform="translate(1.5 -.5)"><path d="${HANDLE}" fill="none" stroke="url(#g${i})" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M31 41 H100 L93.5 65.5 Q92 71 87 71 H41 Z" fill="none" stroke="url(#g${i})" stroke-width="7" stroke-linejoin="round"/><path d="${CHECK}" fill="none" stroke="${acc}" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>${WHEELS(`url(#g${i})`)}</g>`}},
+ badge:(a,b,acc)=>{const i=++uid;return{defs:grad('g'+i,a,b),
+  body:`<g transform="translate(-2 3)"><path d="${HANDLE}" fill="none" stroke="url(#g${i})" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="${BASKET}" fill="url(#g${i})"/>${WHEELS(`url(#g${i})`)}<circle cx="94" cy="30" r="19" fill="#fff"/><circle cx="94" cy="30" r="15" fill="${acc}"/><path d="M86.5 30.5 L92 36 L102 24" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/></g>`}},
+ pop:(a,b,acc,gap)=>{const i=++uid;return{defs:grad('g'+i,a,b),
+  body:`<g transform="translate(0 2)"><path d="${HANDLE}" fill="none" stroke="url(#g${i})" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="${BASKET}" fill="url(#g${i})"/>${WHEELS(`url(#g${i})`)}<path d="M50 52 L62 64 L96 26" fill="none" stroke="${gap}" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/><path d="M50 52 L62 64 L96 26" fill="none" stroke="${acc}" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g>`}}
+};
+const V=[
+ ['1. Сплошной, фиолетовый','Галочка вырезана в корзине. Самый чистый и узнаваемый.', marks.solid('#8C6CFF','#4B34C9'),'#fff'],
+ ['2. Белый знак на цвете','Классическая иконка приложения: белый знак на глубоком фиолетовом.', marks.flat('#fff'),'grad:#7D5CFF:#3F2BB8'],
+ ['3. Линейный','Тонкая линия, галочка акцентом. Легче и современнее.', marks.line('#6A4DEB','#3B2AA8','#FF6A5C'),'#fff'],
+ ['4. Значок «добавлено»','Тележка + круглая отметка сверху. Читается как действие.', marks.badge('#6A4DEB','#3B2AA8','#1EB980'),'#fff'],
+ ['5. Галочка выпрыгивает','Крупная мятная галочка выходит за корзину. Динамично.', marks.pop('#5A3FE0','#2F2090','#1EC8A0','#fff'),'#fff'],
+ ['6. Зелёная на тёмном','Светлый мятный знак на тёмно-зелёном. Свежая палитра.', marks.flat('#7BF0C4'),'grad:#0E5C4A:#06261F']
+];
+const g=document.getElementById('g');
+V.forEach(([t,d,m,bg])=>{
+ let defs=m.defs,fill=bg;
+ if(bg.startsWith('grad:')){const [,a,b]=bg.split(':');const id='t'+(++uid);defs+=grad(id,'#'+a.replace('#',''),'#'+b.replace('#',''));fill=`url(#${id})`}
+ const tile=(s,f,r)=>`<svg width="${s}" height="${s}" viewBox="0 0 120 120"><defs>${defs}</defs><rect width="120" height="120" rx="${r}" fill="${f}"/>${m.body}</svg>`;
+ const dark=bg==='#fff'?'#1B1B22':fill;
+ g.insertAdjacentHTML('beforeend',`<div class="card">
+ <div class="big">${tile(180,fill,28).replace('<svg','<svg style="display:block"')}</div>
+ <div class="row">${tile(56,fill,28)}${tile(56,dark,28)}${tile(56,fill,60)}${tile(36,fill,28)}${tile(24,fill,28)}</div>
+ <div class="t">${t}</div><div class="d">${d}</div></div>`);
+});
+</script></body></html>

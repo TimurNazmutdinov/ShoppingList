@@ -1,0 +1,58 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ShoppingList — палитры и проверка</title>
+<style>
+body{margin:0;background:#F1EFE8;font-family:Roboto,Arial,sans-serif;color:#2C2C2A;padding:16px}
+h1{font-size:20px;margin:0 0 4px}
+.grid{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px}
+.card{background:#fff;border-radius:16px;padding:12px;width:300px}
+.t{font-weight:700;font-size:14px;margin:8px 0 2px}.d{font-size:12px;color:#555}
+.main{display:flex;justify-content:center;margin:0 auto 10px;filter:drop-shadow(0 3px 6px rgba(0,0,0,.15))}
+.wp{border-radius:12px;padding:12px 8px 8px;display:flex;justify-content:space-around;margin-top:8px}
+.wp.l{background:linear-gradient(160deg,#BFD9E8,#E7D9EC)}.wp.d{background:linear-gradient(160deg,#10151F,#2A2140)}
+.ap{text-align:center;font-size:10px;width:64px}.wp.l .ap{color:#1B2A36}.wp.d .ap{color:#E8E8F0}
+.ap svg{display:block;margin:0 auto 3px}
+.nt{display:flex;align-items:center;gap:8px;background:#2A2A30;color:#eee;border-radius:12px;padding:8px 10px;font-size:12px;margin-top:8px}
+.nt svg{flex:none}
+.row{display:flex;align-items:center;justify-content:center;gap:10px;background:#E4E1D6;border-radius:10px;padding:8px;margin-top:8px}
+.row svg{display:block}
+.sw{display:flex;gap:4px;margin-top:6px}.sw i{width:22px;height:22px;border-radius:6px;display:block}
+</style></head><body>
+<h1>ShoppingList — 4 палитры и проверка в жизни</h1>
+<div style="font-size:13px;color:#555">В каждой карточке: иконка, рабочий стол (светлые и тёмные обои), тематическая иконка Android 13+, уведомление, размеры.</div>
+<div class="grid" id="g"></div>
+<script>
+let uid=0;
+const BODY='M27 40 H93 Q95 40 95.5 43 L90.5 94 Q90 101 83 101 H37 Q30 101 29.5 94 L24.5 43 Q25 40 27 40 Z';
+const HANDLE='M45 47 C45 12 75 12 75 47';
+const CHECK='M44 71 L55.5 82.5 L77 58';
+const grad=(id,a,b)=>`<linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient>`;
+// знак: заливка — градиент a→b (мягкий объём) или плоский цвет
+function mark(a,b){const i=++uid;
+ const fill=b?`url(#g${i})`:a;
+ const defs=(b?grad('g'+i,a,b):'')+`<clipPath id="c${i}"><path d="${BODY}"/></clipPath><mask id="m${i}"><rect width="120" height="120" fill="#fff"/><path d="${CHECK}" fill="none" stroke="#000" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></mask><linearGradient id="h${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/></linearGradient>`;
+ const body=`<g transform="translate(0 1)"><path d="${HANDLE}" fill="none" stroke="${fill}" stroke-width="7" stroke-linecap="round"/><g mask="url(#m${i})"><path d="${BODY}" fill="${fill}"/>${b?`<rect x="20" y="40" width="80" height="34" fill="url(#h${i})" clip-path="url(#c${i})"/>`:''}</g></g>`;
+ return{defs,body}}
+const svg=(s,bg,r,m,scale=1)=>`<svg width="${s}" height="${s}" viewBox="0 0 120 120"><defs>${m.defs}</defs>${bg?`<rect width="120" height="120" rx="${r}" fill="${bg}"/>`:''}<g transform="translate(60 60) scale(${scale}) translate(-60 -60)">${m.body}</g></svg>`;
+const P=[
+ {n:'A. Тёплый оранжево-красный',d:'Аппетитный, заметный на любых обоях.',a:'#FFA24C',b:'#E8403A',la:'#FFC27D',lb:'#FF7A6B',mono:'#7A2A10',pastel:'#FFDCC8',sw:['#FFA24C','#E8403A','#FFF1E6','#7A2A10']},
+ {n:'B. Коралл и малина',d:'Мягче и «дружелюбнее», розовый оттенок.',a:'#FF8A7A',b:'#D8306E',la:'#FFB3A8',lb:'#FF6B9B',mono:'#7A1840',pastel:'#FFD6E3',sw:['#FF8A7A','#D8306E','#FFEAF0','#7A1840']},
+ {n:'C. Солнечный янтарь',d:'Самый светлый и радостный.',a:'#FFC83D',b:'#F0702A',la:'#FFE07A',lb:'#FF9A55',mono:'#6B3A06',pastel:'#FFEBB8',sw:['#FFC83D','#F0702A','#FFF6DC','#6B3A06']},
+ {n:'D. Свежий зелёно-бирюзовый',d:'Про продукты и свежесть; отличается от «оранжевых» магазинов.',a:'#3DD6A6',b:'#0B7F7A',la:'#8CF0CF',lb:'#2BB8A8',mono:'#07423F',pastel:'#C9F2E6',sw:['#3DD6A6','#0B7F7A','#E3FAF3','#07423F']}
+];
+const g=document.getElementById('g');
+P.forEach(p=>{
+ const main=mark(p.a,p.b), dk=mark(p.la,p.lb), mono=mark(p.mono), nt=mark('#fff');
+ const sq=(m,bg)=>svg(56,bg,28,m), ci=(m,bg,sc)=>svg(56,bg,60,m,sc);
+ const lightIcons=`<div class="ap">${sq(main,'#fff')}ShoppingList</div><div class="ap">${ci(main,'#fff')}ShoppingList</div><div class="ap">${ci(mono,p.pastel,.8)}Тема</div>`;
+ const darkIcons=`<div class="ap">${sq(dk,'#1E1815')}ShoppingList</div><div class="ap">${ci(dk,'#1E1815')}ShoppingList</div><div class="ap">${ci(mono,p.pastel,.8)}Тема</div>`;
+ g.insertAdjacentHTML('beforeend',`<div class="card">
+ <div class="main">${svg(140,'#fff',28,main)}</div>
+ <div class="t">${p.n}</div><div class="d">${p.d}</div>
+ <div class="sw">${p.sw.map(c=>`<i style="background:${c}"></i>`).join('')}</div>
+ <div class="wp l">${lightIcons}</div>
+ <div class="wp d">${darkIcons}</div>
+ <div class="nt">${svg(22,null,0,nt)}<div><b>ShoppingList</b><br>Сегодня купить: молоко, хлеб и ещё 3</div></div>
+ <div class="row">${sq(main,'#fff')}${svg(40,'#fff',28,main)}${svg(32,'#fff',28,main)}${svg(24,'#fff',28,main)}</div>
+ </div>`);
+});
+</script></body></html>

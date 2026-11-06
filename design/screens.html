@@ -1,0 +1,222 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ShoppingList — эскизы экранов</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons-outline.min.css">
+<style>
+:root{--bg:#FFFBF2;--card:#fff;--bd:#F0E4C8;--tx:#2B2112;--mu:#7A6A4F;--pr:#FFC83D;--onpr:#3E2600;--st:#C2570F;--gr:#1C8F4D;--rd:#CC3535;--tr:#F3E8CF}
+body{margin:0;background:#E9E5DA;font-family:Roboto,Arial,sans-serif;padding:14px}
+h1{font-size:18px;margin:0 0 2px;color:#2C2C2A}.sub{font-size:13px;color:#555;margin-bottom:12px}
+.wrap{display:flex;flex-wrap:wrap;gap:16px}
+.w{width:300px}
+.ph{background:var(--bg);border-radius:26px;border:4px solid #2C2C2A;height:560px;position:relative;overflow:hidden;box-sizing:border-box;color:var(--tx);font-size:13px;padding:14px 14px 0}
+.cap{text-align:center;font-size:13px;color:#444441;margin-top:6px;line-height:1.3}
+.sb{display:flex;justify-content:space-between;font-size:11px;color:var(--mu);margin:-4px 2px 8px}
+.top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.top h2{margin:0;font-size:20px;flex:1;font-weight:700}
+.ib{width:34px;height:34px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:19px;color:var(--mu)}
+.cd{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:11px 12px;margin-bottom:9px}
+.mt{color:var(--mu);font-size:11.5px}
+.row{display:flex;align-items:center;gap:9px}
+.bar{height:6px;background:var(--tr);border-radius:3px;margin-top:8px}.bar i{display:block;height:6px;border-radius:3px}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block;flex:none}
+.nav{position:absolute;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--bd);display:flex;justify-content:space-around;padding:7px 0 9px;font-size:10px;color:var(--mu)}
+.nav div{text-align:center;width:25%}.nav i{display:block;font-size:21px}
+.nav .on{color:var(--st);font-weight:700}
+.fab{position:absolute;right:14px;bottom:70px;background:var(--pr);color:var(--onpr);border-radius:16px;padding:12px 16px;font-weight:700;display:flex;gap:6px;align-items:center;box-shadow:0 3px 8px rgba(120,80,0,.25)}
+.chk{width:22px;height:22px;border-radius:7px;border:2px solid var(--mu);flex:none;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;font-size:14px;color:#fff}
+.chk.on{background:var(--gr);border-color:var(--gr)}
+.cat{font-size:11.5px;font-weight:700;letter-spacing:.3px;margin:10px 2px 5px;display:flex;align-items:center;gap:6px;color:var(--mu)}
+.it{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 12px;margin-bottom:5px;display:flex;align-items:center;gap:10px;min-height:22px}
+.it b{font-weight:500;font-size:14px}.it .q{margin-left:auto;color:var(--mu);font-size:12px;white-space:nowrap}
+.done b{text-decoration:line-through;color:var(--mu)}
+.swr{position:relative;margin-bottom:5px;border-radius:12px;overflow:hidden}
+.swr .rv{position:absolute;inset:0;display:flex;align-items:center;padding:0 14px;color:#fff;font-weight:700;gap:6px}
+.swr .it{margin:0;position:relative}
+.add{position:absolute;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--bd);padding:8px 12px 12px}
+.inp{background:var(--bg);border:1px solid var(--bd);border-radius:22px;padding:9px 14px;color:var(--mu);display:flex;align-items:center;gap:8px}
+.inp i{margin-left:auto;font-size:20px;color:var(--st)}
+.chips{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--bd);border-radius:16px;padding:5px 10px;font-size:12px;background:var(--bg)}
+.chip.on{background:var(--pr);border-color:var(--pr);color:var(--onpr);font-weight:700}
+.dim{position:absolute;inset:0;background:rgba(30,20,5,.5)}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--card);border-radius:22px 22px 0 0;padding:10px 16px 14px}
+.grab{width:36px;height:4px;border-radius:2px;background:var(--bd);margin:0 auto 10px}
+.fl{border:1px solid var(--bd);border-radius:10px;padding:8px 10px;margin:4px 0 9px;background:var(--bg)}
+.lb{font-size:11px;color:var(--mu)}
+.btn{background:var(--pr);color:var(--onpr);border-radius:13px;padding:11px;text-align:center;font-weight:700;flex:1}
+.btn.o{background:none;border:1px solid var(--bd);color:var(--rd)}
+.sw{width:38px;height:22px;border-radius:11px;background:var(--pr);position:relative;flex:none;margin-left:auto}
+.sw:after{content:"";position:absolute;right:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#fff}
+.sw.off{background:var(--tr)}.sw.off:after{right:auto;left:3px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;row-gap:3px;font-size:12px}
+.cal .h{color:var(--mu);font-size:10.5px;padding-bottom:3px}
+.cal .d{height:34px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:50%;width:34px;margin:0 auto;line-height:1.1}
+.cal .d.sel{background:var(--pr);color:var(--onpr);font-weight:700}
+.cal .d.td{border:2px solid var(--st)}
+.cal .dts{display:flex;gap:2px;height:5px;margin-top:1px}.cal .dts i{width:5px;height:5px;border-radius:50%;display:block}
+.seg{display:flex;background:var(--tr);border-radius:11px;padding:3px;margin:6px 0 10px}
+.seg div{flex:1;text-align:center;padding:7px 0;border-radius:9px;font-size:12px}.seg .on{background:var(--card);font-weight:700;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.sec{font-size:11.5px;font-weight:700;color:var(--st);margin:12px 2px 5px;letter-spacing:.3px}
+.sc{display:flex;gap:7px;margin:6px 0 4px}.sc span{width:30px;height:30px;border-radius:50%;border:2px solid var(--bd);display:inline-flex;align-items:center;justify-content:center;font-size:15px;color:#fff}
+.sc .on{border:3px solid var(--tx)}
+.li{display:flex;align-items:center;padding:9px 2px;border-bottom:1px solid var(--bd)}.li span:last-child{margin-left:auto;color:var(--mu)}
+.badge{background:#FAC775;color:#412402;border-radius:8px;padding:2px 9px;font-size:11px;font-weight:700}
+.note{background:#FFF1C9;border-radius:10px;padding:8px 10px;font-size:11.5px;color:#5b4300;margin:6px 0}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFC83D"/><stop offset="1" stop-color="#F0702A"/></linearGradient>
+<linearGradient id="hl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<clipPath id="bc"><path d="M27 40 H93 Q95 40 95.5 43 L90.5 94 Q90 101 83 101 H37 Q30 101 29.5 94 L24.5 43 Q25 40 27 40 Z"/></clipPath>
+<mask id="bm"><rect width="120" height="120" fill="#fff"/><path d="M44 71 L55.5 82.5 L77 58" fill="none" stroke="#000" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></mask>
+<symbol id="logo" viewBox="0 0 120 120"><g transform="translate(0 1)"><path d="M45 47 C45 12 75 12 75 47" fill="none" stroke="url(#bg1)" stroke-width="7" stroke-linecap="round"/><g mask="url(#bm)"><path d="M27 40 H93 Q95 40 95.5 43 L90.5 94 Q90 101 83 101 H37 Q30 101 29.5 94 L24.5 43 Q25 40 27 40 Z" fill="url(#bg1)"/><rect x="20" y="40" width="80" height="34" fill="url(#hl)" clip-path="url(#bc)"/></g></g></symbol>
+</defs></svg>
+<h1>ShoppingList — эскизы экранов (схема «Янтарь», светлая тема)</h1>
+<div class="sub">Первый круг: расположение и состав. Цвета и мелкие детали уточним после «ок».</div>
+<div class="wrap">
+
+<!-- 1 Заставка -->
+<div class="w"><div class="ph" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;text-align:center">
+<svg width="130" height="130" viewBox="0 0 120 120"><use href="#logo"/></svg>
+<div style="font-size:26px;font-weight:700;margin-top:6px">ShoppingList</div>
+<div class="mt" style="margin-top:4px;font-size:13px">Добавил — купил — смахнул</div>
+<div class="badge" style="margin-top:14px">Прототип</div>
+<div class="mt" style="position:absolute;bottom:26px">Коснись, чтобы продолжить</div>
+</div><div class="cap">1. Заставка (живая: пакет «вырастает», галочка «рисуется», ~1,6 с)</div></div>
+
+<!-- 2 Списки -->
+<div class="w"><div class="ph">
+<div class="sb"><span>9:41</span><span></span></div>
+<div class="top"><h2>Списки</h2><span class="ib"><i class="ti ti-arrows-sort"></i></span></div>
+<div class="cd"><div class="row"><span class="dot" style="background:#1C8F4D"></span><b style="font-size:15px">Продукты</b><span class="mt" style="margin-left:auto">сегодня</span></div>
+<div class="mt" style="margin-top:4px">Осталось купить 7 из 12</div><div class="bar"><i style="width:42%;background:#1C8F4D"></i></div></div>
+<div class="cd"><div class="row"><span class="dot" style="background:#1A80BF"></span><b style="font-size:15px">Хозтовары</b><span class="mt" style="margin-left:auto">пт, 8 нояб</span></div>
+<div class="mt" style="margin-top:4px">Осталось купить 3 из 5</div><div class="bar"><i style="width:40%;background:#1A80BF"></i></div></div>
+<div class="cd"><div class="row"><span class="dot" style="background:#C4511F"></span><b style="font-size:15px">К празднику</b><span class="mt" style="margin-left:auto">сб, 23 нояб</span></div>
+<div class="mt" style="margin-top:4px">Осталось купить 9 из 9</div><div class="bar"><i style="width:0;background:#C4511F"></i></div></div>
+<div class="mt" style="text-align:center;margin-top:6px">Удерживайте карточку, чтобы переставить</div>
+<div class="fab"><i class="ti ti-plus"></i> Новый список</div>
+<div class="nav"><div><i class="ti ti-sun"></i>Сегодня</div><div class="on"><i class="ti ti-list-check"></i>Списки</div><div><i class="ti ti-calendar"></i>Календарь</div><div><i class="ti ti-settings"></i>Настройки</div></div>
+</div><div class="cap">2. Списки: карточки, прогресс, ближайшая дата</div></div>
+
+<!-- 3 Список -->
+<div class="w"><div class="ph">
+<div class="sb"><span>9:41</span><span></span></div>
+<div class="top"><span class="ib" style="margin-left:-8px"><i class="ti ti-arrow-left"></i></span><span class="dot" style="background:#1C8F4D"></span><h2>Продукты</h2><span class="ib"><i class="ti ti-share"></i></span><span class="ib" style="margin-right:-6px"><i class="ti ti-dots-vertical"></i></span></div>
+<div class="cat"><span class="dot" style="background:#62A31D;width:9px;height:9px"></span>ОВОЩИ И ФРУКТЫ</div>
+<div class="swr"><div class="rv" style="background:#1C8F4D"><i class="ti ti-check"></i> Куплено</div><div class="it" style="margin-left:112px;border-radius:12px 0 0 12px"><span class="chk"></span><b>Помидоры</b><span class="q">1 кг</span></div></div>
+<div class="it"><span class="chk"></span><b>Яблоки</b><span class="q">6 шт</span></div>
+<div class="cat"><span class="dot" style="background:#1A80BF;width:9px;height:9px"></span>МОЛОЧНОЕ</div>
+<div class="it"><span class="chk"></span><div><b>Молоко</b><div class="mt">жирность 2,5%</div></div><span class="q">1 л</span></div>
+<div class="swr"><div class="rv" style="background:#CC3535;justify-content:flex-end">Удалить <i class="ti ti-trash"></i></div><div class="it" style="margin-right:112px;border-radius:0 12px 12px 0"><span class="chk"></span><b>Творог</b><span class="q">400 г</span></div></div>
+<div class="cat"><span class="dot" style="background:#A06C00;width:9px;height:9px"></span>ХЛЕБ</div>
+<div class="it"><span class="chk"></span><b>Батон</b><span class="q">1 шт</span><i class="ti ti-bell" style="color:var(--st);font-size:15px"></i></div>
+<div class="cat" style="margin-top:12px"><i class="ti ti-chevron-right"></i>КУПЛЕНО (3)</div>
+<div class="add"><div class="chips"><span class="chip">Хлеб</span><span class="chip">Молоко 1 л</span><span class="chip">Яйца 10 шт</span></div><div class="inp">Добавить товар…<i class="ti ti-circle-plus"></i></div></div>
+</div><div class="cap">3. Список: категории, смахивание вправо — куплено, влево — удалить, быстрое добавление с подсказками из истории</div></div>
+
+<!-- 3б Быстрое добавление и самообучение -->
+<div class="w"><div class="ph">
+<div class="sb"><span>9:41</span><span></span></div>
+<div class="top"><span class="ib" style="margin-left:-8px"><i class="ti ti-arrow-left"></i></span><span class="dot" style="background:#1C8F4D"></span><h2>Продукты</h2></div>
+<div class="cat">ДОБАВЛЕНО ТОЛЬКО ПО НАЗВАНИЮ</div>
+<div class="it"><span class="chk"></span><b>Соль</b></div>
+<div class="cat">ПОДСТАВИЛОСЬ ИЗ ПРОШЛОЙ ПОКУПКИ</div>
+<div class="it"><span class="chk"></span><div><b>Гречка</b><div class="mt" style="color:var(--st)">как в прошлый раз</div></div><span class="q">0,8 кг</span></div>
+<div class="add"><div class="chips"><span class="chip on">Гречка · 0,8 кг</span><span class="chip">Гречневая крупа</span></div><div class="inp" style="color:var(--tx)">греч<i class="ti ti-circle-plus"></i></div></div>
+</div><div class="cap">3б. Быстрое добавление: название без деталей или подсказка из истории (запоминаются количество, единица, категория)</div></div>
+
+<!-- 4 Товар -->
+<div class="w"><div class="ph">
+<div class="sb"><span>9:41</span><span></span></div>
+<div class="top"><h2>Продукты</h2></div>
+<div class="it"><span class="chk"></span><b>Помидоры</b><span class="q">1 кг</span></div><div class="it"><span class="chk"></span><b>Яблоки</b><span class="q">6 шт</span></div>
+<div class="dim"></div>
+<div class="sheet"><div class="grab"></div>
+<div class="lb">Название</div><div class="fl">Молоко</div>
+<div class="mt" style="margin:-4px 0 6px;color:var(--st)">Количество и категория не обязательны. Подставлено по прошлой покупке.</div>
+<div class="row"><div style="flex:1"><div class="lb">Количество</div><div class="fl" style="margin-bottom:6px">1</div></div><div style="flex:2"><div class="lb">Единица</div><div class="chips" style="margin:4px 0 6px"><span class="chip">шт</span><span class="chip">кг</span><span class="chip">г</span><span class="chip on">л</span><span class="chip">уп</span></div></div></div>
+<div class="lb">Категория</div><div class="chips" style="margin:4px 0 8px"><span class="chip">Овощи</span><span class="chip on">Молочное</span><span class="chip">Хлеб</span><span class="chip">Мясо</span><span class="chip">+ ещё</span></div>
+<div class="row" style="margin:2px 0 6px"><i class="ti ti-calendar" style="font-size:18px;color:var(--mu)"></i><span>Дата покупки</span><span class="mt" style="margin-left:auto">Пт, 8 нояб ›</span></div>
+<div class="row" style="margin:6px 0 8px"><i class="ti ti-bell" style="font-size:18px;color:var(--mu)"></i><span>Напомнить</span><span class="sw"></span></div>
+<div class="lb">Заметка</div><div class="fl" style="margin-bottom:10px">жирность 2,5%</div>
+<div class="row"><div class="btn o">Удалить</div><div class="btn">Сохранить</div></div>
+</div></div><div class="cap">4. Товар: панель снизу (поднимается над клавиатурой)</div></div>
+
+<!-- 5 Календарь -->
+<div class="w"><div class="ph">
+<div class="sb"><span>9:41</span><span></span></div>
+<div class="top"><span class="ib"><i class="ti ti-chevron-left"></i></span><h2 style="text-align:center">Ноябрь 2026</h2><span class="ib"><i class="ti ti-chevron-right"></i></span></div>
+<div class="cal" id="cal"></div>
+<div style="margin-top:12px;font-weight:700">Пятница, 6 ноября</div>
+<div class="it" style="margin-top:6px"><span class="chk"></span><b>Молоко</b><span class="q"><span class="dot" style="background:#1C8F4D;width:8px;height:8px"></span> Продукты</span></div>
+<div class="it"><span class="chk"></span><b>Батон</b><span class="q"><span class="dot" style="background:#1C8F4D;width:8px;height:8px"></span> Продукты</span></div>
+<div class="it"><span class="chk"></span><b>Порошок</b><span class="q"><span class="dot" style="background:#1A80BF;width:8px;height:8px"></span> Хозтовары</span></div>
+<div class="fab" style="bottom:70px"><i class="ti ti-plus"></i> Купить</div>
+<div class="nav"><div><i class="ti ti-sun"></i>Сегодня</div><div><i class="ti ti-list-check"></i>Списки</div><div class="on"><i class="ti ti-calendar"></i>Календарь</div><div><i class="ti ti-settings"></i>Настройки</div></div>
+</div><div class="cap">5. Календарь: точки цветом списка, ниже — покупки выбранного дня</div></div>
+
+<!-- 6 Сегодня -->
+<div class="w"><div class="ph">
+<div class="sb"><span>9:41</span><span></span></div>
+<div class="top"><div style="flex:1"><h2 style="font-size:22px">Сегодня</h2><div class="mt">Пятница, 6 ноября</div></div><span class="ib"><i class="ti ti-bell"></i></span></div>
+<div class="sec" style="margin-top:4px">КУПИТЬ СЕГОДНЯ · 3</div>
+<div class="it"><span class="chk"></span><b>Молоко</b><span class="q">1 л</span></div>
+<div class="it"><span class="chk"></span><b>Батон</b><span class="q">1 шт</span></div>
+<div class="it"><span class="chk"></span><b>Порошок</b><span class="q">1 уп</span></div>
+<div class="sec">С ПРОШЛЫХ ДНЕЙ · 2</div>
+<div class="it"><span class="chk"></span><div><b>Сыр</b><div class="mt">был на 4 ноября</div></div><span class="q">200 г</span></div>
+<div class="it"><span class="chk"></span><div><b>Бананы</b><div class="mt">был на 5 ноября</div></div><span class="q">1 кг</span></div>
+<div class="mt" style="text-align:center;margin-top:8px">Не успели — ничего страшного, можно перенести на сегодня или завтра</div>
+<div class="nav"><div class="on"><i class="ti ti-sun"></i>Сегодня</div><div><i class="ti ti-list-check"></i>Списки</div><div><i class="ti ti-calendar"></i>Календарь</div><div><i class="ti ti-settings"></i>Настройки</div></div>
+</div><div class="cap">6. Сегодня: главный экран (стартует на нём, если на сегодня что-то запланировано)</div></div>
+
+<!-- 7а Настройки -->
+<div class="w"><div class="ph">
+<div class="sb"><span>9:41</span><span></span></div>
+<div class="top"><h2>Настройки</h2></div>
+<div class="sec" style="margin-top:2px">ЦВЕТОВОЙ ПРОФИЛЬ</div>
+<div class="row" style="margin-bottom:8px"><svg width="52" height="52" viewBox="0 0 120 120"><use href="#logo"/></svg><div class="mt">Профиль задаёт цвета экранов, логотипа и заставки</div></div>
+<div class="it" style="border:3px solid var(--tx)"><i class="ti ti-device-mobile" style="font-size:20px;color:var(--mu)"></i><div><b>Как в системе</b><div class="mt">светлый или тёмный — по телефону</div></div><i class="ti ti-circle-check-filled" style="margin-left:auto;color:var(--st)"></i></div>
+<div class="lb" style="margin-top:6px">Светлые</div>
+<div class="sc"><span style="background:#fff;color:#999"></span><span style="background:#F8E3EA"></span><span style="background:#EFE4D3"></span><span style="background:#FBEEC6"></span><span style="background:#FCE6D8"></span><span style="background:#DCF2E9"></span><span style="background:#DEEBF9"></span></div>
+<div class="lb" style="margin-top:6px">Тёмные</div>
+<div class="sc"><span style="background:#1B1740"></span><span style="background:#2B2840"></span><span style="background:#262A33"></span><span style="background:#1E3236"></span><span style="background:#17332B"></span><span style="background:#33232E"></span><span style="background:#2F2722"></span></div>
+<div class="note">Профиль «Янтарь» (по умолчанию): янтарный логотип и заставка. Сменили профиль — логотип и заставка перекрасились вместе с экранами.</div>
+<div class="li" style="margin-top:6px"><span>Язык</span><span>Русский ›</span></div>
+<div class="nav"><div><i class="ti ti-sun"></i>Сегодня</div><div><i class="ti ti-list-check"></i>Списки</div><div><i class="ti ti-calendar"></i>Календарь</div><div class="on"><i class="ti ti-settings"></i>Настройки</div></div>
+</div><div class="cap">7а. Настройки: один цветовой профиль на всё (экраны, логотип, заставка), язык</div></div>
+
+<!-- 7б Настройки -->
+<div class="w"><div class="ph">
+<div class="sb"><span>9:41</span><span></span></div>
+<div class="top"><h2>Настройки</h2></div>
+<div class="sec" style="margin-top:2px">НАПОМИНАНИЯ</div>
+<div class="li"><span>Напоминать о покупках</span><span class="sw" style="margin-left:auto"></span></div>
+<div class="li"><span>Время</span><span>09:00 ›</span></div>
+<div class="li"><span>Тихие часы</span><span>22:00–08:00 ›</span></div>
+<div class="cd" style="margin-top:10px"><div class="row"><b>Состояние напоминаний</b></div>
+<div class="row mt" style="margin-top:6px"><i class="ti ti-circle-check" style="color:var(--gr);font-size:16px"></i>Уведомления разрешены</div>
+<div class="row mt" style="margin-top:4px"><i class="ti ti-circle-check" style="color:var(--gr);font-size:16px"></i>Точные будильники разрешены</div>
+<div class="row mt" style="margin-top:4px"><i class="ti ti-alert-triangle" style="color:var(--st);font-size:16px"></i>Экономия батареи: ограничено <span style="margin-left:auto;color:var(--st)">Исправить ›</span></div></div>
+<div class="sec">ОБНОВЛЕНИЯ</div>
+<div class="li"><span>Проверить обновления</span><span>›</span></div>
+<div class="li"><span>Проверять автоматически</span><span class="sw" style="margin-left:auto"></span></div>
+<div class="sec">ПОДСКАЗКИ</div>
+<div class="li"><span>Запоминать параметры товаров</span><span class="sw" style="margin-left:auto"></span></div>
+<div class="li"><span>Очистить историю покупок</span><span>›</span></div>
+<div class="sec">О ПРИЛОЖЕНИИ</div>
+<div class="li"><span>Версия</span><span>0.1.0 <span class="badge" style="margin-left:4px">Прототип</span></span></div>
+<div class="nav"><div><i class="ti ti-sun"></i>Сегодня</div><div><i class="ti ti-list-check"></i>Списки</div><div><i class="ti ti-calendar"></i>Календарь</div><div class="on"><i class="ti ti-settings"></i>Настройки</div></div>
+</div><div class="cap">7б. Настройки (продолжение): напоминания, обновления, версия</div></div>
+
+</div>
+<script>
+// Ноябрь 2026: 1-е — воскресенье, неделя с понедельника
+const marks={2:['#1C8F4D'],4:['#1C8F4D'],5:['#1C8F4D'],6:['#1C8F4D','#1A80BF'],8:['#1A80BF'],12:['#1C8F4D'],15:['#1C8F4D','#1A80BF'],23:['#C4511F'],27:['#1A80BF']};
+let h=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map(x=>`<div class="h">${x}</div>`).join('');
+for(let i=0;i<6;i++)h+='<div></div>';
+for(let d=1;d<=30;d++){
+ const cls=d===6?'d sel':'d';
+ h+=`<div><div class="${cls}">${d}<span class="dts">${(marks[d]||[]).map(c=>`<i style="background:${d===6?'#3E2600':c}"></i>`).join('')}</span></div></div>`;
+}
+document.getElementById('cal').innerHTML=h;
+</script></body></html>

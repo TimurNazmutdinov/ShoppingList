@@ -1,0 +1,539 @@
+{
+ "note": "Цветовые профили ShoppingList (14: 7 светлых, 7 тёмных). Один профиль задаёт экраны, логотип и заставку (schemes[*].mark = градиент знака). «Как в системе» берёт defaults.lightScheme / darkScheme по теме телефона. Контраст проверен тестами.",
+ "defaults": {
+  "schemeSetting": "system",
+  "lightScheme": "vanilla",
+  "darkScheme": "cocoa"
+ },
+ "schemes": {
+  "white": {
+   "mode": "light",
+   "name": {
+    "ru": "Белая",
+    "en": "White",
+    "kk": "Ақ"
+   },
+   "tokens": {
+    "bg": "#FFFFFF",
+    "card": "#F6F6F9",
+    "cardBorder": "#E6E6EE",
+    "cardStrong": "#EEEEF4",
+    "track": "#E4E4EC",
+    "text": "#16142B",
+    "textMuted": "#5C5977",
+    "primary": "#5DCAA5",
+    "onPrimary": "#04342C",
+    "primaryStrong": "#16906A",
+    "warn": "#C2521F",
+    "outline": "#5C5977"
+   },
+   "mark": {
+    "from": "#1EC8F2",
+    "to": "#2433F5"
+   },
+   "launcherIcon": "default (фирменная иконка)",
+   "iconBackground": "#FFFFFF"
+  },
+  "powder": {
+   "mode": "light",
+   "name": {
+    "ru": "Пудра",
+    "en": "Powder",
+    "kk": "Ұнтақ"
+   },
+   "tokens": {
+    "bg": "#FBF1F4",
+    "card": "#FFFFFF",
+    "cardBorder": "#F2DCE3",
+    "cardStrong": "#F8E3EA",
+    "track": "#F1D9E1",
+    "text": "#3A1E2B",
+    "textMuted": "#85596B",
+    "primary": "#EE9AB5",
+    "onPrimary": "#4A1426",
+    "primaryStrong": "#C8507A",
+    "warn": "#C2521F",
+    "outline": "#85596B"
+   },
+   "mark": {
+    "from": "#FF8A7A",
+    "to": "#D8306E"
+   },
+   "launcherIcon": "ic_scheme_powder",
+   "iconBackground": "#FBF1F4"
+  },
+  "beige": {
+   "mode": "light",
+   "name": {
+    "ru": "Беж",
+    "en": "Beige",
+    "kk": "Беж"
+   },
+   "tokens": {
+    "bg": "#F6F0E7",
+    "card": "#FFFDF9",
+    "cardBorder": "#E8DCCB",
+    "cardStrong": "#EFE4D3",
+    "track": "#E6D8C3",
+    "text": "#3A2E22",
+    "textMuted": "#76634F",
+    "primary": "#D9B48C",
+    "onPrimary": "#3A2512",
+    "primaryStrong": "#9C6B3C",
+    "warn": "#B9471B",
+    "outline": "#76634F"
+   },
+   "mark": {
+    "from": "#E2BB8E",
+    "to": "#A86F3E"
+   },
+   "launcherIcon": "ic_scheme_beige",
+   "iconBackground": "#F6F0E7"
+  },
+  "vanilla": {
+   "mode": "light",
+   "name": {
+    "ru": "Янтарь",
+    "en": "Amber",
+    "kk": "Кәріптас"
+   },
+   "tokens": {
+    "bg": "#FFF8E6",
+    "card": "#FFFFFF",
+    "cardBorder": "#F2E4BC",
+    "cardStrong": "#FBEEC6",
+    "track": "#F0E0AE",
+    "text": "#3B3216",
+    "textMuted": "#776839",
+    "primary": "#F4C95A",
+    "onPrimary": "#3E2D00",
+    "primaryStrong": "#A87C00",
+    "warn": "#B9471B",
+    "outline": "#776839"
+   },
+   "mark": {
+    "from": "#FFC83D",
+    "to": "#F0702A"
+   },
+   "launcherIcon": "ic_scheme_vanilla",
+   "iconBackground": "#FFF8E6"
+  },
+  "peach": {
+   "mode": "light",
+   "name": {
+    "ru": "Персик",
+    "en": "Peach",
+    "kk": "Шабдалы"
+   },
+   "tokens": {
+    "bg": "#FFF3EC",
+    "card": "#FFFFFF",
+    "cardBorder": "#F5DECF",
+    "cardStrong": "#FCE6D8",
+    "track": "#F2D8C8",
+    "text": "#3D2219",
+    "textMuted": "#80574A",
+    "primary": "#F8AB85",
+    "onPrimary": "#4A1E0C",
+    "primaryStrong": "#C2582C",
+    "warn": "#B0401A",
+    "outline": "#80574A"
+   },
+   "mark": {
+    "from": "#FFA24C",
+    "to": "#E8403A"
+   },
+   "launcherIcon": "ic_scheme_peach",
+   "iconBackground": "#FFF3EC"
+  },
+  "mint": {
+   "mode": "light",
+   "name": {
+    "ru": "Мята",
+    "en": "Mint",
+    "kk": "Жалбыз"
+   },
+   "tokens": {
+    "bg": "#EDF8F3",
+    "card": "#FFFFFF",
+    "cardBorder": "#D2ECE2",
+    "cardStrong": "#DCF2E9",
+    "track": "#CCE8DD",
+    "text": "#12352B",
+    "textMuted": "#4A7466",
+    "primary": "#6BD3B0",
+    "onPrimary": "#04342C",
+    "primaryStrong": "#18946D",
+    "warn": "#C2521F",
+    "outline": "#4A7466"
+   },
+   "mark": {
+    "from": "#3DD6A6",
+    "to": "#0B7F7A"
+   },
+   "launcherIcon": "ic_scheme_mint",
+   "iconBackground": "#EDF8F3"
+  },
+  "sky": {
+   "mode": "light",
+   "name": {
+    "ru": "Небо",
+    "en": "Sky",
+    "kk": "Аспан"
+   },
+   "tokens": {
+    "bg": "#EEF5FC",
+    "card": "#FFFFFF",
+    "cardBorder": "#D5E5F6",
+    "cardStrong": "#DEEBF9",
+    "track": "#D2E2F4",
+    "text": "#13283F",
+    "textMuted": "#4B6785",
+    "primary": "#86B8F5",
+    "onPrimary": "#0C2A52",
+    "primaryStrong": "#2F6FCB",
+    "warn": "#C2521F",
+    "outline": "#4B6785"
+   },
+   "mark": {
+    "from": "#8CC2F7",
+    "to": "#2F6FCB"
+   },
+   "launcherIcon": "ic_scheme_sky",
+   "iconBackground": "#EEF5FC"
+  },
+  "night": {
+   "mode": "dark",
+   "name": {
+    "ru": "Ночь",
+    "en": "Night",
+    "kk": "Түн"
+   },
+   "tokens": {
+    "bg": "#1B1740",
+    "card": "#2A2560",
+    "cardBorder": "#2A2560",
+    "cardStrong": "#3C3489",
+    "track": "#3C3489",
+    "text": "#FFFFFF",
+    "textMuted": "#AFA9EC",
+    "primary": "#5DCAA5",
+    "onPrimary": "#04342C",
+    "primaryStrong": "#5DCAA5",
+    "warn": "#F0997B",
+    "outline": "#AFA9EC"
+   },
+   "mark": {
+    "from": "#1EC8F2",
+    "to": "#2433F5"
+   },
+   "launcherIcon": "ic_scheme_night",
+   "iconBackground": "#1B1740"
+  },
+  "dusk": {
+   "mode": "dark",
+   "name": {
+    "ru": "Сумерки",
+    "en": "Dusk",
+    "kk": "Ымырт"
+   },
+   "tokens": {
+    "bg": "#2B2840",
+    "card": "#38344F",
+    "cardBorder": "#38344F",
+    "cardStrong": "#47425F",
+    "track": "#4D4868",
+    "text": "#F4F2FF",
+    "textMuted": "#BEB8DB",
+    "primary": "#A898F7",
+    "onPrimary": "#1E1640",
+    "primaryStrong": "#A898F7",
+    "warn": "#FFA07A",
+    "outline": "#BEB8DB"
+   },
+   "mark": {
+    "from": "#C6B8FF",
+    "to": "#7B63F0"
+   },
+   "launcherIcon": "ic_scheme_dusk",
+   "iconBackground": "#2B2840"
+  },
+  "graphite": {
+   "mode": "dark",
+   "name": {
+    "ru": "Графит",
+    "en": "Graphite",
+    "kk": "Графит"
+   },
+   "tokens": {
+    "bg": "#262A33",
+    "card": "#323743",
+    "cardBorder": "#323743",
+    "cardStrong": "#3E4452",
+    "track": "#4A5162",
+    "text": "#F2F4F8",
+    "textMuted": "#AAB2C3",
+    "primary": "#5DCAA5",
+    "onPrimary": "#04342C",
+    "primaryStrong": "#5DCAA5",
+    "warn": "#FFA07A",
+    "outline": "#AAB2C3"
+   },
+   "mark": {
+    "from": "#86E6C8",
+    "to": "#2FAF8A"
+   },
+   "launcherIcon": "ic_scheme_graphite",
+   "iconBackground": "#262A33"
+  },
+  "sea": {
+   "mode": "dark",
+   "name": {
+    "ru": "Глубокое море",
+    "en": "Deep sea",
+    "kk": "Терең теңіз"
+   },
+   "tokens": {
+    "bg": "#1E3236",
+    "card": "#284045",
+    "cardBorder": "#284045",
+    "cardStrong": "#335158",
+    "track": "#3D5D64",
+    "text": "#EEF8F7",
+    "textMuted": "#A2C5C0",
+    "primary": "#55D6BD",
+    "onPrimary": "#053A31",
+    "primaryStrong": "#55D6BD",
+    "warn": "#FFA07A",
+    "outline": "#A2C5C0"
+   },
+   "mark": {
+    "from": "#8CF0CF",
+    "to": "#2BB8A8"
+   },
+   "launcherIcon": "ic_scheme_sea",
+   "iconBackground": "#1E3236"
+  },
+  "emerald": {
+   "mode": "dark",
+   "name": {
+    "ru": "Изумруд",
+    "en": "Emerald",
+    "kk": "Зүбаржат"
+   },
+   "tokens": {
+    "bg": "#17332B",
+    "card": "#204238",
+    "cardBorder": "#204238",
+    "cardStrong": "#2A5246",
+    "track": "#335C50",
+    "text": "#ECFBF5",
+    "textMuted": "#A3D3C1",
+    "primary": "#45DA9E",
+    "onPrimary": "#053B26",
+    "primaryStrong": "#45DA9E",
+    "warn": "#FFA07A",
+    "outline": "#A3D3C1"
+   },
+   "mark": {
+    "from": "#8CF0CF",
+    "to": "#2BB8A8"
+   },
+   "launcherIcon": "ic_scheme_emerald",
+   "iconBackground": "#17332B"
+  },
+  "berry": {
+   "mode": "dark",
+   "name": {
+    "ru": "Ягода",
+    "en": "Berry",
+    "kk": "Жидек"
+   },
+   "tokens": {
+    "bg": "#33232E",
+    "card": "#43303D",
+    "cardBorder": "#43303D",
+    "cardStrong": "#533C4C",
+    "track": "#5D4455",
+    "text": "#FFF2F7",
+    "textMuted": "#D8B1C4",
+    "primary": "#F59AC0",
+    "onPrimary": "#4A1426",
+    "primaryStrong": "#F59AC0",
+    "warn": "#FFB08A",
+    "outline": "#D8B1C4"
+   },
+   "mark": {
+    "from": "#FFB3A8",
+    "to": "#FF6B9B"
+   },
+   "launcherIcon": "ic_scheme_berry",
+   "iconBackground": "#33232E"
+  },
+  "cocoa": {
+   "mode": "dark",
+   "name": {
+    "ru": "Какао",
+    "en": "Cocoa",
+    "kk": "Какао"
+   },
+   "tokens": {
+    "bg": "#2F2722",
+    "card": "#3E342E",
+    "cardBorder": "#3E342E",
+    "cardStrong": "#4C413A",
+    "track": "#574A41",
+    "text": "#FBF4EC",
+    "textMuted": "#CFBBA7",
+    "primary": "#EDBA72",
+    "onPrimary": "#3E2600",
+    "primaryStrong": "#EDBA72",
+    "warn": "#FFA07A",
+    "outline": "#CFBBA7"
+   },
+   "mark": {
+    "from": "#FFE07A",
+    "to": "#FF9A55"
+   },
+   "launcherIcon": "ic_scheme_cocoa",
+   "iconBackground": "#2F2722"
+  }
+ },
+ "goalColors": [
+  {
+   "key": "sky",
+   "name": {
+    "ru": "Небо",
+    "en": "Sky",
+    "kk": "Аспан"
+   },
+   "light": "#1A80BF",
+   "dark": "#62CBF5"
+  },
+  {
+   "key": "blue",
+   "name": {
+    "ru": "Синий",
+    "en": "Blue",
+    "kk": "Көк"
+   },
+   "light": "#2F57D9",
+   "dark": "#86A6FF"
+  },
+  {
+   "key": "violet",
+   "name": {
+    "ru": "Фиалка",
+    "en": "Violet",
+    "kk": "Күлгін"
+   },
+   "light": "#6544D6",
+   "dark": "#A98FFF"
+  },
+  {
+   "key": "purple",
+   "name": {
+    "ru": "Сирень",
+    "en": "Lilac",
+    "kk": "Сирень"
+   },
+   "light": "#9139BD",
+   "dark": "#D58FF2"
+  },
+  {
+   "key": "pink",
+   "name": {
+    "ru": "Розовый",
+    "en": "Pink",
+    "kk": "Қызғылт"
+   },
+   "light": "#C93A83",
+   "dark": "#F78FC4"
+  },
+  {
+   "key": "red",
+   "name": {
+    "ru": "Красный",
+    "en": "Red",
+    "kk": "Қызыл"
+   },
+   "light": "#CC3535",
+   "dark": "#FF8F8F"
+  },
+  {
+   "key": "coral",
+   "name": {
+    "ru": "Коралл",
+    "en": "Coral",
+    "kk": "Маржан"
+   },
+   "light": "#C4511F",
+   "dark": "#FFA078"
+  },
+  {
+   "key": "amber",
+   "name": {
+    "ru": "Янтарь",
+    "en": "Amber",
+    "kk": "Кәріптас"
+   },
+   "light": "#A06C00",
+   "dark": "#FFCC55"
+  },
+  {
+   "key": "lime",
+   "name": {
+    "ru": "Лайм",
+    "en": "Lime",
+    "kk": "Лайм"
+   },
+   "light": "#557F0B",
+   "dark": "#B8E85A"
+  },
+  {
+   "key": "green",
+   "name": {
+    "ru": "Зелёный",
+    "en": "Green",
+    "kk": "Жасыл"
+   },
+   "light": "#1C8F4D",
+   "dark": "#62DD93"
+  },
+  {
+   "key": "teal",
+   "name": {
+    "ru": "Бирюза",
+    "en": "Teal",
+    "kk": "Көгілдір"
+   },
+   "light": "#0B827C",
+   "dark": "#55DAD1"
+  },
+  {
+   "key": "slate",
+   "name": {
+    "ru": "Графит",
+    "en": "Slate",
+    "kk": "Графит"
+   },
+   "light": "#566075",
+   "dark": "#B7BFD0"
+  }
+ ],
+ "goalColorMigration": {
+  "mint": "teal",
+  "violet": "violet",
+  "pink": "pink",
+  "coral": "coral",
+  "amber": "amber",
+  "blue": "blue",
+  "_unknown": "blue"
+ },
+ "rewardBadge": {
+  "bg": "#FAC775",
+  "text": "#412402",
+  "note": "как сейчас, во всех схемах"
+ },
+ "note_for_new_app": "goalColors — цвета списков и категорий (в коде listColor*). Названия kk — на проверку носителем."
+}

@@ -1,0 +1,56 @@
+{
+  "expo": {
+    "name": "ShoppingList",
+    "slug": "shoppinglist",
+    "version": "0.6.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "shoppinglist",
+    "userInterfaceStyle": "automatic",
+    "backgroundColor": "#2F2722",
+    "android": {
+      "package": "com.timurnazmutdinov.shoppinglist",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon-foreground.png",
+        "backgroundColor": "#FFFFFF",
+        "monochromeImage": "./assets/images/adaptive-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": ["android.permission.SCHEDULE_EXACT_ALARM", "android.permission.REQUEST_INSTALL_PACKAGES"]
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-blank.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#FFF8E6",
+          "dark": {
+            "image": "./assets/images/splash-blank.png",
+            "backgroundColor": "#2F2722"
+          }
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#F0702A"
+        }
+      ],
+      "expo-sqlite",
+      "expo-localization",
+      "@react-native-community/datetimepicker",
+      "./plugins/withGradleProps",
+      "./plugins/withReleaseSigning",
+      "./plugins/withReleaseOptimizations",
+      "./plugins/withAppNameLocales"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
