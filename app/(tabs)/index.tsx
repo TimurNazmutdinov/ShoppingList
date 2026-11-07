@@ -8,6 +8,7 @@ import { useSettings } from '@/AppSettings';
 import { ScheduledItem, loadDue, toggleBought } from '@/logic/shopping';
 import { formatDayTitle, todayIso } from '@/logic/dates';
 import { groupByList, splitDue } from '@/logic/schedule';
+import { ListGroupFooter } from '@/components/ListGroupFooter';
 import { ListGroupHeader } from '@/components/ListGroupHeader';
 import { ScheduledRow } from '@/components/ScheduledRow';
 
@@ -53,9 +54,10 @@ export default function TodayScreen() {
       <SectionList
         sections={sections}
         keyExtractor={(i, index) => `${i.id}-${index}`}
-        renderItem={({ item }) => (
+        renderItem={({ item, index, section }) => (
           <ScheduledRow
             item={item}
+            last={index === section.data.length - 1}
             onToggle={(it) => {
               toggleBought(it, rememberItems)
                 .then(reload)
@@ -71,6 +73,7 @@ export default function TodayScreen() {
             <ListGroupHeader title={section.title} color={section.color} onPress={() => openList(section.listId)} />
           )
         }
+        renderSectionFooter={({ section }) => (section.kind === 'list' ? <ListGroupFooter color={section.color} /> : null)}
         ListEmptyComponent={<Text style={styles.empty}>{t('today.empty')}</Text>}
         ListFooterComponent={split.overdue.length > 0 ? <Text style={styles.hint}>{t('today.overdueHint')}</Text> : undefined}
         stickySectionHeadersEnabled={false}

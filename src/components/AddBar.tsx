@@ -64,7 +64,7 @@ export function AddBar({ text, onChangeText, suggestions, quick, bottomPad, onAd
           accessibilityRole="button"
           accessibilityLabel={quickLabel ? `${t('qty.title')}: ${quickLabel}` : t('qty.open')}
         >
-          {quickLabel ? <Text style={styles.qtyText} numberOfLines={1}>{quickLabel}</Text> : <Ionicons name="scale-outline" size={22} color={colors.textMuted} />}
+          {quickLabel ? <Text style={styles.qtyText} numberOfLines={1}>{quickLabel}</Text> : <Ionicons name="calculator-outline" size={22} color={colors.textMuted} />}
         </Pressable>
         <Pressable style={styles.addBtn} onPress={() => onAdd(text)} accessibilityRole="button" accessibilityLabel={t('a11y.addItem')}>
           <Ionicons name="add" size={28} color={colors.onPrimary} />

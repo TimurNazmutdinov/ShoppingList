@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ShoppingList 0.7.1 — эскиз двух правок</title>
+<title>ShoppingList 0.7.1 — эскиз правок</title>
 <style>
   :root {
     --bg: #F6F0E7; --card: #FFFDF9; --cb: #E8DCCB; --text: #3A2E22; --muted: #76634F;
@@ -56,12 +56,32 @@
   .btns { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
   .btns .reset { color: var(--muted); font-weight: 600; font-size: 17px; padding: 0 14px; }
   .btns .done { flex: 1; min-height: 52px; background: var(--primary); color: var(--onp); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 17px; }
+  /* экран списка: кнопка «Блюда» */
+  .lscreen { position: relative; background: var(--bg); border: 1px solid #b9b0a2; border-radius: 22px; overflow: hidden; color: var(--text); height: 560px; display: flex; flex-direction: column; }
+  .lhead { display: flex; align-items: center; gap: 10px; padding: 8px 12px 8px; }
+  .lhead .btn { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 22px; }
+  .lhead .ttl { flex: 1; font-size: 22px; font-weight: 700; }
+  .lbody { padding: 0 16px; flex: 1; }
+  .swipe { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; border-radius: 20px; background: #EFE4D3; color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+  .bar { background: var(--card); border-top: 1px solid var(--cb); padding: 10px 12px 14px; }
+  .irow { display: flex; align-items: center; gap: 8px; }
+  .inp { flex: 1; min-height: 48px; display: flex; align-items: center; padding: 0 16px; border: 1px solid var(--outline); border-radius: 24px; background: var(--bg); color: var(--muted); font-size: 16px; }
+  .circ { width: 48px; height: 48px; border-radius: 24px; border: 1px solid var(--outline); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 18px; flex: none; }
+  .circ.plus { background: var(--primary); border-color: var(--primary); color: var(--onp); font-size: 28px; }
+  .pillrow { margin-bottom: 8px; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px 0 12px; border: 1px solid var(--outline); border-radius: 22px; background: var(--card); color: var(--text); font-weight: 600; font-size: 15px; }
+  .pill svg { width: 22px; height: 22px; color: var(--muted); }
+  .float { position: absolute; right: 12px; bottom: 82px; box-shadow: 0 2px 6px rgba(60, 40, 20, .25); }
+  .ico { width: 22px; height: 22px; }
+  .circ svg { width: 24px; height: 24px; }
+  .circ .num { font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -.3px; }
+  .barbox { border: 1px solid #b9b0a2; border-radius: 16px; overflow: hidden; }
   ul.notes { margin: 8px 0 0; padding-left: 18px; font-size: 13px; color: #555; max-width: 360px; }
 </style>
 </head>
 <body>
-<h1>ShoppingList 0.7.1 — эскиз двух правок</h1>
-<p class="lead">Эскиз по цветам и размерам настоящего приложения (профиль «Беж», ширина 360 dp — самая узкая из частых). Ответьте: «ок» по каждой правке или какой вариант выбрать.</p>
+<h1>ShoppingList 0.7.1 — эскиз правок</h1>
+<p class="lead">Эскиз по цветам и размерам настоящего приложения (профиль «Беж», ширина 360 dp — самая узкая из частых). Утверждено: п. 1 — вариант А, п. 2, п. 3 — вариант Б, п. 4 — вариант Б «калькулятор» (код сделан).</p>
 
 <h2>1. «Сегодня» и «Календарь»: обводить каждый список линией</h2>
 <p class="lead">Сейчас линия карточек светлая (#E8DCCB на фоне #F6F0E7), и списки сливаются с фоном и друг с другом.</p>
@@ -162,6 +182,87 @@
   <li>Кнопки остаются 48×48 dp (чуть уже отступы внутри), поле «Своё число» занимает остаток ряда (≈ 90 dp на экране 360 dp, больше на широких). Если на очень узком экране поле не помещается, оно переходит на следующую строку.</li>
   <li>Своё число (5, 10, 0,8 и любое другое) вводится в поле; кнопка «Готово» работает как раньше.</li>
 </ul>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ic-scale" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M7 20h10M5 7h14M5 7l-3 7a3 3 0 0 0 6 0L5 7zM19 7l-3 7a3 3 0 0 0 6 0l-3-7z"/></g></symbol>
+  <symbol id="ic-calc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8 7.5h8"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01" stroke-width="2.4"/></g></symbol>
+  <symbol id="ic-keypad" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round"><path d="M7 6h.01M12 6h.01M17 6h.01M7 12h.01M12 12h.01M17 12h.01M7 18h.01M12 18h.01M17 18h.01" stroke-width="3.2"/></g></symbol>
+  <symbol id="ic-cube" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3zM12 12l8-4.5M12 12L4 7.5M12 12v9"/></g></symbol>
+  <symbol id="ic-dish" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v6a2.5 2.5 0 0 0 5 0V3M8.5 3v18"/><path d="M17 21V3c-2.5 1.5-3.5 4.5-3.5 8H17"/></g></symbol>
+</svg>
+
+<h2>3. Экран списка: кнопка «Блюда» — вниз, значок и надпись рядом</h2>
+<p class="lead">Сейчас кнопка — один значок «вилка и нож» в правом верхнем углу: его не видно и непонятно, что это. Значок остаётся, рядом появляется слово «Блюда», кнопка уходит вниз, к строке добавления товара. Из верхнего угла значок убираем.</p>
+<div class="row">
+
+  <div class="fig">
+    <p class="cap">Сейчас</p>
+    <div class="lscreen">
+      <div class="lhead"><span class="btn">←</span><span class="dot" style="--lc:#7A5BC4;width:14px;height:14px"></span><span class="ttl">3</span><span class="btn"><svg class="ico"><use href="#ic-dish"/></svg></span></div>
+      <div class="lbody">
+        <div class="swipe"><span>← удалить</span><span>куплено →</span></div>
+        <div class="item"><span class="chk"></span><span class="t">Шампунь</span><span class="q">1 шт</span></div>
+        <div class="item"><span class="chk"></span><span class="t">Салфетки</span><span class="q">2 шт</span></div>
+      </div>
+      <div class="bar"><div class="irow"><div class="inp">Что купить?</div><span class="circ">🎤</span><span class="circ">⚖</span><span class="circ plus">+</span></div></div>
+    </div>
+  </div>
+
+  <div class="fig">
+    <p class="cap rec">Вариант А (рекомендую) <em>— кнопка над строкой добавления, слева</em></p>
+    <div class="lscreen">
+      <div class="lhead"><span class="btn">←</span><span class="dot" style="--lc:#7A5BC4;width:14px;height:14px"></span><span class="ttl">3</span></div>
+      <div class="lbody">
+        <div class="swipe"><span>← удалить</span><span>куплено →</span></div>
+        <div class="item"><span class="chk"></span><span class="t">Шампунь</span><span class="q">1 шт</span></div>
+        <div class="item"><span class="chk"></span><span class="t">Салфетки</span><span class="q">2 шт</span></div>
+      </div>
+      <div class="bar">
+        <div class="pillrow"><span class="pill"><svg><use href="#ic-dish"/></svg>Блюда</span></div>
+        <div class="irow"><div class="inp">Что купить?</div><span class="circ">🎤</span><span class="circ">⚖</span><span class="circ plus">+</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fig">
+    <p class="cap">Вариант Б <em>— плавающая кнопка справа над строкой добавления</em></p>
+    <div class="lscreen">
+      <div class="lhead"><span class="btn">←</span><span class="dot" style="--lc:#7A5BC4;width:14px;height:14px"></span><span class="ttl">3</span></div>
+      <div class="lbody">
+        <div class="swipe"><span>← удалить</span><span>куплено →</span></div>
+        <div class="item"><span class="chk"></span><span class="t">Шампунь</span><span class="q">1 шт</span></div>
+        <div class="item"><span class="chk"></span><span class="t">Салфетки</span><span class="q">2 шт</span></div>
+      </div>
+      <span class="pill float"><svg><use href="#ic-dish"/></svg>Блюда</span>
+      <div class="bar"><div class="irow"><div class="inp">Что купить?</div><span class="circ">🎤</span><span class="circ">⚖</span><span class="circ plus">+</span></div></div>
+    </div>
+  </div>
+
+</div>
+<ul class="notes">
+  <li>Нажатие открывает то же окно «Добавить из блюда», что и сейчас; зона нажатия не меньше 48 dp.</li>
+  <li>Пока на клавиатуре набирается название товара, кнопка «Блюда» скрыта, чтобы не занимать место (в варианте А).</li>
+  <li>Верхний правый угол освобождается: значок оттуда убираем.</li>
+</ul>
+
+<h2>4. Значок «количество» рядом с «+» (вместо весов)</h2>
+<p class="lead">Показана только строка добавления товара. Значок виден, пока количество не выбрано; после выбора на его месте — «2 кг», как сейчас. Выберите вариант.</p>
+<div class="row">
+  <div class="fig"><p class="cap">Сейчас <em>— весы</em></p>
+    <div class="barbox"><div class="bar"><div class="irow"><div class="inp">Что купить?</div><span class="circ">🎤</span><span class="circ"><svg><use href="#ic-scale"/></svg></span><span class="circ plus">+</span></div></div></div></div>
+  <div class="fig"><p class="cap rec">Вариант А (рекомендую) <em>— «123» (число)</em></p>
+    <div class="barbox"><div class="bar"><div class="irow"><div class="inp">Что купить?</div><span class="circ">🎤</span><span class="circ"><span class="num">123</span></span><span class="circ plus">+</span></div></div></div></div>
+  <div class="fig"><p class="cap">Вариант Б <em>— калькулятор</em></p>
+    <div class="barbox"><div class="bar"><div class="irow"><div class="inp">Что купить?</div><span class="circ">🎤</span><span class="circ"><svg><use href="#ic-calc"/></svg></span><span class="circ plus">+</span></div></div></div></div>
+  <div class="fig"><p class="cap">Вариант В <em>— цифровая клавиатура</em></p>
+    <div class="barbox"><div class="bar"><div class="irow"><div class="inp">Что купить?</div><span class="circ">🎤</span><span class="circ"><svg><use href="#ic-keypad"/></svg></span><span class="circ plus">+</span></div></div></div></div>
+  <div class="fig"><p class="cap">Вариант Г <em>— коробка (упаковка, штуки)</em></p>
+    <div class="barbox"><div class="bar"><div class="irow"><div class="inp">Что купить?</div><span class="circ">🎤</span><span class="circ"><svg><use href="#ic-cube"/></svg></span><span class="circ plus">+</span></div></div></div></div>
+</div>
+<ul class="notes">
+  <li>Значки нарисованы приблизительно; в приложении — родные значки из набора Ionicons того же стиля (контур).</li>
+  <li>Подпись для экранных дикторов («Количество») не меняется.</li>
+</ul>
+
 <script>
   // на узком экране уменьшаем макеты целиком, не меняя их раскладку (360 dp)
   function fit() {

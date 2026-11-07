@@ -14,6 +14,7 @@ import {
 import { categoryName, groupByCategory } from '@/logic/categories';
 import { currencySymbol, formatMoney, listTotals } from '@/logic/money';
 import { AddBar } from '@/components/AddBar';
+import { DishButton } from '@/components/DishButton';
 import { DishSheet } from '@/components/DishSheet';
 import { dishRows } from '@/logic/dishes';
 import { ItemRow } from '@/components/ItemRow';
@@ -173,39 +174,39 @@ export default function ListScreen() {
         </Pressable>
         {list ? <View style={[styles.dot, { backgroundColor: listColor(list.color, colors.scheme) }]} /> : null}
         <Text style={styles.title} numberOfLines={1}>{list?.title ?? ''}</Text>
-        <Pressable style={styles.back} onPress={() => setDishOpen(true)} accessibilityRole="button" accessibilityLabel={t('dish.button')}>
-          <Ionicons name="restaurant-outline" size={22} color={colors.textMuted} />
-        </Pressable>
       </View>
 
-      <SectionList
-        style={styles.scroll}
-        sections={sections}
-        keyExtractor={(i) => String(i.id)}
-        renderItem={renderRow}
-        renderSectionHeader={({ section }) => {
-          if (section.kind === 'bought') {
-            return bought.length > 0 ? (
-              <Pressable style={styles.boughtHeader} onPress={() => setShowBought((v) => !v)} accessibilityRole="button">
-                <Ionicons name={showBought ? 'chevron-down' : 'chevron-forward'} size={18} color={colors.textMuted} />
-                <Text style={styles.boughtTitle}>{t('list.bought', { n: bought.length })}</Text>
-              </Pressable>
-            ) : null;
-          }
-          if (!section.category && groups.length === 1) return null;
-          return (
-            <View style={styles.catHeader}>
-              <View style={[styles.catDot, { backgroundColor: section.category ? listColor(section.category.color, colors.scheme) : colors.outline }]} />
-              <Text style={styles.catTitle}>{(section.category ? categoryName(section.category) : t('cat.none')).toUpperCase()}</Text>
-            </View>
-          );
-        }}
-        ListHeaderComponent={header}
-        ListFooterComponent={<View style={{ height: 24 }} />}
-        stickySectionHeadersEnabled={false}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      />
+      <View style={styles.listArea}>
+        <SectionList
+          style={styles.scroll}
+          sections={sections}
+          keyExtractor={(i) => String(i.id)}
+          renderItem={renderRow}
+          renderSectionHeader={({ section }) => {
+            if (section.kind === 'bought') {
+              return bought.length > 0 ? (
+                <Pressable style={styles.boughtHeader} onPress={() => setShowBought((v) => !v)} accessibilityRole="button">
+                  <Ionicons name={showBought ? 'chevron-down' : 'chevron-forward'} size={18} color={colors.textMuted} />
+                  <Text style={styles.boughtTitle}>{t('list.bought', { n: bought.length })}</Text>
+                </Pressable>
+              ) : null;
+            }
+            if (!section.category && groups.length === 1) return null;
+            return (
+              <View style={styles.catHeader}>
+                <View style={[styles.catDot, { backgroundColor: section.category ? listColor(section.category.color, colors.scheme) : colors.outline }]} />
+                <Text style={styles.catTitle}>{(section.category ? categoryName(section.category) : t('cat.none')).toUpperCase()}</Text>
+              </View>
+            );
+          }}
+          ListHeaderComponent={header}
+          ListFooterComponent={<View style={{ height: 72 }} />}
+          stickySectionHeadersEnabled={false}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        />
+        {keyboard === 0 ? <DishButton onPress={() => setDishOpen(true)} /> : null}
+      </View>
 
       {toast ? <Toast text={toast.text} actionLabel={t('list.undo')} onAction={toast.action} /> : null}
 
@@ -268,6 +269,7 @@ const createStyles = (colors: Palette) =>
     back: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
     dot: { width: 14, height: 14, borderRadius: 7 },
     title: { color: colors.text, fontSize: 24, fontWeight: '700', flex: 1 },
+    listArea: { flex: 1 },
     scroll: { flex: 1, paddingHorizontal: 16 },
     totals: { color: colors.textMuted, fontSize: 13, marginBottom: 8 },
     empty: { color: colors.textMuted, fontSize: 15, marginTop: 24 },

@@ -8,7 +8,7 @@ import { BottomSheet } from './BottomSheet';
 import { TextField } from './FormField';
 import { PrimaryButton } from './PrimaryButton';
 
-const PRESETS = [0.5, 1, 2, 3, 5, 10];
+const PRESETS = [0.5, 1, 2, 3];
 
 type Props = { visible: boolean; value: QuickQty; onClose: () => void; onChange: (v: QuickQty) => void };
 
@@ -32,10 +32,10 @@ function QtyForm({ value, onChange }: Pick<Props, 'value' | 'onChange'>) {
   const [text, setText] = useState(value.qty === null ? '' : String(value.qty).replace('.', ','));
   const [unit, setUnit] = useState<string | null>(value.unit);
 
-  const chip = (label: string, active: boolean, onPress: () => void) => (
+  const chip = (label: string, active: boolean, onPress: () => void, tight = false) => (
     <Pressable
       key={label}
-      style={[styles.chip, active && styles.chipActive]}
+      style={[styles.chip, tight && styles.chipTight, active && styles.chipActive]}
       onPress={onPress}
       accessibilityRole="radio"
       accessibilityState={{ selected: active }}
@@ -49,10 +49,18 @@ function QtyForm({ value, onChange }: Pick<Props, 'value' | 'onChange'>) {
     <>
       <Text style={styles.title}>{t('qty.title')}</Text>
       <View style={styles.row}>
-        {PRESETS.map((p) => chip(String(p).replace('.', ','), parseQty(text) === p, () => setText(String(p).replace('.', ','))))}
+        {PRESETS.map((p) => chip(String(p).replace('.', ','), parseQty(text) === p, () => setText(String(p).replace('.', ',')), true))}
+        <TextField
+          style={styles.custom}
+          value={text}
+          onChangeText={setText}
+          keyboardType="decimal-pad"
+          maxLength={8}
+          placeholder={t('qty.custom')}
+          accessibilityLabel={t('qty.custom')}
+        />
       </View>
-      <TextField value={text} onChangeText={setText} keyboardType="decimal-pad" maxLength={8} placeholder={t('qty.custom')} accessibilityLabel={t('qty.custom')} />
-      <View style={[styles.row, styles.unitRow]}>
+      <View style={styles.row}>
         {UNITS.map((u) => chip(t(`unitShort.${u}`), unit === u, () => setUnit(unit === u ? null : u)))}
       </View>
       <View style={styles.buttons}>
@@ -71,7 +79,8 @@ const createStyles = (colors: Palette) =>
   StyleSheet.create({
     title: { color: colors.text, fontSize: 20, fontWeight: '600', marginBottom: 10 },
     row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 10 },
-    unitRow: { marginTop: 10 },
+    chipTight: { minWidth: 48, paddingHorizontal: 6 },
+    custom: { flexGrow: 1, flexBasis: 88, minWidth: 88, height: 48, fontSize: 14, paddingHorizontal: 8 },
     chip: {
       minHeight: 48,
       minWidth: 52,

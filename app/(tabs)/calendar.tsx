@@ -9,6 +9,7 @@ import { useSettings } from '@/AppSettings';
 import { ScheduledItem, loadScheduledRange, toggleBought } from '@/logic/shopping';
 import { formatDayTitle, todayIso } from '@/logic/dates';
 import { buildMonth, dayMarks, groupByList, monthRange } from '@/logic/schedule';
+import { ListGroupFooter } from '@/components/ListGroupFooter';
 import { ListGroupHeader } from '@/components/ListGroupHeader';
 import { ScheduledRow } from '@/components/ScheduledRow';
 
@@ -98,9 +99,10 @@ export default function CalendarScreen() {
       <SectionList
         sections={sections}
         keyExtractor={(i) => String(i.id)}
-        renderItem={({ item }) => (
+        renderItem={({ item, index, section }) => (
           <ScheduledRow
             item={item}
+            last={index === section.data.length - 1}
             onToggle={(it) => {
               toggleBought(it, rememberItems)
                 .then(reload)
@@ -112,6 +114,7 @@ export default function CalendarScreen() {
         renderSectionHeader={({ section }) => (
           <ListGroupHeader title={section.title} color={section.color} onPress={() => openList(section.listId)} />
         )}
+        renderSectionFooter={({ section }) => <ListGroupFooter color={section.color} />}
         ListHeaderComponent={grid}
         ListEmptyComponent={<Text style={styles.empty}>{t('cal.dayEmpty')}</Text>}
         stickySectionHeadersEnabled={false}
