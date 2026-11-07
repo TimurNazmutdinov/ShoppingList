@@ -15,6 +15,16 @@ import { SplashScreen } from '@/components/SplashScreen';
 import { PrimaryButton } from '@/components/PrimaryButton';
 
 // Нативная заставка (только фон) закрывается, когда живая заставка загрузила настройки и отрисовала первый кадр.
+// В release консоль молчит (правило проекта: без console.* в release).
+if (!__DEV__) {
+  const silent = () => {};
+  console.log = silent;
+  console.info = silent;
+  console.debug = silent;
+  console.warn = silent;
+  console.error = silent;
+}
+
 NativeSplash.preventAutoHideAsync().catch(() => {});
 const hideNativeSplash = () => NativeSplash.hideAsync().catch(() => {});
 

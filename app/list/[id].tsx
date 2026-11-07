@@ -4,22 +4,23 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Palette, listColor, radius, useTheme } from '@/theme';
-import { getLanguage, t } from '@/i18n';
+import { t } from '@/i18n';
 import { useSettings } from '@/AppSettings';
 import { useKeyboardOverlap } from '@/useKeyboard';
 import {
   Category, HistoryRow, Item, ItemPatch, NO_QTY, QuickQty, ShoppingList, addFromText, addMany, createCategory, isFlagSet, loadCategories, loadItems,
-  loadList, removeItem, restoreItem, saveItem, setFlag, suggestAll, toggleBought,
+  loadList, removeItem, restoreItem, saveItem, setFlag, setItemQtyPrice, suggestAll, toggleBought,
 } from '@/logic/shopping';
+import { bulkPreview, priceMarkers } from '@/logic/bulk';
 import { categoryName, groupByCategory } from '@/logic/categories';
 import { currencySymbol, formatMoney, listTotals } from '@/logic/money';
 import { AddBar } from '@/components/AddBar';
 import { DishButton } from '@/components/DishButton';
 import { DishSheet } from '@/components/DishSheet';
-import { dishRows } from '@/logic/dishes';
 import { ItemRow } from '@/components/ItemRow';
 import { ItemSheet } from '@/components/ItemSheet';
 import { QtySheet } from '@/components/QtySheet';
+import { QuickHelpSheet } from '@/components/QuickHelpSheet';
 import { Toast } from '@/components/Toast';
 
 const TOAST_MS = 6000;
@@ -50,7 +51,10 @@ export default function ListScreen() {
   const [showBought, setShowBought] = useState(false);
   const [toast, setToast] = useState<ToastState | null>(null);
   const [hintDone, setHintDone] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const [qtyItem, setQtyItem] = useState<Item | null>(null); // товар, у которого правят количество и цену
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const sym = currencySymbol(currency);
 
   const reload = useCallback(async () => {
     setList(await loadList(listId));
@@ -81,6 +85,7 @@ export default function ListScreen() {
   }, []);
 
   const shownSuggestions = text.trim() ? suggestions : [];
+  const preview = useMemo(() => bulkPreview(text, priceMarkers(sym)), [text, sym]);
   const toBuy = items.filter((i) => i.boughtAt === null);
   const bought = items.filter((i) => i.boughtAt !== null).sort((a, b) => (b.boughtAt ?? '').localeCompare(a.boughtAt ?? ''));
   const groups = groupByCategory(toBuy, categories);
@@ -102,7 +107,7 @@ export default function ListScreen() {
   };
 
   const add = async (title: string, preset?: HistoryRow) => {
-    await addFromText(listId, title, { remember: rememberItems, preset, quick });
+    await addFromText(listId, title, { remember: rememberItems, preset, quick, currency: sym });
     setText('');
     setQuick(NO_QTY);
     await reload();
@@ -138,12 +143,12 @@ export default function ListScreen() {
       onToggle={(it) => toggle(it).catch((e) => console.warn(e))}
       onRemove={(it) => remove(it).catch((e) => console.warn(e))}
       onOpen={setEditing}
+      onEditQty={setQtyItem}
       onSwiped={markHintDone}
     />
   );
 
   const totals = listTotals(items);
-  const sym = currencySymbol(currency);
   const header = (
     <View>
       {totals.priced ? (
@@ -174,6 +179,9 @@ export default function ListScreen() {
         </Pressable>
         {list ? <View style={[styles.dot, { backgroundColor: listColor(list.color, colors.scheme) }]} /> : null}
         <Text style={styles.title} numberOfLines={1}>{list?.title ?? ''}</Text>
+        <Pressable style={styles.back} onPress={() => setHelpOpen(true)} accessibilityRole="button" accessibilityLabel={t('help.open')}>
+          <Ionicons name="help-circle-outline" size={24} color={colors.textMuted} />
+        </Pressable>
       </View>
 
       <View style={styles.listArea}>
@@ -215,15 +223,33 @@ export default function ListScreen() {
         onChangeText={setText}
         suggestions={shownSuggestions}
         quick={quick}
+        symbol={sym}
+        preview={preview}
         bottomPad={bottomPad}
         onAdd={(title, preset) => add(title, preset).catch((e) => console.warn(e))}
         onQtyPress={() => setQtyOpen(true)}
+        onTipMore={() => setHelpOpen(true)}
       />
+      <QuickHelpSheet visible={helpOpen} onClose={() => setHelpOpen(false)} />
+      {qtyItem ? (
+        <QtySheet
+          key={qtyItem.id}
+          visible
+          value={{ qty: qtyItem.qty, unit: qtyItem.unit, price: qtyItem.price }}
+          onClose={() => setQtyItem(null)}
+          onChange={(v) => {
+            const target = qtyItem;
+            setQtyItem(null);
+            setItemQtyPrice(target, v, rememberItems)
+              .then(reload)
+              .catch((e) => console.warn(e));
+          }}
+        />
+      ) : null}
 
       <DishSheet
         visible={dishOpen}
         categories={categories}
-        rowsFor={(dish) => dishRows(dish, getLanguage(), categories)}
         onClose={() => setDishOpen(false)}
         onAdd={(chosen) => {
           setDishOpen(false);

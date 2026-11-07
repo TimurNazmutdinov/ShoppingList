@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8">
+<title>ShoppingList 0.7.2 — чек-лист тестировщика</title>
+<style>
+@page { size: A4; margin: 14mm 12mm; }
+* { box-sizing: border-box; }
+body { font-family: "Segoe UI", Arial, sans-serif; color: #222; font-size: 11.5px; line-height: 1.35; }
+h1 { font-size: 22px; margin: 0 0 2px; }
+.sub { color: #666; margin-bottom: 10px; }
+h2 { font-size: 14px; margin: 16px 0 5px; padding: 4px 8px; background: #FFE9A8; border-radius: 4px; break-after: avoid; }
+.box { border: 1px solid #bbb; border-radius: 6px; padding: 8px 10px; margin: 8px 0; }
+.box b { color: #8a4b00; }
+table { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
+th { text-align: left; font-size: 10.5px; color: #555; border-bottom: 2px solid #999; padding: 3px 4px; }
+td { border-bottom: 1px solid #ddd; padding: 4px; vertical-align: top; }
+tr { break-inside: avoid; }
+td.n { width: 24px; color: #888; }
+td.r { width: 96px; white-space: nowrap; }
+.cb { display: inline-block; width: 11px; height: 11px; border: 1.5px solid #444; border-radius: 2px; margin-right: 3px; vertical-align: -1px; }
+td.note { width: 120px; }
+.fill { border-bottom: 1px solid #888; display: inline-block; min-width: 130px; height: 14px; }
+.small { color: #666; font-size: 10.5px; }
+</style></head><body>
+
+<h1>ShoppingList 0.7.2 — чек-лист тестировщика</h1>
+<div class="sub">Версия 0.7.2 (сборка 6). Проходите пункты по порядку, отмечайте ☐ «Ок» или ☐ «Не ок» и пишите заметку, что именно не так. Разделы 2–6 — новое в этой версии; остальное — проверка, что прежнее не сломалось.</div>
+
+<div class="box">
+<b>Кто тестирует:</b> <span class="fill"></span> &nbsp; <b>Телефон / Android:</b> <span class="fill"></span> &nbsp; <b>Язык приложения:</b> <span class="fill" style="min-width:70px"></span> &nbsp; <b>Дата:</b> <span class="fill" style="min-width:70px"></span>
+</div>
+<div class="box small">
+<b>Перед началом.</b> 1) Если на телефоне стоит предыдущая версия, это нормально — проверяйте обновление поверх. 2) Для голосового ввода нужен интернет. 3) Для проверки резервной копии и своих блюд сначала пройдите раздел 5. 4) Если что-то работает странно, сфотографируйте экран и напишите, что нажимали перед этим.
+</div>
+
+<h2>1. Установка и запуск</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">1</td><td>Поставьте 0.7.2 поверх 0.7.1 («Настройки» → «Проверить сейчас» или файлом APK).</td><td>Обновление ставится, списки, товары и настройки на месте.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">2</td><td>Откройте приложение, дождитесь заставки; коснитесь экрана во время заставки.</td><td>Заставка проигрывается; касание сразу показывает готовый знак, повторное касание открывает приложение.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">3</td><td>Закройте и откройте приложение несколько раз.</td><td>Не вылетает, цвета не «мигают».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>2. Новое: цена в окне «Количество и цена»</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">4</td><td>В списке нажмите значок калькулятора рядом с «+».</td><td>Окно «Количество и цена»: кнопки 0,5 · 1 · 2 · 3 и поле «Своё число» в одном ряду, ниже единицы и поле «Цена, ₸». Подпись «Своё число» не обрезана.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">5</td><td>Задайте 2 кг и цену 3000, нажмите «Готово», затем введите «сыр» и «+».</td><td>Добавился «сыр» с «2 кг · 3 000 ₸». Кнопка рядом с «+» снова показывает калькулятор (количество и цена сбросились).</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">6</td><td>Задайте количество и цену, но товар пока не добавляйте.</td><td>Кнопка рядом с «+» показывает две строки: количество и цену.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">7</td><td>Нажмите на «2 кг · 3 000 ₸» справа в строке товара.</td><td>Открывается «Количество и цена» этого товара; после «Готово» изменения видны в строке. У товара без количества и цены стоит тихая подпись «+ цена».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">8</td><td>Нажмите на название товара (не на количество) и на галочку; смахните строку.</td><td>Название открывает карточку товара; галочка и смахивания работают, как раньше.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">9</td><td>Добавьте «сыр» 1 кг с ценой 1500, отметьте купленным, затем добавьте «сыр» снова: без количества, с 1 кг и с 2 кг.</td><td>Без количества и с 1 кг цена 1500 подставляется; с 2 кг — цена пустая (цена за всю позицию).</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">10</td><td>Откройте карточку товара и поправьте цену там.</td><td>Цена сохраняется; итоги над списком пересчитываются.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>3. Новое: быстрый ввод текстом и подсказки</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">11</td><td>Откройте любой список.</td><td>Над строкой всегда стоит подсказка: «Можно сразу несколько: … Текстом или голосом.» и ссылка «Как вводить?». В строке: «Добавить товар или список…».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">12</td><td>Нажмите «Как вводить?» (или значок «?» вверху списка).</td><td>Окно «Быстрый ввод» с примерами: несколько товаров, количество, цена, голос. «Понятно» закрывает.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">13</td><td>Начните вводить название товара, затем сотрите текст.</td><td>Пока печатаете, подсказка уступает место подсказкам товаров или предпросмотру списка; текст стёрт — подсказка снова на месте. Окно «Быстрый ввод» по «?» открывается всегда.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">14</td><td>Введите «молоко 1 л 450 ₸, хлеб, сыр 2 кг 3 000 ₸» (пока не нажимайте «+»).</td><td>Над строкой «ДОБАВИТСЯ 3 ТОВАРА»: молоко 1 л · 450 ₸, хлеб, сыр 2 кг · 3 000 ₸; итого 3 450 ₸.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">15</td><td>Нажмите «+».</td><td>Добавились три товара с этими количествами и ценами; предпросмотр пропал.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">16</td><td>Введите «хлеб 120 тг», «хлеб 120 тенге», «хлеб 120₸» (по очереди).</td><td>Каждый раз добавляется «хлеб» с ценой 120.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">17</td><td>Введите «Йогурт 3» и «Молоко 3,2%».</td><td>Обычные названия, цены нет, предпросмотра нет.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">18</td><td>В «Настройках» выберите свою валюту (например, USD) и введите «хлеб 5 USD».</td><td>Цена 5 распознаётся; в строке — ваш символ валюты.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">19</td><td>Вставьте список из мессенджера с ценами (по товару в строке).</td><td>Предпросмотр показывает все товары (первые пять и «… +N»); после «+» каждая строка — отдельный товар.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">20</td><td>Переключите язык на казахский и введите «нан 120 теңге».</td><td>Цена распознаётся. Напишите, если подсказки и справка на казахском звучат неправильно.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>4. Новое: голосовой ввод</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">21</td><td>Нажмите микрофон (интернет включён) в первый раз.</td><td>Сообщение про интернет и пример «Как говорить: …»; после «Понятно, начать» телефон просит доступ к микрофону.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">22</td><td>Пока идёт запись.</td><td>Над строкой панель «Слушаю…» с подсказкой, как говорить; микрофон подсвечен.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">23</td><td>Скажите «молоко 1 литр 450 тенге, хлеб, сыр 2 килограмма».</td><td>Текст появился в строке, над ней предпросмотр. Товары сами НЕ добавились — только после «+».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">24</td><td>Скажите то же с числами словами («один литр, четыреста пятьдесят тенге»). Напишите, как записались числа.</td><td>Если числа записались цифрами, всё разобралось; если словами — напишите, как именно (разбор слов-чисел можно добавить).</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">25</td><td>Нажмите микрофон ещё раз; скажите что-нибудь на казахском.</td><td>Сообщение про интернет не повторяется. Напишите, насколько точно распознаёт казахский.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>5. Новое: блюда — кнопка, цены, свои блюда</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">26</td><td>Откройте список.</td><td>Справа над строкой добавления кнопка «значок + Блюда»; в верхнем правом углу вместо неё значок «?». Последний товар можно прокрутить выше кнопки.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">27</td><td>Начните вводить товар (откроется клавиатура).</td><td>Кнопка «Блюда» скрыта, пока открыта клавиатура.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">28</td><td>Нажмите «Блюда», выберите «Плов».</td><td>У каждого продукта есть количество, единица (нажатие на неё меняет её) и поле цены; можно снять галочки и поправить.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">29</td><td>Введите цену у двух продуктов и добавьте блюдо в список.</td><td>Продукты добавлены с количеством и введёнными ценами.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">30</td><td>В окне блюд нажмите «+ Своё блюдо». Назовите «Мой салат», добавьте 3 продукта (название, количество, единица, цена), «Сохранить блюдо».</td><td>Блюдо появилось в списке блюд; его можно выбрать и добавить в список.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">31</td><td>Нажмите «Изменить» в окне блюд.</td><td>Список блюд со значками ✎ (правка) и 🗑 (удаление), метки «стандартное» / «моё», число продуктов; «Готово» возвращает обычный вид.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">32</td><td>Исправьте своё блюдо (✎): переименуйте, уберите продукт, измените цену; сохраните.</td><td>Изменения сохраняются и видны при следующем открытии.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">33</td><td>Удалите своё блюдо (🗑).</td><td>Вопрос подтверждения; после «Удалить» блюдо исчезает навсегда.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">34</td><td>Удалите стандартное блюдо (например, «Блины»).</td><td>Вопрос подтверждения; блюдо скрывается из списка.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">35</td><td>Нажмите «Вернуть стандартные блюда».</td><td>Скрытые стандартные блюда возвращаются.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">36</td><td>Исправьте стандартное блюдо («Плов»: уберите лук, сохраните).</td><td>Появилось ваше блюдо «Плов» без лука; стандартный «Плов» скрыт (вернётся по «Вернуть стандартные блюда»).</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">37</td><td>Проверьте остальные блюда (бешбармак, манты, лагман, баурсаки, борщ, оливье, блины).</td><td>Названия понятны, набор продуктов разумный. Напишите, чего не хватает.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>6. Экран списка, «Сегодня» и «Календарь»</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">38</td><td>Откройте «Сегодня» и «Календарь» при нескольких списках с датами.</td><td>Каждый список обведён рамкой цвета списка (заголовок и товары внутри); списки не сливаются с фоном.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">39</td><td>Нажмите на заголовок списка внутри рамки; отметьте товар галочкой.</td><td>Открывается список; галочка отмечает товар; рамка не ломается.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">40</td><td>В списке посмотрите значок рядом с «+».</td><td>Вместо весов — калькулятор.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>7. Товары, подсказки, каталог</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">41</td><td>Начните вводить «мол», «порош», «посуд».</td><td>Подсказки из каталога; нажатие добавляет товар с категорией. Кнопки подсказок удобно нажимать.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">42</td><td>Добавьте «молоко», откройте товар, поставьте 1 л и цену; добавьте «молоко» ещё раз.</td><td>Второй раз количество, единица и цена подставляются сами.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">43</td><td>Откройте товар: измените название, категорию (в том числе «+ Своя»), дату, «Напомнить», заметку.</td><td>Всё сохраняется; товары сгруппированы по категориям.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>8. Смахивание</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">44</td><td>Смахните товар вправо.</td><td>Товар «куплен»; внизу сообщение с кнопкой «Отменить».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">45</td><td>Смахните товар влево.</td><td>Товар удалён; «Отменить» возвращает его.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">46</td><td>Откройте «Куплено» и смахните товар вправо.</td><td>Товар возвращается в список.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>9. Цены и валюта</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">47</td><td>Поставьте цену нескольким товарам.</td><td>В строке видна цена; над списком «Куплено … · Осталось … · Всего …»; на карточке списка — сумма остатка.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">48</td><td>Отметьте товар купленным.</td><td>Суммы «Куплено» и «Осталось» пересчитались.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">49</td><td>«Настройки» → «Валюта»: выберите ₽, затем «Своя» и своё обозначение.</td><td>Во всех ценах и итогах символ меняется; по умолчанию ₸.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>10. Поделиться и импорт</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">50</td><td>«⋯» на списке → «Поделиться» → «Текстом».</td><td>Меню Android; в мессенджере список с ☐/✓, количеством, ценой и итогом.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">51</td><td>«Поделиться» → «PDF».</td><td>Аккуратный PDF; русские и казахские буквы читаются.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">52</td><td>«Поделиться» → «Файл для приложения»; отправьте на другой телефон с ShoppingList и импортируйте («Списки» → «Импорт из файла»).</td><td>Список появился со всеми товарами, ценами и категориями.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок <span class="cb"></span>Нет 2-го тел.</td><td class="note"></td></tr>
+<tr><td class="n">53</td><td>Попробуйте импортировать посторонний файл (фото, документ).</td><td>Сообщение «Это не файл ShoppingList…», ничего не ломается.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>11. Резервная копия</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">54</td><td>«Настройки» → «Резервная копия» → «Сохранить копию» (при наличии своего блюда из раздела 5).</td><td>Создаётся один файл со всеми списками и вашими блюдами.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">55</td><td>Удалите своё блюдо, затем «Восстановить из файла» → этот файл → «Добавить».</td><td>Списки из файла добавляются (появятся копии), свои блюда возвращаются, существующее не дублируется.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>12. Даты и копии списков</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">56</td><td>Поставьте списку или товару дату на сегодня и на завтра.</td><td>На карточке списка дата; «Сегодня» показывает «Купить сегодня» по спискам.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">57</td><td>«⋯» на списке → «Копировать»; поправьте название, дату, состав.</td><td>Создаётся новый список, исходный не меняется.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">58</td><td>«⋯» → «Снять отметки "куплено"».</td><td>Все товары возвращаются в «К покупке».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>13. Напоминания</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">59</td><td>«Настройки» → «Напоминания» → «Проверить уведомление».</td><td>Через 10 секунд приходит всплывающее уведомление.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">60</td><td>Товару поставьте сегодняшнюю дату с «Напомнить» и временем через 2–3 минуты; закройте приложение.</td><td>Приходит «Сегодня купить: …»; нажатие открывает «Сегодня».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>14. Настройки, цвета, язык</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">61</td><td>Выберите несколько цветовых профилей и «Как в системе».</td><td>Цвета меняются сразу и сохраняются после перезапуска.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">62</td><td>«Ко всему: заставка и ярлык» с неянтарным профилем.</td><td>Спрашивает «Сменить ярлык?»; «Сменить» меняет иконку на рабочем столе, «Не менять» оставляет.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">63</td><td>Переключите язык: русский, казахский, English.</td><td>Тексты меняются сразу. Для казахского напишите, что звучит неправильно (в том числе единицы «шт», «уп»).</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">64</td><td>Тумблер «Запоминать параметры товаров» и «Очистить историю покупок».</td><td>При выключенном параметры не запоминаются; очистка убирает запомненное, списки остаются.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>15. Обновление и общее</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">65</td><td>«Настройки» → «Проверить сейчас».</td><td>«Последняя» или экран обновления; без вылетов.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">66</td><td>Попользуйтесь приложением 10–15 минут как обычно.</td><td>Без вылетов, рывков и «зависаний»; кнопки достаточно крупные.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">67</td><td>Общее впечатление: что понравилось, что неудобно, чего не хватает?</td><td class="small">Напишите свободно в заметках ниже.</td><td class="r"></td><td class="note"></td></tr></table>
+
+<div class="box" style="min-height:110px"><b>Заметки и пожелания:</b></div>
+<div class="small">Если что-то сломалось, напишите: на каком экране, что нажимали, что ожидали и что получилось (по возможности со снимком экрана). Спасибо за помощь!</div>
+</body></html>

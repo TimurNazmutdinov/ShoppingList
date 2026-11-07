@@ -1,6 +1,7 @@
 import { getDb, write } from './index';
-import { ExchangeFile, ExportCategory, ExportHistory, ExportItem, ExportList } from '@/logic/exchange';
+import { ExchangeFile, ExportCategory, ExportDish, ExportHistory, ExportItem, ExportList } from '@/logic/exchange';
 import { normTitle } from '@/logic/history';
+import { loadUserDishes } from './dishes';
 
 type ListRow = { id: number; title: string; color: string; planned_date: string | null };
 type ItemRow = {
@@ -47,6 +48,12 @@ export async function loadExportHistory(): Promise<ExportHistory[]> {
        FROM history h LEFT JOIN categories c ON c.id = h.category_id ORDER BY h.used_count DESC LIMIT 5000`,
   );
   return rows.map((r) => ({ title: r.title, qty: r.qty, unit: r.unit, price: r.price, category: category(r.cat_key, r.cat_title), usedCount: r.used_count }));
+}
+
+// Свои блюда для резервной копии.
+export async function loadExportDishes(): Promise<ExportDish[]> {
+  const dishes = await loadUserDishes();
+  return dishes.map((d) => ({ title: d.title, products: d.products.map((p) => ({ title: p.title, qty: p.qty, unit: p.unit, price: p.price })) }));
 }
 
 const chunks = <T,>(arr: readonly T[], size: number): T[][] => {
@@ -108,6 +115,21 @@ export async function importExchange(file: ExchangeFile): Promise<{ lists: numbe
       await write(
         `INSERT OR IGNORE INTO history (title_norm, title, qty, unit, price, category_id, used_count, last_used_at) VALUES ${marks}`,
         ...params,
+      );
+    }
+    // свои блюда: блюдо с таким названием уже есть — не дублируем
+    const known = new Set((await db.getAllAsync<{ title: string }>('SELECT title FROM dishes')).map((d) => d.title.toLowerCase()));
+    for (const dish of file.dishes) {
+      if (known.has(dish.title.toLowerCase())) continue;
+      known.add(dish.title.toLowerCase());
+      const res = await write(
+        'INSERT INTO dishes (title, sort, created_at) VALUES (?, (SELECT COALESCE(MAX(sort), 0) + 1 FROM dishes), ?)',
+        dish.title, now,
+      );
+      const marks = dish.products.map(() => '(?, ?, ?, ?, ?, ?)').join(', ');
+      await write(
+        `INSERT INTO dish_items (dish_id, title, qty, unit, price, sort) VALUES ${marks}`,
+        ...dish.products.flatMap((p, i) => [res.lastInsertRowId, p.title, p.qty, p.unit, p.price, i + 1]),
       );
     }
   });

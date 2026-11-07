@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ShoppingList 0.7.2 — эскиз цен и подсказок</title>
+<style>
+  :root {
+    --bg: #F6F0E7; --card: #FFFDF9; --cb: #E8DCCB; --cs: #EFE4D3; --text: #3A2E22; --muted: #76634F;
+    --primary: #D9B48C; --onp: #3A2512; --strong: #9C6B3C; --outline: #76634F;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; background: #E4DDD2; color: #2a2a2a; font-family: system-ui, "Segoe UI", Roboto, sans-serif; line-height: 1.4; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  h2 { font-size: 17px; margin: 30px 0 4px; }
+  p.lead { margin: 0 0 8px; color: #555; font-size: 14px; max-width: 780px; }
+  .row { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; margin-top: 10px; }
+  .fig { width: 360px; }
+  .cap { font-weight: 700; font-size: 14px; margin: 0 0 6px; }
+  .cap em { font-style: normal; font-weight: 400; color: #666; }
+  .rec { color: #1b7a43; }
+  ul.notes { margin: 8px 0 0; padding-left: 18px; font-size: 13px; color: #555; max-width: 780px; }
+  svg.i { width: 22px; height: 22px; }
+
+  /* экран списка */
+  .lscreen { position: relative; background: var(--bg); border: 1px solid #b9b0a2; border-radius: 22px; overflow: hidden; color: var(--text); display: flex; flex-direction: column; min-height: 470px; }
+  .lhead { display: flex; align-items: center; gap: 10px; padding: 8px 12px; }
+  .lhead .btn { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 22px; }
+  .lhead .ttl { flex: 1; font-size: 22px; font-weight: 700; }
+  .dot { width: 14px; height: 14px; border-radius: 50%; background: #7A5BC4; }
+  .lbody { padding: 0 16px; flex: 1; }
+  .item { display: flex; align-items: center; gap: 14px; min-height: 52px; padding: 8px 14px; background: var(--card); border: 1px solid var(--cb); border-radius: 12px; margin-bottom: 8px; }
+  .chk { width: 26px; height: 26px; border: 2px solid var(--outline); border-radius: 8px; flex: none; }
+  .item .t { flex: 1; font-size: 17px; }
+  .item .q { color: var(--muted); font-size: 15px; }
+  .item .q.tap { background: var(--cs); border-radius: 10px; padding: 6px 10px; border-bottom: 2px solid var(--primary); }
+  .bar { background: var(--card); border-top: 1px solid var(--cb); padding: 10px 12px 14px; }
+  .irow { display: flex; align-items: center; gap: 8px; }
+  .inp { flex: 1; min-height: 48px; display: flex; align-items: center; padding: 0 16px; border: 1px solid var(--outline); border-radius: 24px; background: var(--bg); color: var(--muted); font-size: 15px; line-height: 1.25; }
+  .inp.typed { color: var(--text); font-size: 16px; }
+  .circ { width: 48px; height: 48px; border-radius: 24px; border: 1px solid var(--outline); display: flex; align-items: center; justify-content: center; color: var(--muted); flex: none; text-align: center; font-size: 12px; font-weight: 700; line-height: 1.1; }
+  .circ.plus { background: var(--primary); border-color: var(--primary); color: var(--onp); font-size: 28px; font-weight: 400; }
+  .circ.on { background: var(--cs); border: 2px solid var(--strong); color: var(--text); }
+  .circ.rec { background: var(--primary); border-color: var(--strong); color: var(--onp); }
+  .tip { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; padding: 6px 6px 6px 14px; min-height: 48px; border-radius: 24px; background: var(--cs); font-size: 13px; color: var(--text); }
+  .tip .tx { flex: 1; }
+  .tip .lnk { color: var(--strong); font-weight: 700; white-space: nowrap; }
+  .tip .x { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 18px; }
+  .prev { margin: 0 0 8px; padding: 10px 14px; border-radius: 16px; background: var(--cs); font-size: 14px; }
+  .prev b { font-size: 13px; color: var(--strong); letter-spacing: .3px; }
+  .prev .ln { display: flex; justify-content: space-between; gap: 10px; margin-top: 3px; }
+  .prev .ln span:last-child { color: var(--muted); }
+  .prev .tot { border-top: 1px solid var(--cb); margin-top: 6px; padding-top: 6px; font-weight: 700; display: flex; justify-content: space-between; }
+  .listen { display: flex; align-items: center; gap: 12px; margin: 0 0 8px; padding: 12px 14px; border-radius: 16px; background: var(--cs); font-size: 14px; }
+  .pulse { width: 48px; height: 48px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 0 6px rgba(217,180,140,.45), 0 0 0 12px rgba(217,180,140,.2); display: flex; align-items: center; justify-content: center; flex: none; color: var(--onp); }
+  .listen .tx { flex: 1; }
+  .listen .tx small { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
+
+  /* окна снизу и диалог */
+  .phoneb { background: #8c8898; border-radius: 22px; overflow: hidden; border: 1px solid #b9b0a2; }
+  .scrim { height: 60px; }
+  .sheet { background: #FFFDF9; border-radius: 28px 28px 0 0; padding: 12px 22px 18px; color: var(--text); }
+  .handle { width: 44px; height: 5px; border-radius: 3px; background: #E6DCC8; margin: 0 auto 14px; }
+  .sheet h4 { margin: 0 0 10px; font-size: 20px; font-weight: 600; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .chip { min-width: 48px; min-height: 48px; padding: 0 6px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--outline); border-radius: 12px; font-size: 16px; }
+  .field { flex: 1; min-width: 88px; min-height: 48px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--outline); background: #fff; border-radius: 12px; color: var(--muted); font-size: 14px; white-space: nowrap; }
+  .field.full { width: 100%; flex: none; margin-bottom: 10px; font-size: 16px; padding: 0 14px; }
+  .field .sfx { color: var(--text); font-weight: 700; }
+  .lbl { font-size: 13px; color: var(--muted); margin: 0 0 4px; }
+  .btns { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+  .btns .reset { color: var(--muted); font-weight: 600; font-size: 17px; padding: 0 14px; }
+  .btns .done { flex: 1; min-height: 52px; background: var(--primary); color: var(--onp); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 17px; }
+  .dim { background: rgba(40, 30, 20, .45); padding: 70px 22px; border-radius: 22px; }
+  .dialog { background: var(--card); border-radius: 20px; padding: 20px; color: var(--text); }
+  .dialog h4 { margin: 0 0 8px; font-size: 19px; }
+  .dialog p { margin: 0 0 10px; font-size: 15px; }
+  .dialog .ex { background: var(--cs); border-radius: 12px; padding: 8px 12px; font-size: 14px; margin-bottom: 12px; }
+  .dialog .acts { display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px; }
+  .dialog .acts span { min-height: 48px; padding: 0 16px; display: flex; align-items: center; font-weight: 700; border-radius: 12px; color: var(--muted); }
+  .dialog .acts span.ok { background: var(--primary); color: var(--onp); }
+  .help h5 { margin: 12px 0 2px; font-size: 15px; }
+  .help p { margin: 0; font-size: 14px; color: var(--muted); }
+  .help .ex { display: inline-block; margin-top: 4px; background: var(--cs); border-radius: 10px; padding: 5px 10px; font-size: 14px; color: var(--text); }
+
+  /* блюда */
+  .drow { display: flex; align-items: center; gap: 6px; min-height: 56px; }
+  .drow .ck { width: 48px; height: 52px; display: flex; align-items: center; justify-content: center; }
+  .drow .ck i { width: 24px; height: 24px; border-radius: 7px; background: var(--strong); display: block; color: #fff; text-align: center; font-style: normal; font-size: 15px; line-height: 24px; }
+  .drow .nm { flex: 1; min-width: 0; }
+  .drow .in { min-height: 48px; display: flex; align-items: center; padding: 0 10px; border: 1px solid var(--outline); border-radius: 12px; background: #fff; font-size: 16px; }
+  .drow .qt { width: 52px; } .drow .un { width: 24px; color: var(--muted); font-size: 14px; } .drow .pr { width: 64px; justify-content: flex-end; }
+  .dhead { display: flex; gap: 6px; font-size: 12px; color: var(--muted); padding-left: 48px; margin: 4px 0 -2px; }
+  .dhead span:nth-child(1) { flex: 1; } .dhead span:nth-child(2) { width: 82px; } .dhead span:nth-child(3) { width: 64px; text-align: right; }
+  .shead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .shead h4 { margin: 0; }
+  .toplink { color: var(--strong); font-weight: 700; font-size: 15px; min-height: 48px; display: flex; align-items: center; padding: 0 6px; }
+  .dchips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+  .dchip { min-height: 52px; padding: 0 18px; display: flex; align-items: center; border-radius: 12px; background: var(--cs); font-size: 17px; }
+  .dchip.add { background: transparent; border: 1.5px dashed var(--strong); color: var(--strong); font-weight: 700; }
+  .mrow { display: flex; align-items: center; gap: 2px; min-height: 56px; border-bottom: 1px solid var(--cb); font-size: 17px; }
+  .mrow .nm { flex: 1; padding-left: 4px; }
+  .mrow .nm small { display: block; font-size: 12px; color: var(--muted); }
+  .mrow .ab { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 20px; }
+  .mrow .ab.del { color: #B9471B; }
+  .sub { font-size: 14px; color: var(--strong); font-weight: 700; padding: 10px 4px; }
+  table.g { border-collapse: collapse; font-size: 14px; background: var(--card); border-radius: 12px; overflow: hidden; max-width: 780px; }
+  table.g th, table.g td { padding: 7px 12px; border-bottom: 1px solid var(--cb); text-align: left; }
+  table.g th { background: var(--cs); font-size: 13px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ic-calc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8 7.5h8"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01" stroke-width="2.4"/></g></symbol>
+  <symbol id="ic-mic" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></g></symbol>
+  <symbol id="ic-help" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.6 2.2c-.8.5-1.2 1-1.2 1.9M12 17h.01"/></g></symbol>
+  <symbol id="ic-dish" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v6a2.5 2.5 0 0 0 5 0V3M8.5 3v18"/><path d="M17 21V3c-2.5 1.5-3.5 4.5-3.5 8H17"/></g></symbol>
+</svg>
+
+<h1>ShoppingList 0.7.2 — эскиз: цена везде и подсказки быстрого ввода</h1>
+<p class="lead">Цвета и размеры настоящего приложения (профиль «Беж», ширина 360 dp). Всё в версии 0.7.2. Ответьте: «ок» по каждому пункту или что поменять. Рекомендую «ок» на всё.</p>
+
+<h2>1. Цена в окне «Количество» → «Количество и цена»</h2>
+<p class="lead">Кнопка-калькулятор рядом с «+» задаёт количество и цену для следующего добавляемого товара (после добавления сбрасывается, как количество сейчас). Цена — за всю позицию, как в карточке товара.</p>
+<div class="row">
+  <div class="fig"><p class="cap">Сейчас</p>
+    <div class="phoneb"><div class="scrim"></div><div class="sheet"><div class="handle"></div>
+      <h4>Количество</h4>
+      <div class="chips"><div class="chip">0,5</div><div class="chip">1</div><div class="chip">2</div><div class="chip">3</div><div class="field">Своё число</div></div>
+      <div class="chips"><div class="chip">шт</div><div class="chip">кг</div><div class="chip">г</div><div class="chip">л</div><div class="chip">уп</div></div>
+      <div class="btns"><span class="reset">Сбросить</span><span class="done">Готово</span></div>
+    </div></div></div>
+  <div class="fig"><p class="cap rec">Станет <em>— добавлено поле «Цена»</em></p>
+    <div class="phoneb"><div class="scrim"></div><div class="sheet"><div class="handle"></div>
+      <h4>Количество и цена</h4>
+      <div class="chips"><div class="chip">0,5</div><div class="chip">1</div><div class="chip">2</div><div class="chip">3</div><div class="field">Своё число</div></div>
+      <div class="chips"><div class="chip">шт</div><div class="chip">кг</div><div class="chip">г</div><div class="chip">л</div><div class="chip">уп</div></div>
+      <div class="lbl">Цена за позицию</div>
+      <div class="field full"><span>Например, 450</span><span class="sfx">₸</span></div>
+      <div class="btns"><span class="reset">Сбросить</span><span class="done">Готово</span></div>
+    </div></div></div>
+  <div class="fig"><p class="cap">Кнопка рядом с «+» <em>— три состояния</em></p>
+    <div class="bar" style="border:1px solid #b9b0a2;border-radius:16px">
+      <div class="irow" style="justify-content:space-around">
+        <div style="text-align:center"><span class="circ"><svg class="i"><use href="#ic-calc"/></svg></span><div class="lbl" style="margin-top:4px">пусто</div></div>
+        <div style="text-align:center"><span class="circ on">2 кг</span><div class="lbl" style="margin-top:4px">количество</div></div>
+        <div style="text-align:center"><span class="circ on">2 кг<br>1500₸</span><div class="lbl" style="margin-top:4px">с ценой</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<ul class="notes">
+  <li>Если у товара уже есть цена в «запомненных параметрах», она подставится сама; цена из окна главнее.</li>
+  <li>Исправление: сейчас при заданном количестве рядом с «+» старая цена из истории теряется — это тоже поправим.</li>
+</ul>
+
+<h2>2. Цена и количество прямо в тексте, подсказка и предпросмотр</h2>
+<p class="lead">Цена пишется числом со значком: «молоко 1 л 450 ₸». Значки: ₸, тг, тенге, ₽, руб — и символ вашей валюты из «Настроек». Число без значка остаётся в названии («Йогурт 3», «Молоко 3,2%»). Пока вы печатаете список, над строкой показывается, что именно добавится.</p>
+<div class="row">
+  <div class="fig"><p class="cap rec">А. Подсказка над строкой <em>(всегда, пока строка пуста; без ✕ — по просьбе пользователя)</em></p>
+    <div class="lscreen">
+      <div class="lhead"><span class="btn">←</span><span class="dot"></span><span class="ttl">Продукты</span><span class="btn"><svg class="i"><use href="#ic-help"/></svg></span></div>
+      <div class="lbody"><div class="item"><span class="chk"></span><span class="t">Шампунь</span><span class="q">1 шт</span></div><div class="item"><span class="chk"></span><span class="t">Салфетки</span><span class="q">2 шт</span></div></div>
+      <div class="bar">
+        <div class="tip"><span class="tx">Можно сразу несколько: «молоко 1 л 450 ₸, хлеб, сыр 2 кг» <span class="lnk">Как вводить?</span></span></div>
+        <div class="irow"><div class="inp">Добавить товар или список…</div><span class="circ"><svg class="i"><use href="#ic-mic"/></svg></span><span class="circ"><svg class="i"><use href="#ic-calc"/></svg></span><span class="circ plus">+</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="fig"><p class="cap rec">Б. Пока печатаете: предпросмотр</p>
+    <div class="lscreen">
+      <div class="lhead"><span class="btn">←</span><span class="dot"></span><span class="ttl">Продукты</span><span class="btn"><svg class="i"><use href="#ic-help"/></svg></span></div>
+      <div class="lbody"><div class="item"><span class="chk"></span><span class="t">Шампунь</span><span class="q">1 шт</span></div><div class="item"><span class="chk"></span><span class="t">Салфетки</span><span class="q">2 шт</span></div></div>
+      <div class="bar">
+        <div class="prev"><b>ДОБАВИТСЯ 3 ТОВАРА</b>
+          <div class="ln"><span>Молоко</span><span>1 л · 450 ₸</span></div>
+          <div class="ln"><span>Хлеб</span><span></span></div>
+          <div class="ln"><span>Сыр</span><span>2 кг · 3 000 ₸</span></div>
+          <div class="tot"><span>Итого</span><span>3 450 ₸</span></div></div>
+        <div class="irow"><div class="inp typed">молоко 1 л 450 ₸, хлеб, сыр 2 кг 3 000 ₸</div><span class="circ"><svg class="i"><use href="#ic-mic"/></svg></span><span class="circ"><svg class="i"><use href="#ic-calc"/></svg></span><span class="circ plus">+</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<p class="lead" style="margin-top:14px"><b>Что понимает разбор</b> (примеры):</p>
+<table class="g">
+  <tr><th>Вы пишете</th><th>Получится</th></tr>
+  <tr><td>хлеб 120 ₸</td><td>Хлеб, 120 ₸</td></tr>
+  <tr><td>сыр 2 кг 3000 тг</td><td>Сыр, 2 кг, 3 000 ₸</td></tr>
+  <tr><td>2 кг сыра 3000 тенге</td><td>сыра, 2 кг, 3 000 ₸</td></tr>
+  <tr><td>молоко 1 л 450т</td><td>Молоко 1 л, число «450т» без значка остаётся в названии — поэтому пишите ₸ или тг</td></tr>
+  <tr><td>Йогурт 3 · Молоко 3,2%</td><td>просто названия (числа без значка и единицы — часть названия)</td></tr>
+</table>
+
+<h2>3. Голосовой ввод: понятно, что говорить и что получилось</h2>
+<div class="row">
+  <div class="fig"><p class="cap rec">В. Пока идёт запись <em>— панель над строкой</em></p>
+    <div class="lscreen">
+      <div class="lhead"><span class="btn">←</span><span class="dot"></span><span class="ttl">Продукты</span><span class="btn"><svg class="i"><use href="#ic-help"/></svg></span></div>
+      <div class="lbody"><div class="item"><span class="chk"></span><span class="t">Шампунь</span><span class="q">1 шт</span></div></div>
+      <div class="bar">
+        <div class="listen"><span class="pulse"><svg class="i"><use href="#ic-mic"/></svg></span><span class="tx"><b>Слушаю…</b><small>Назовите товары по очереди, цифры и «тенге» — как в тексте: «молоко 1 литр 450 тенге, хлеб». Нажмите микрофон, чтобы закончить.</small></span></div>
+        <div class="irow"><div class="inp">Добавить товар или список…</div><span class="circ rec"><svg class="i"><use href="#ic-mic"/></svg></span><span class="circ"><svg class="i"><use href="#ic-calc"/></svg></span><span class="circ plus">+</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="fig"><p class="cap rec">Г. После записи <em>— текст в строке + тот же предпросмотр; добавляется только по «+»</em></p>
+    <div class="lscreen">
+      <div class="lhead"><span class="btn">←</span><span class="dot"></span><span class="ttl">Продукты</span><span class="btn"><svg class="i"><use href="#ic-help"/></svg></span></div>
+      <div class="lbody"><div class="item"><span class="chk"></span><span class="t">Шампунь</span><span class="q">1 шт</span></div></div>
+      <div class="bar">
+        <div class="prev"><b>ДОБАВИТСЯ 2 ТОВАРА</b>
+          <div class="ln"><span>Молоко</span><span>1 л · 450 ₸</span></div>
+          <div class="ln"><span>Хлеб</span><span></span></div>
+          <div class="tot"><span>Итого</span><span>450 ₸</span></div></div>
+        <div class="irow"><div class="inp typed">молоко 1 литр 450 тенге, хлеб</div><span class="circ"><svg class="i"><use href="#ic-mic"/></svg></span><span class="circ"><svg class="i"><use href="#ic-calc"/></svg></span><span class="circ plus">+</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="fig"><p class="cap">Д. Первое сообщение <em>— к тексту про интернет добавлен пример</em></p>
+    <div class="dim"><div class="dialog">
+      <h4>Голосовой ввод и интернет</h4>
+      <p>Чтобы распознать речь, телефон может отправлять запись в сервис распознавания (обычно это Google), поэтому нужен интернет. Это сообщение показывается один раз.</p>
+      <div class="ex"><b>Как говорить:</b> «молоко 1 литр 450 тенге, хлеб, сыр 2 килограмма». Текст появится в строке — проверьте и нажмите «+».</div>
+      <div class="acts"><span>Отмена</span><span class="ok">Понятно, начать</span></div>
+    </div></div>
+  </div>
+</div>
+<ul class="notes">
+  <li>Распознаватель Google обычно сам записывает числа цифрами («1 литр», «450»). Если он напишет словами («один литр»), количество не поймём — можно позже добавить разбор слов-чисел (скажите, нужно ли).</li>
+</ul>
+
+<h2>4. Окно «Быстрый ввод» (значок «?» вверху списка и «Как вводить?»)</h2>
+<p class="lead">Справка с примерами. Значок «?» появляется в правом верхнем углу экрана списка (там, где раньше была кнопка блюд).</p>
+<div class="row">
+  <div class="fig"><div class="phoneb"><div class="scrim"></div><div class="sheet help"><div class="handle"></div>
+    <h4>Быстрый ввод</h4>
+    <h5>Несколько товаров сразу</h5><p>Через запятую или с новой строки. Можно вставить список из мессенджера.</p><span class="ex">молоко, хлеб, яйца</span>
+    <h5>Количество</h5><p>Число и единица — до или после названия.</p><span class="ex">2 кг сыра · сыр 200 г · яйца 10 шт</span>
+    <h5>Цена</h5><p>Число со значком ₸, тг или «тенге» (или символом вашей валюты). Цена за всю позицию.</p><span class="ex">хлеб 120 ₸ · сыр 2 кг 3000 тг</span>
+    <h5>Голосом</h5><p>Нажмите микрофон и назовите так же. Текст появится в строке — проверьте и нажмите «+».</p><span class="ex">молоко 1 литр 450 тенге, хлеб</span>
+    <div class="btns" style="margin-top:14px"><span class="done">Понятно</span></div>
+  </div></div></div>
+</div>
+
+<h2>5. Блюда: цена у каждого продукта</h2>
+<p class="lead">В наборе из блюда у каждой строки появляется необязательное поле цены; в историю цена запоминается, как и количество.</p>
+<div class="row">
+  <div class="fig"><p class="cap">Сейчас</p>
+    <div class="phoneb"><div class="scrim"></div><div class="sheet"><div class="handle"></div>
+      <h4>Плов</h4>
+      <div class="lbl">Продукты для блюда</div>
+      <div class="drow"><span class="ck"><i>✓</i></span><span class="nm"><div class="in">Рис</div></span><span class="qt"><div class="in">1</div></span><span class="un">кг</span></div>
+      <div class="drow"><span class="ck"><i>✓</i></span><span class="nm"><div class="in">Морковь</div></span><span class="qt"><div class="in">1</div></span><span class="un">кг</span></div>
+      <div class="btns" style="margin-top:8px"><span class="done">Добавить в список (2)</span></div>
+    </div></div></div>
+  <div class="fig"><p class="cap rec">Станет <em>— колонка «Цена, ₸»</em></p>
+    <div class="phoneb"><div class="scrim"></div><div class="sheet"><div class="handle"></div>
+      <h4>Плов</h4>
+      <div class="dhead"><span>Продукты для блюда</span><span>Кол-во</span><span>Цена, ₸</span></div>
+      <div class="drow"><span class="ck"><i>✓</i></span><span class="nm"><div class="in">Рис</div></span><span class="qt"><div class="in">1</div></span><span class="un">кг</span><span class="pr"><div class="in" style="width:100%;justify-content:flex-end">800</div></span></div>
+      <div class="drow"><span class="ck"><i>✓</i></span><span class="nm"><div class="in">Морковь</div></span><span class="qt"><div class="in">1</div></span><span class="un">кг</span><span class="pr"><div class="in" style="width:100%;justify-content:flex-end;color:var(--muted)"></div></span></div>
+      <div class="btns" style="margin-top:8px"><span class="done">Добавить в список (2)</span></div>
+    </div></div></div>
+</div>
+<ul class="notes"><li>На узком экране 360 dp название получает около 100 dp; длинные названия переносятся.</li></ul>
+
+<h2>6. В списке: нажатие на «1 шт · 450 ₸» открывает «Количество и цена»</h2>
+<p class="lead">В магазине можно быстро поправить цену на полке, не открывая всю карточку. Нажатие на остальную часть строки — открывает карточку, как сейчас; галочка и смахивания — как сейчас.</p>
+<div class="row">
+  <div class="fig"><div class="lscreen" style="min-height:0">
+    <div class="lhead"><span class="btn">←</span><span class="dot"></span><span class="ttl">Продукты</span><span class="btn"><svg class="i"><use href="#ic-help"/></svg></span></div>
+    <div class="lbody" style="padding-bottom:14px">
+      <div class="item"><span class="chk"></span><span class="t">Шампунь</span><span class="q tap">1 шт · 450 ₸</span></div>
+      <div class="item"><span class="chk"></span><span class="t">Салфетки</span><span class="q tap">2 шт</span></div>
+      <div class="item"><span class="chk"></span><span class="t">Хлеб</span><span class="q tap">+ цена</span></div>
+    </div></div></div>
+</div>
+<ul class="notes">
+  <li>Область нажатия — подчёркнутая «таблетка» справа (не меньше 48 dp по высоте). Если количества и цены нет — тихая подпись «+ цена».</li>
+  <li>Это необязательная часть: если не нужна, скажите — уберём.</li>
+</ul>
+
+<h2>7. Блюда: своё блюдо, изменить и удалить блюда из списка</h2>
+<p class="lead">В окне «Добавить из блюда» — кнопка «+ Своё блюдо» и ссылка «Изменить» (режим правки списка блюд). Нажатие на блюдо без правки — как сейчас: набор продуктов для добавления в этот список.</p>
+<div class="row">
+  <div class="fig"><p class="cap rec">А. Список блюд <em>— новая кнопка и ссылка «Изменить»</em></p>
+    <div class="phoneb"><div class="scrim"></div><div class="sheet"><div class="handle"></div>
+      <div class="shead"><h4>Добавить из блюда</h4><span class="toplink">Изменить</span></div>
+      <div class="lbl">Выберите блюдо — набор продуктов можно изменить</div>
+      <div class="dchips"><span class="dchip">Плов</span><span class="dchip">Бешбармак</span><span class="dchip">Манты</span><span class="dchip">Борщ</span><span class="dchip">Оливье</span><span class="dchip">Шашлык</span><span class="dchip">Мой салат</span><span class="dchip add">+ Своё блюдо</span></div>
+    </div></div></div>
+  <div class="fig"><p class="cap rec">Б. Режим «Изменить» <em>— ✎ правка, 🗑 удаление (с вопросом)</em></p>
+    <div class="phoneb"><div class="scrim"></div><div class="sheet"><div class="handle"></div>
+      <div class="shead"><h4>Мои и стандартные блюда</h4><span class="toplink">Готово</span></div>
+      <div class="mrow"><span class="nm">Плов<small>стандартное · 7 продуктов</small></span><span class="ab">✎</span><span class="ab del">🗑</span></div>
+      <div class="mrow"><span class="nm">Бешбармак<small>стандартное · 8 продуктов</small></span><span class="ab">✎</span><span class="ab del">🗑</span></div>
+      <div class="mrow"><span class="nm">Мой салат<small>моё · 5 продуктов</small></span><span class="ab">✎</span><span class="ab del">🗑</span></div>
+      <div class="sub">+ Новое блюдо</div>
+      <div class="sub" style="color:var(--muted)">Вернуть стандартные блюда</div>
+    </div></div></div>
+  <div class="fig"><p class="cap rec">В. Правка блюда <em>— название и продукты (с ценой)</em></p>
+    <div class="phoneb"><div class="scrim"></div><div class="sheet"><div class="handle"></div>
+      <div class="shead"><h4>Блюдо</h4><span class="toplink" style="color:#B9471B">Удалить</span></div>
+      <div class="lbl">Название</div>
+      <div class="field full"><span style="color:var(--text)">Мой салат</span></div>
+      <div class="dhead" style="padding-left:0"><span style="width:auto;flex:1">Продукты</span><span style="width:76px">Кол-во</span><span style="width:70px;text-align:right">Цена, ₸</span></div>
+      <div class="drow"><span class="nm"><div class="in">Огурцы</div></span><span class="qt"><div class="in">0,5</div></span><span class="un">кг</span><span class="pr"><div class="in" style="width:100%;justify-content:flex-end">400</div></span></div>
+      <div class="drow"><span class="nm"><div class="in">Помидоры</div></span><span class="qt"><div class="in">0,5</div></span><span class="un">кг</span><span class="pr"><div class="in" style="width:100%;justify-content:flex-end"></div></span></div>
+      <div class="sub">+ Продукт</div>
+      <div class="btns"><span class="done">Сохранить блюдо</span></div>
+    </div></div></div>
+</div>
+<ul class="notes">
+  <li>«Удалить» у стандартного блюда прячет его (оно не пропадает насовсем): вернуть можно ссылкой «Вернуть стандартные блюда». У своего блюда удаление окончательное, с вопросом.</li>
+  <li>Правка стандартного блюда создаёт ваше блюдо с тем же названием, а стандартное прячется; «Вернуть стандартные» вернёт и его.</li>
+  <li>Свои блюда хранятся в базе (новая таблица, старые данные целы) и попадают в резервную копию — рекомендую включить; скажите, если не нужно.</li>
+  <li>Окно «Добавить из блюда» после выбора блюда остаётся как сейчас (набор для этого списка), плюс цена у каждой строки (п. 5).</li>
+</ul>
+
+<script>
+  function fit() {
+    var k = Math.min(1, (document.documentElement.clientWidth - 32) / 360);
+    document.querySelectorAll('.fig').forEach(function (f) { f.style.zoom = k; });
+  }
+  fit(); addEventListener('resize', fit);
+</script>
+</body>
+</html>

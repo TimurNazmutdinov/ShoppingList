@@ -1,6 +1,6 @@
 // Действия «Поделиться», резервная копия и импорт: собирают данные, форматируют и передают в системное меню.
 import { StringKey, t } from '@/i18n';
-import { loadExportHistory, loadExportLists, importExchange } from '@/db/exchange';
+import { loadExportDishes, loadExportHistory, loadExportLists, importExchange } from '@/db/exchange';
 import { pickFileText, shareFile, sharePdf, shareText } from '@/sharing';
 import { ExchangeFile, ExportCategory, FormatContext, buildFile, fileSafeName, listToHtml, listToText, parseFile } from './exchange';
 import { formatLong } from './dates';
@@ -30,11 +30,11 @@ export async function shareList(listId: number, kind: ShareKind, symbol: string)
   else await shareFile(`ShoppingList-${name}.json`, JSON.stringify(buildFile('list', [list], [], new Date())), 'application/json');
 }
 
-// Резервная копия: все списки и история покупок одним файлом.
+// Резервная копия: все списки, история покупок и свои блюда одним файлом.
 export async function backupAll(): Promise<void> {
-  const [lists, history] = await Promise.all([loadExportLists(), loadExportHistory()]);
+  const [lists, history, dishes] = await Promise.all([loadExportLists(), loadExportHistory(), loadExportDishes()]);
   const day = new Date().toISOString().slice(0, 10);
-  await shareFile(`ShoppingList-backup-${day}.json`, JSON.stringify(buildFile('backup', lists, history, new Date())), 'application/json');
+  await shareFile(`ShoppingList-backup-${day}.json`, JSON.stringify(buildFile('backup', lists, history, new Date(), dishes)), 'application/json');
 }
 
 export type PickResult = { status: 'cancel' } | { status: 'error'; reason: 'invalid' | 'newer' | 'empty' } | { status: 'ok'; file: ExchangeFile };

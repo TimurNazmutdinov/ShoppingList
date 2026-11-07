@@ -1,6 +1,6 @@
-// Массовое добавление: «молоко, хлеб, 2 кг сыра» или список из мессенджера (по строке на товар) → товары с количеством.
+// Массовое добавление: «молоко, хлеб, 2 кг сыра» или список из мессенджера (по строке на товар) → товары с количеством и ценой.
 
-export type BulkItem = { title: string; qty: number | null; unit: string | null };
+export type BulkItem = { title: string; qty: number | null; unit: string | null; price?: number };
 
 // Слова единиц на трёх языках → ключ единицы.
 const UNIT_WORDS: Record<string, string> = {
@@ -9,7 +9,20 @@ const UNIT_WORDS: Record<string, string> = {
   г: 'g', гр: 'g', грамм: 'g', грамма: 'g', граммов: 'g', g: 'g',
   л: 'l', литр: 'l', литра: 'l', литров: 'l', l: 'l',
   уп: 'pack', упаковка: 'pack', упаковки: 'pack', пачка: 'pack', пачки: 'pack', қап: 'pack', pack: 'pack',
+  liter: 'l', liters: 'l', litre: 'l', litres: 'l', gram: 'g', grams: 'g', kilogram: 'kg', kilograms: 'kg', piece: 'pcs', pieces: 'pcs',
 };
+
+// Значки цены: число со значком — цена («450 ₸», «450тг», «3 000 тенге»); число без значка остаётся в названии.
+const BASE_MARKERS = ['₸', 'тг', 'тнг', 'тенге', 'теңге', 'tg', 'tenge', '₽', 'руб', 'рубль', 'рубля', 'рублей', 'р', 'kzt', 'rub'];
+const markerKey = (s: string) => s.toLowerCase().replace(/\.$/, '');
+
+// Значки цены: стандартные и символ (или код) валюты пользователя.
+export function priceMarkers(symbol = ''): ReadonlySet<string> {
+  const set = new Set(BASE_MARKERS);
+  const own = markerKey(symbol.trim());
+  if (own && !/^\d+$/.test(own)) set.add(own);
+  return set;
+}
 
 const isDigit = (c: string | undefined) => c !== undefined && c >= '0' && c <= '9';
 const NUMBER = /^\d+([.,]\d+)?$/;
@@ -34,35 +47,64 @@ export function splitBulk(text: string): string[] {
 
 const toNumber = (token: string): number => Number(token.replace(',', '.'));
 
-// Одна часть → название, количество, единица.
-// «2 кг сыра» и «сыр 2 кг», «2 яйца», «яйца 10 шт»; число в конце без единицы («Йогурт 3») остаётся в названии.
-export function parseBulkPart(raw: string): BulkItem {
+// Цена в конце части: «450₸», «450 ₸», «3 000 тг». Возвращает остаток слов и цену.
+function extractPrice(tokens: string[], markers: ReadonlySet<string>): { rest: string[]; price: number | undefined } {
+  const none = { rest: tokens, price: undefined };
+  const last = tokens[tokens.length - 1];
+  const attached = last.match(/^(\d+(?:[.,]\d+)?)(\D+)$/);
+  if (attached && markers.has(markerKey(attached[2]))) return { rest: tokens.slice(0, -1), price: toNumber(attached[1]) };
+  if (tokens.length < 2 || !markers.has(markerKey(last))) return none;
+  let at = tokens.length - 2;
+  if (!NUMBER.test(tokens[at])) return none;
+  const parts = [tokens[at]];
+  // группы тысяч: «3 000»
+  while (at > 0 && /^\d{3}([.,]\d+)?$/.test(parts[0]) && /^\d{1,3}$/.test(tokens[at - 1])) {
+    at--;
+    parts.unshift(tokens[at]);
+  }
+  return { rest: tokens.slice(0, at), price: toNumber(parts.join('')) };
+}
+
+// Одна часть → название, количество, единица, цена.
+// «2 кг сыра» и «сыр 2 кг», «2 яйца», «яйца 10 шт», «сыр 2 кг 3000 ₸»; число в конце без единицы («Йогурт 3») остаётся в названии.
+export function parseBulkPart(raw: string, markers: ReadonlySet<string> = priceMarkers()): BulkItem {
   const cleaned = raw.replace(BULLET, '').replace(NUMBERING, '').trim();
-  const tokens = cleaned.split(/\s+/).filter(Boolean);
+  const all = cleaned.split(/\s+/).filter(Boolean);
   const asName = (t: string[]): BulkItem => ({ title: t.join(' '), qty: null, unit: null });
-  if (tokens.length === 0) return asName([]);
+  if (all.length === 0) return asName([]);
+
+  const { rest, price } = extractPrice(all, markers);
+  if (price !== undefined && rest.length === 0) return asName(all); // «450 ₸» без названия — это название
+  const tokens = rest;
+  const withPrice = (item: BulkItem): BulkItem => (price === undefined ? item : { ...item, price });
 
   if (tokens.length >= 2 && NUMBER.test(tokens[0])) {
     const qty = toNumber(tokens[0]);
     const unit = UNIT_WORDS[tokens[1].toLowerCase()];
-    if (unit && tokens.length >= 3) return { title: tokens.slice(2).join(' '), qty, unit };
-    if (!unit && qty > 0) return { title: tokens.slice(1).join(' '), qty, unit: null };
+    if (unit && tokens.length >= 3) return withPrice({ title: tokens.slice(2).join(' '), qty, unit });
+    if (!unit && qty > 0) return withPrice({ title: tokens.slice(1).join(' '), qty, unit: null });
   }
   if (tokens.length >= 3) {
     const unit = UNIT_WORDS[tokens[tokens.length - 1].toLowerCase()];
     const numToken = tokens[tokens.length - 2];
-    if (unit && NUMBER.test(numToken)) return { title: tokens.slice(0, -2).join(' '), qty: toNumber(numToken), unit };
+    if (unit && NUMBER.test(numToken)) return withPrice({ title: tokens.slice(0, -2).join(' '), qty: toNumber(numToken), unit });
   }
-  return asName(tokens);
+  return withPrice(asName(tokens));
 }
 
-export function parseBulk(text: string): BulkItem[] {
+export function parseBulk(text: string, markers: ReadonlySet<string> = priceMarkers()): BulkItem[] {
   return splitBulk(text)
-    .map(parseBulkPart)
+    .map((part) => parseBulkPart(part, markers))
     .filter((i) => i.title.length > 0);
 }
 
-// Нужно ли разбирать как несколько товаров или как один с количеством (а не обычный ввод названия).
+// Нужно ли разбирать как несколько товаров или как один с количеством или ценой (а не обычный ввод названия).
 export function isStructured(items: readonly BulkItem[]): boolean {
-  return items.length > 1 || (items.length === 1 && (items[0].qty !== null || items[0].unit !== null));
+  return items.length > 1 || (items.length === 1 && (items[0].qty !== null || items[0].unit !== null || items[0].price !== undefined));
+}
+
+// Для предпросмотра «Добавится N товаров»: разобранные товары, если ввод — список или товар с количеством/ценой; иначе пусто.
+export function bulkPreview(text: string, markers: ReadonlySet<string> = priceMarkers()): BulkItem[] {
+  const items = parseBulk(text, markers);
+  return isStructured(items) ? items : [];
 }

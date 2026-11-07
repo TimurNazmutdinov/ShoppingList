@@ -46,6 +46,22 @@ export async function write(sql: string, ...params: SQLite.SQLiteBindValue[]) {
   return result;
 }
 
+let transactionDepth = 0;
+
+// Несколько записей одной транзакцией: ошибка — ничего не записано. Вложенный вызов входит в уже открытую транзакцию.
+export async function inTransaction(task: () => Promise<void>): Promise<void> {
+  if (transactionDepth > 0) {
+    await task();
+    return;
+  }
+  transactionDepth++;
+  try {
+    await getDb().withTransactionAsync(task);
+  } finally {
+    transactionDepth--;
+  }
+}
+
 export async function getSetting<T>(key: string): Promise<T | null> {
   const row = await getDb().getFirstAsync<{ value: string }>(
     'SELECT value FROM settings WHERE key = ?',

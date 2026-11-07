@@ -14,11 +14,12 @@ type Props = {
   onToggle: (item: Item) => void; // галочка или смахивание вправо
   onRemove: (item: Item) => void; // смахивание влево
   onOpen: (item: Item) => void;
+  onEditQty: (item: Item) => void; // нажатие на количество и цену справа
   onSwiped: () => void; // пользователь воспользовался смахиванием (для подсказки)
 };
 
 // Строка товара: галочка, название, заметка, количество; смахивание вправо — куплено/вернуть, влево — удалить.
-export function ItemRow({ item, onToggle, onRemove, onOpen, onSwiped }: Props) {
+export function ItemRow({ item, onToggle, onRemove, onOpen, onEditQty, onSwiped }: Props) {
   const colors = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const done = item.boughtAt !== null;
@@ -51,7 +52,14 @@ export function ItemRow({ item, onToggle, onRemove, onOpen, onSwiped }: Props) {
           <Text style={[styles.title, done && styles.done]} numberOfLines={2}>{item.title}</Text>
           {item.note ? <Text style={styles.note} numberOfLines={1}>{item.note}</Text> : null}
         </View>
-        {qty ? <Text style={styles.qty}>{qty}</Text> : null}
+        <Pressable
+          style={[styles.qtyHit, qty !== '' && styles.qtyHas]}
+          onPress={() => onEditQty(item)}
+          accessibilityRole="button"
+          accessibilityLabel={`${t('qty.title')}: ${qty || t('list.addPrice')}`}
+        >
+          <Text style={[styles.qty, qty === '' && styles.qtyEmpty]}>{qty || t('list.addPrice')}</Text>
+        </Pressable>
       </Pressable>
     </SwipeRow>
   );
@@ -76,5 +84,8 @@ const createStyles = (colors: Palette) =>
     title: { color: colors.text, fontSize: 17 },
     done: { color: colors.textMuted, textDecorationLine: 'line-through' },
     note: { color: colors.textMuted, fontSize: 13, marginTop: 2 },
-    qty: { color: colors.textMuted, fontSize: 15, marginLeft: 10 },
+    qtyHit: { minHeight: 48, justifyContent: 'center', paddingHorizontal: 10, marginLeft: 6, borderRadius: 10 },
+    qtyHas: { backgroundColor: colors.cardStrong, borderBottomWidth: 2, borderBottomColor: colors.primary },
+    qty: { color: colors.textMuted, fontSize: 15 },
+    qtyEmpty: { fontSize: 13 },
   });

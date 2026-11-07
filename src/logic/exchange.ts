@@ -11,6 +11,8 @@ export const BUILTIN_CATEGORY_KEYS = ['veg', 'dairy', 'bread', 'meat', 'grocery'
 const MAX_LISTS = 200;
 const MAX_ITEMS = 2000;
 const MAX_HISTORY = 5000;
+const MAX_DISHES = 200;
+const MAX_DISH_PRODUCTS = 60;
 
 // Категория в файле: встроенная — по ключу, своя — по названию (id у телефонов разные).
 export type ExportCategory = { key: string } | { title: string } | null;
@@ -28,6 +30,10 @@ export type ExportItem = {
 export type ExportList = { title: string; color: string; plannedDate: string | null; items: ExportItem[] };
 export type ExportHistory = { title: string; qty: number | null; unit: string | null; price: number | null; category: ExportCategory; usedCount: number };
 
+// Своё блюдо: название и продукты (стандартные блюда в файл не попадают — они есть в самом приложении).
+export type ExportDishProduct = { title: string; qty: number | null; unit: string | null; price: number | null };
+export type ExportDish = { title: string; products: ExportDishProduct[] };
+
 export type ExchangeFile = {
   app: typeof APP_ID;
   format: number;
@@ -35,10 +41,11 @@ export type ExchangeFile = {
   exportedAt: string;
   lists: ExportList[];
   history: ExportHistory[];
+  dishes: ExportDish[];
 };
 
-export function buildFile(kind: ExchangeFile['kind'], lists: ExportList[], history: ExportHistory[], now: Date): ExchangeFile {
-  return { app: APP_ID, format: FORMAT, kind, exportedAt: now.toISOString(), lists, history };
+export function buildFile(kind: ExchangeFile['kind'], lists: ExportList[], history: ExportHistory[], now: Date, dishes: ExportDish[] = []): ExchangeFile {
+  return { app: APP_ID, format: FORMAT, kind, exportedAt: now.toISOString(), lists, history, dishes };
 }
 
 export type ParseResult = { ok: true; file: ExchangeFile } | { ok: false; reason: 'invalid' | 'newer' | 'empty' };
@@ -104,6 +111,29 @@ function cleanHistory(v: unknown): ExportHistory | null {
   };
 }
 
+function cleanDish(v: unknown): ExportDish | null {
+  if (typeof v !== 'object' || v === null) return null;
+  const o = v as Record<string, unknown>;
+  const title = str(o.title, 60);
+  if (!title) return null;
+  const products = (Array.isArray(o.products) ? o.products : [])
+    .slice(0, MAX_DISH_PRODUCTS)
+    .map((p): ExportDishProduct | null => {
+      if (typeof p !== 'object' || p === null) return null;
+      const po = p as Record<string, unknown>;
+      const name = str(po.title, 60);
+      if (!name) return null;
+      return {
+        title: name,
+        qty: num(po.qty, Number.MIN_VALUE),
+        unit: typeof po.unit === 'string' && (UNITS as readonly string[]).includes(po.unit) ? po.unit : null,
+        price: num(po.price, 0),
+      };
+    })
+    .filter((p): p is ExportDishProduct => p !== null);
+  return products.length > 0 ? { title, products } : null;
+}
+
 export function parseFile(text: string): ParseResult {
   let raw: unknown;
   try {
@@ -117,7 +147,8 @@ export function parseFile(text: string): ParseResult {
   if (o.format > FORMAT) return { ok: false, reason: 'newer' };
   const lists = o.lists.slice(0, MAX_LISTS).map(cleanList).filter((l): l is ExportList => l !== null);
   const history = (Array.isArray(o.history) ? o.history : []).slice(0, MAX_HISTORY).map(cleanHistory).filter((h): h is ExportHistory => h !== null);
-  if (lists.length === 0 && history.length === 0) return { ok: false, reason: 'empty' };
+  const dishes = (Array.isArray(o.dishes) ? o.dishes : []).slice(0, MAX_DISHES).map(cleanDish).filter((d): d is ExportDish => d !== null);
+  if (lists.length === 0 && history.length === 0 && dishes.length === 0) return { ok: false, reason: 'empty' };
   return {
     ok: true,
     file: {
@@ -127,6 +158,7 @@ export function parseFile(text: string): ParseResult {
       exportedAt: typeof o.exportedAt === 'string' ? o.exportedAt : '',
       lists,
       history,
+      dishes,
     },
   };
 }

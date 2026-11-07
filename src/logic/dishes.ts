@@ -24,7 +24,7 @@ const LANG_INDEX: Record<Lang, 0 | 1 | 2> = { ru: 0, kk: 1, en: 2 };
 
 export const dishName = (dish: Dish, lang: Lang): string => dish.names[LANG_INDEX[lang]];
 
-export type DishRow = { key: string; title: string; qty: number | null; unit: string | null; categoryId: number | null };
+export type DishRow = { key: string; title: string; qty: number | null; unit: string | null; categoryId: number | null; price?: number | null };
 
 // Продукты блюда на языке приложения; категория — из каталога.
 export function dishRows(dish: Dish, lang: Lang, categories: readonly Category[]): DishRow[] {

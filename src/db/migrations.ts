@@ -71,6 +71,25 @@ export const MIGRATIONS: readonly string[] = [
   ALTER TABLE items ADD COLUMN price REAL;
   ALTER TABLE history ADD COLUMN price REAL;
   `,
+  // v5: свои блюда и их продукты (стандартные блюда живут в коде; скрытые стандартные — в settings)
+  `
+  CREATE TABLE IF NOT EXISTS dishes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    sort INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS dish_items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    dish_id INTEGER NOT NULL REFERENCES dishes(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    qty REAL,
+    unit TEXT,
+    price REAL,
+    sort INTEGER NOT NULL DEFAULT 0
+  );
+  CREATE INDEX IF NOT EXISTS idx_dish_items_dish ON dish_items(dish_id);
+  `,
 ];
 
 // Минимум, который нужен миграциям от БД (реализуют expo-sqlite и тест на sql.js).

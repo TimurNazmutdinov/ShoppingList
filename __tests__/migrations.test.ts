@@ -24,6 +24,22 @@ beforeAll(async () => {
 const NOW = '2026-11-06T09:00:00.000Z';
 
 describe('миграции', () => {
+  it('v5: свои блюда; старые данные целы, продукты блюда удаляются вместе с блюдом', async () => {
+    const db = new SQL.Database();
+    for (let i = 0; i < 4; i++) db.exec(MIGRATIONS[i]);
+    db.exec('PRAGMA user_version = 4');
+    db.exec(`INSERT INTO lists (title, created_at) VALUES ('Список', '${NOW}')`);
+    db.exec(`INSERT INTO items (list_id, title, price, created_at) VALUES (1, 'Молоко', 450, '${NOW}')`);
+    await runMigrations(adapter(db));
+    expect(rows(db, 'SELECT title, price FROM items')).toEqual([['Молоко', 450]]);
+    db.exec('PRAGMA foreign_keys = ON');
+    db.exec(`INSERT INTO dishes (title, sort, created_at) VALUES ('Мой салат', 1, '${NOW}')`);
+    db.exec("INSERT INTO dish_items (dish_id, title, qty, unit, price, sort) VALUES (1, 'Огурцы', 0.5, 'kg', 400, 1), (1, 'Помидоры', NULL, NULL, NULL, 2)");
+    expect(rows(db, 'SELECT title, qty, unit, price FROM dish_items ORDER BY sort')).toEqual([['Огурцы', 0.5, 'kg', 400], ['Помидоры', null, null, null]]);
+    db.exec('DELETE FROM dishes WHERE id = 1');
+    expect(rows(db, 'SELECT COUNT(*) FROM dish_items')).toEqual([[0]]);
+  });
+
   it('v4: цена у товаров и в истории необязательна, старые данные целы', async () => {
     const db = new SQL.Database();
     for (let i = 0; i < 3; i++) db.exec(MIGRATIONS[i]);
@@ -115,7 +131,7 @@ describe('миграции', () => {
     expect(Number(rows(db, 'PRAGMA user_version')[0][0])).toBe(MIGRATIONS.length);
     expect(rows(db, 'SELECT title, qty, unit FROM items')).toEqual([['Порошок', 1, 'уп']]);
     const idx = rows(db, "SELECT name FROM sqlite_master WHERE type = 'index' AND name LIKE 'idx_%'").map((r) => r[0]);
-    expect(idx).toHaveLength(4);
+    expect(idx).toHaveLength(5);
   });
 
   it('повторный запуск ничего не ломает', async () => {

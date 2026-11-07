@@ -1,4 +1,4 @@
-import { isStructured, parseBulk, parseBulkPart, splitBulk } from '@/logic/bulk';
+import { bulkPreview, isStructured, parseBulk, parseBulkPart, priceMarkers, splitBulk } from '@/logic/bulk';
 
 describe('splitBulk', () => {
   it('по запятым, строкам и «;»', () => {
@@ -48,5 +48,45 @@ describe('parseBulk / isStructured', () => {
     expect(isStructured(parseBulk('молоко, хлеб'))).toBe(true);
     expect(isStructured(parseBulk('молоко 2 л'))).toBe(true);
     expect(isStructured(parseBulk(''))).toBe(false);
+  });
+});
+
+describe('цена в тексте', () => {
+  it('число со значком — цена: ₸, тг, тенге, слитно и раздельно', () => {
+    expect(parseBulkPart('хлеб 120 ₸')).toEqual({ title: 'хлеб', qty: null, unit: null, price: 120 });
+    expect(parseBulkPart('молоко 1 л 450₸')).toEqual({ title: 'молоко', qty: 1, unit: 'l', price: 450 });
+    expect(parseBulkPart('сыр 2 кг 3000 тг')).toEqual({ title: 'сыр', qty: 2, unit: 'kg', price: 3000 });
+    expect(parseBulkPart('2 кг сыра 3000 тенге')).toEqual({ title: 'сыра', qty: 2, unit: 'kg', price: 3000 });
+    expect(parseBulkPart('хлеб 120 руб.')).toEqual({ title: 'хлеб', qty: null, unit: null, price: 120 });
+  });
+
+  it('группы тысяч и дробная цена', () => {
+    expect(parseBulkPart('сыр 2 кг 3 000 ₸')).toEqual({ title: 'сыр', qty: 2, unit: 'kg', price: 3000 });
+    expect(parseBulkPart('сок 1,5 л 1 250,50 ₸')).toEqual({ title: 'сок', qty: 1.5, unit: 'l', price: 1250.5 });
+  });
+
+  it('число без значка остаётся в названии', () => {
+    expect(parseBulkPart('молоко 1 л 450т')).toEqual({ title: 'молоко 1 л 450т', qty: null, unit: null });
+    expect(parseBulkPart('Йогурт 3')).toEqual({ title: 'Йогурт 3', qty: null, unit: null });
+    expect(parseBulkPart('Молоко 3,2%')).toEqual({ title: 'Молоко 3,2%', qty: null, unit: null });
+  });
+
+  it('одна цена без названия — это название', () => {
+    expect(parseBulkPart('450 ₸')).toEqual({ title: '450 ₸', qty: null, unit: null });
+  });
+
+  it('символ или код валюты пользователя тоже значок цены', () => {
+    expect(parseBulkPart('хлеб 5 usd')).toEqual({ title: 'хлеб 5 usd', qty: null, unit: null });
+    expect(parseBulkPart('хлеб 5 usd', priceMarkers('USD'))).toEqual({ title: 'хлеб', qty: null, unit: null, price: 5 });
+    expect(parseBulkPart('хлеб 5BR', priceMarkers('br'))).toEqual({ title: 'хлеб', qty: null, unit: null, price: 5 });
+  });
+
+  it('список с ценами и предпросмотр', () => {
+    const items = parseBulk('молоко 1 л 450 ₸, хлеб, сыр 2 кг 3 000 ₸');
+    expect(items.map((i) => [i.title, i.price])).toEqual([['молоко', 450], ['хлеб', undefined], ['сыр', 3000]]);
+    expect(bulkPreview('молоко 1 л 450 ₸, хлеб')).toHaveLength(2);
+    expect(bulkPreview('хлеб 120 ₸')).toHaveLength(1);
+    expect(bulkPreview('Молоко')).toEqual([]);
+    expect(isStructured(parseBulk('хлеб 120 ₸'))).toBe(true);
   });
 });

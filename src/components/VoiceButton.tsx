@@ -10,15 +10,19 @@ import { ConfirmDialog } from './ConfirmDialog';
 const LOCALES: Record<Lang, string> = { ru: 'ru-RU', kk: 'kk-KZ', en: 'en-US' };
 const NOTICE_FLAG = 'voiceNoticeShown';
 
-type Props = { onResult: (text: string) => void };
+type Props = { onResult: (text: string) => void; onListeningChange?: (listening: boolean) => void };
 
 // Голосовой ввод: распознанная речь попадает в строку добавления. Распознавание может идти через интернет:
-// при первом использовании показывается сообщение об этом.
-export function VoiceButton({ onResult }: Props) {
+// при первом использовании показывается сообщение об этом (с примером, как говорить).
+export function VoiceButton({ onResult, onListeningChange }: Props) {
   const colors = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
-  const [listening, setListening] = useState(false);
+  const [listening, setListeningState] = useState(false);
   const [notice, setNotice] = useState(false);
+  const setListening = (on: boolean) => {
+    setListeningState(on);
+    onListeningChange?.(on);
+  };
 
   useSpeechRecognitionEvent('start', () => setListening(true));
   useSpeechRecognitionEvent('end', () => setListening(false));
@@ -66,7 +70,7 @@ export function VoiceButton({ onResult }: Props) {
       <ConfirmDialog
         visible={notice}
         title={t('voice.noticeTitle')}
-        message={t('voice.noticeText')}
+        message={`${t('voice.noticeText')}\n\n${t('voice.noticeExample')}`}
         icon="mic-outline"
         cancelLabel={t('common.cancel')}
         confirmLabel={t('voice.noticeOk')}

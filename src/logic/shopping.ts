@@ -1,5 +1,5 @@
 // Правила работы со списками и товарами. Экраны вызывают только эти функции, SQL — в src/db.
-import { getSetting, setSetting } from '@/db';
+import { getSetting, inTransaction, setSetting } from '@/db';
 import { Item, ItemPatch, addItem, deleteItem, loadItems, restoreItem, setBought, updateItem } from '@/db/items';
 import { createCategory, loadCategories } from '@/db/categories';
 import { ScheduledItem, loadDue, loadScheduledRange } from '@/db/schedule';
@@ -7,7 +7,7 @@ import { ShoppingList, copyList, createList, deleteList, loadList, loadLists, re
 import { clearHistory, findHistory, remember, suggest } from '@/db/history';
 import { HistoryRow } from './history';
 import { catalogRow, findCatalog, matchCatalog } from './catalog';
-import { isStructured, parseBulk } from './bulk';
+import { isStructured, parseBulk, priceMarkers } from './bulk';
 import { getLanguage, t } from '@/i18n';
 
 export type { Item, ItemPatch, ScheduledItem, ShoppingList, HistoryRow };
@@ -16,13 +16,15 @@ export { clearHistory };
 export { createCategory, loadCategories, loadDue, loadScheduledRange };
 export { copyList, createList, deleteList, loadItems, loadList, loadLists, resetBought, restoreItem, updateItem, updateList };
 
-export type QuickQty = { qty: number | null; unit: string | null };
-export const NO_QTY: QuickQty = { qty: null, unit: null };
+// Количество, единица и цена (за всю позицию), заданные рядом с «+» или у товара в списке.
+export type QuickQty = { qty: number | null; unit: string | null; price?: number | null };
+export const NO_QTY: QuickQty = { qty: null, unit: null, price: null };
 
 type AddOptions = {
   remember: boolean; // включено «Запоминать параметры товаров»
   preset?: HistoryRow; // выбрана подсказка
-  quick?: QuickQty; // количество, заданное рядом с «+»
+  quick?: QuickQty; // количество и цена, заданные рядом с «+»
+  currency?: string; // символ валюты пользователя: он тоже значок цены в тексте
 };
 
 // Подсказки при вводе: сначала из истории покупок (если запоминание включено), затем из встроенного каталога.
@@ -35,20 +37,22 @@ export async function suggestAll(query: string, withHistory: boolean, limit = 5)
   return [...history, ...fromCatalog];
 }
 
-// Добавление: количество из быстрого ввода главнее; иначе подсказка или точное совпадение в истории; иначе только название.
+// Добавление: количество и цена из быстрого ввода главнее; иначе подсказка или точное совпадение в истории; иначе только название.
+// Цена из истории подставляется, только если количество не меняли (цена — за всю позицию).
 export async function addByTitle(listId: number, title: string, opts: AddOptions): Promise<void> {
   const name = title.trim();
   if (!name) return;
   const quick = opts.quick ?? NO_QTY;
-  const hasQuick = quick.qty !== null || quick.unit !== null;
+  const hasQty = quick.qty !== null || quick.unit !== null;
   const known = opts.preset ?? (opts.remember ? await findHistory(name) : null);
   // нет в истории — берём категорию из каталога по точному названию
   const catalog = known ? null : findCatalog(name, getLanguage(), await loadCategories());
-  const h = hasQuick ? catalog : known ?? catalog;
-  const qty = hasQuick ? quick.qty : h?.qty ?? null;
-  const unit = hasQuick ? quick.unit : h?.unit ?? null;
+  const h = known ?? catalog;
+  const qty = hasQty ? quick.qty : h?.qty ?? null;
+  const unit = hasQty ? quick.unit : h?.unit ?? null;
   const categoryId = h?.categoryId ?? null;
-  const price = hasQuick ? null : h?.price ?? null;
+  const sameAsKnown = !hasQty || (known !== null && known.qty === quick.qty && known.unit === quick.unit);
+  const price = quick.price ?? (sameAsKnown ? h?.price ?? null : null);
   await addItem({ listId, title: name, qty, unit, price, categoryId });
   // запоминаем сразу при добавлении: в следующий раз «молоко» подставится с теми же параметрами
   if (opts.remember) await remember({ title: name, qty, unit, price, categoryId });
@@ -60,22 +64,45 @@ export async function saveItem(id: number, patch: ItemPatch, rememberOn: boolean
   if (rememberOn) await remember({ title: patch.title, qty: patch.qty, unit: patch.unit, price: patch.price, categoryId: patch.categoryId });
 }
 
-// Ввод из строки: одно название — обычное добавление; несколько («молоко, хлеб») или с количеством («2 кг сыра») — разбираются на товары.
+// Ввод из строки: одно название — обычное добавление; несколько («молоко, хлеб»), с количеством («2 кг сыра») или ценой
+// («хлеб 120 ₸») — разбираются на товары.
 export async function addFromText(listId: number, text: string, opts: AddOptions): Promise<void> {
-  const parsed = parseBulk(text);
+  const parsed = parseBulk(text, priceMarkers(opts.currency));
   if (opts.preset || !isStructured(parsed)) {
     await addByTitle(listId, text, opts);
     return;
   }
-  for (const p of parsed) {
-    const own = p.qty !== null || p.unit !== null;
-    await addByTitle(listId, p.title, { remember: opts.remember, quick: own ? { qty: p.qty, unit: p.unit } : parsed.length === 1 ? opts.quick : undefined });
-  }
+  // одной транзакцией: либо все товары добавлены, либо ни одного
+  await inTransaction(async () => {
+    for (const p of parsed) {
+      const own = p.qty !== null || p.unit !== null || p.price !== undefined;
+      const outer = parsed.length === 1 ? opts.quick : undefined; // количество и цена рядом с «+» — только для единственного товара
+      const quick = own
+        ? { qty: p.qty ?? outer?.qty ?? null, unit: p.unit ?? outer?.unit ?? null, price: p.price ?? outer?.price ?? null }
+        : outer;
+      await addByTitle(listId, p.title, { remember: opts.remember, quick });
+    }
+  });
 }
 
-// Несколько товаров сразу (набор из блюда): у каждого свои название, количество и единица.
-export async function addMany(listId: number, items: { title: string; qty: number | null; unit: string | null }[], rememberOn: boolean): Promise<void> {
-  for (const i of items) await addByTitle(listId, i.title, { remember: rememberOn, quick: { qty: i.qty, unit: i.unit } });
+// Несколько товаров сразу (набор из блюда): у каждого свои название, количество, единица и цена. Одной транзакцией.
+export async function addMany(
+  listId: number,
+  items: { title: string; qty: number | null; unit: string | null; price?: number | null }[],
+  rememberOn: boolean,
+): Promise<void> {
+  await inTransaction(async () => {
+    for (const i of items) await addByTitle(listId, i.title, { remember: rememberOn, quick: { qty: i.qty, unit: i.unit, price: i.price ?? null } });
+  });
+}
+
+// Быстрая правка количества и цены товара прямо в списке.
+export async function setItemQtyPrice(item: Item, v: QuickQty, rememberOn: boolean): Promise<void> {
+  await saveItem(
+    item.id,
+    { title: item.title, qty: v.qty, unit: v.unit, price: v.price ?? null, note: item.note, categoryId: item.categoryId, plannedDate: item.plannedDate, remind: item.remind },
+    rememberOn,
+  );
 }
 
 // Первый запуск: если списков нет, создаём пример «Продукты» с несколькими товарами (один раз; удалить можно как обычный).
