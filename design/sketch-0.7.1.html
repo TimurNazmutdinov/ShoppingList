@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ShoppingList 0.7.1 — эскиз двух правок</title>
+<style>
+  :root {
+    --bg: #F6F0E7; --card: #FFFDF9; --cb: #E8DCCB; --text: #3A2E22; --muted: #76634F;
+    --primary: #D9B48C; --onp: #3A2512; --strong: #9C6B3C; --outline: #76634F;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; background: #E4DDD2; color: #2a2a2a; font-family: system-ui, "Segoe UI", Roboto, sans-serif; line-height: 1.4; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  h2 { font-size: 17px; margin: 28px 0 4px; }
+  p.lead { margin: 0 0 8px; color: #555; font-size: 14px; max-width: 760px; }
+  .row { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; margin-top: 10px; }
+  .fig { width: 360px; }
+  .cap { font-weight: 700; font-size: 14px; margin: 0 0 6px; }
+  .cap em { font-style: normal; font-weight: 400; color: #666; }
+  .rec { color: #1b7a43; }
+
+  .screen { background: var(--bg); border: 1px solid #b9b0a2; border-radius: 22px; padding: 18px 20px 14px; color: var(--text); }
+  .screen h3 { font-size: 26px; margin: 0; }
+  .date { color: var(--muted); font-size: 14px; margin-top: 2px; }
+  .sec { color: var(--strong); font-size: 12px; font-weight: 700; margin: 16px 0 0; }
+  .hdr { display: flex; align-items: center; gap: 8px; min-height: 48px; font-weight: 700; font-size: 15px; }
+  .hdr .name { flex: 1; }
+  .hdr .chev { color: var(--muted); font-size: 18px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--lc); }
+  .item { display: flex; align-items: center; gap: 14px; min-height: 48px; padding: 10px 14px; background: var(--card); border: 1px solid var(--cb); border-radius: 14px; margin-bottom: 8px; }
+  .chk { width: 26px; height: 26px; border: 2px solid var(--outline); border-radius: 8px; flex: none; }
+  .item .t { flex: 1; font-size: 17px; }
+  .item .q { color: var(--muted); font-size: 15px; }
+  .hint { color: var(--muted); font-size: 13px; text-align: center; margin: 10px 0 2px; }
+
+  /* вариант А: рамка вокруг всего списка цветом списка */
+  .frame { border: 2px solid var(--lc); border-radius: 18px; padding: 0 10px 2px; margin-top: 10px; }
+  .frame .hdr { min-height: 44px; }
+  /* вариант Б: линия карточек темнее */
+  .strong .item { border: 1.5px solid #B39A79; }
+
+  /* окно «Количество» */
+  .phoneb { background: #8c8898; border-radius: 22px; overflow: hidden; border: 1px solid #b9b0a2; }
+  .scrim { height: 70px; }
+  .sheet { background: #FFFDF9; border-radius: 28px 28px 0 0; padding: 12px 22px 18px; color: var(--text); }
+  .handle { width: 44px; height: 5px; border-radius: 3px; background: #E6DCC8; margin: 0 auto 14px; }
+  .sheet h4 { margin: 0 0 10px; font-size: 20px; font-weight: 600; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .chip { min-width: 48px; min-height: 48px; padding: 0 12px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--outline); border-radius: 14px; font-size: 16px; }
+  .chip.on { background: var(--primary); border-color: var(--primary); font-weight: 700; color: var(--onp); }
+  .tight .chip { min-width: 48px; padding: 0 6px; }
+  .field { flex: 1; min-width: 88px; min-height: 48px; padding: 0 8px; display: flex; align-items: center; border: 1px solid var(--cb); background: #fff; border-radius: 14px; color: var(--muted); font-size: 14px; white-space: nowrap; }
+  .field.full { flex: none; width: 100%; font-size: 16px; padding: 0 14px; margin-bottom: 10px; }
+  .units { margin-top: 0; }
+  .btns { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+  .btns .reset { color: var(--muted); font-weight: 600; font-size: 17px; padding: 0 14px; }
+  .btns .done { flex: 1; min-height: 52px; background: var(--primary); color: var(--onp); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 17px; }
+  ul.notes { margin: 8px 0 0; padding-left: 18px; font-size: 13px; color: #555; max-width: 360px; }
+</style>
+</head>
+<body>
+<h1>ShoppingList 0.7.1 — эскиз двух правок</h1>
+<p class="lead">Эскиз по цветам и размерам настоящего приложения (профиль «Беж», ширина 360 dp — самая узкая из частых). Ответьте: «ок» по каждой правке или какой вариант выбрать.</p>
+
+<h2>1. «Сегодня» и «Календарь»: обводить каждый список линией</h2>
+<p class="lead">Сейчас линия карточек светлая (#E8DCCB на фоне #F6F0E7), и списки сливаются с фоном и друг с другом.</p>
+<div class="row">
+
+  <div class="fig">
+    <p class="cap">Сейчас</p>
+    <div class="screen">
+      <h3>Сегодня</h3><div class="date">Суббота, 7 ноября</div>
+      <div class="sec">С прошлых дней · 4</div>
+      <div class="hdr" style="--lc:#1F8F55"><span class="dot"></span><span class="name">1</span><span class="chev">›</span></div>
+      <div class="item"><span class="chk"></span><span class="t">Хлеб</span><span class="q">1 шт</span></div>
+      <div class="item"><span class="chk"></span><span class="t">Масло</span><span class="q">1 л</span></div>
+      <div class="hdr" style="--lc:#7A5BC4"><span class="dot"></span><span class="name">3</span><span class="chev">›</span></div>
+      <div class="item"><span class="chk"></span><span class="t">Шампунь</span><span class="q">1 шт</span></div>
+      <div class="item"><span class="chk"></span><span class="t">Салфетки</span><span class="q">2 шт</span></div>
+      <div class="hint">Не успели — не страшно, можно купить сегодня</div>
+    </div>
+  </div>
+
+  <div class="fig">
+    <p class="cap rec">Вариант А (рекомендую) <em>— рамка вокруг всего списка цветом списка</em></p>
+    <div class="screen">
+      <h3>Сегодня</h3><div class="date">Суббота, 7 ноября</div>
+      <div class="sec">С прошлых дней · 4</div>
+      <div class="frame" style="--lc:#1F8F55">
+        <div class="hdr"><span class="dot"></span><span class="name">1</span><span class="chev">›</span></div>
+        <div class="item"><span class="chk"></span><span class="t">Хлеб</span><span class="q">1 шт</span></div>
+        <div class="item"><span class="chk"></span><span class="t">Масло</span><span class="q">1 л</span></div>
+      </div>
+      <div class="frame" style="--lc:#7A5BC4">
+        <div class="hdr"><span class="dot"></span><span class="name">3</span><span class="chev">›</span></div>
+        <div class="item"><span class="chk"></span><span class="t">Шампунь</span><span class="q">1 шт</span></div>
+        <div class="item"><span class="chk"></span><span class="t">Салфетки</span><span class="q">2 шт</span></div>
+      </div>
+      <div class="hint">Не успели — не страшно, можно купить сегодня</div>
+    </div>
+  </div>
+
+  <div class="fig">
+    <p class="cap">Вариант Б <em>— только линия карточек темнее и толще</em></p>
+    <div class="screen strong">
+      <h3>Сегодня</h3><div class="date">Суббота, 7 ноября</div>
+      <div class="sec">С прошлых дней · 4</div>
+      <div class="hdr" style="--lc:#1F8F55"><span class="dot"></span><span class="name">1</span><span class="chev">›</span></div>
+      <div class="item"><span class="chk"></span><span class="t">Хлеб</span><span class="q">1 шт</span></div>
+      <div class="item"><span class="chk"></span><span class="t">Масло</span><span class="q">1 л</span></div>
+      <div class="hdr" style="--lc:#7A5BC4"><span class="dot"></span><span class="name">3</span><span class="chev">›</span></div>
+      <div class="item"><span class="chk"></span><span class="t">Шампунь</span><span class="q">1 шт</span></div>
+      <div class="item"><span class="chk"></span><span class="t">Салфетки</span><span class="q">2 шт</span></div>
+      <div class="hint">Не успели — не страшно, можно купить сегодня</div>
+    </div>
+  </div>
+
+</div>
+<ul class="notes">
+  <li>Действует на «Сегодня» и «Календаре» (там списки идут группами). Экран самого списка и вкладка «Списки» не меняются.</li>
+  <li>В тёмных профилях цвет рамки берётся из тех же цветов списка, что и точка.</li>
+</ul>
+
+<h2>2. Окно «Количество»: убрать 5 и 10, «Своё число» — в тот же ряд</h2>
+<p class="lead">Сейчас шесть кнопок не помещаются в ряд («10» уезжает на вторую строку), а ниже ещё отдельное длинное поле.</p>
+<div class="row">
+
+  <div class="fig">
+    <p class="cap">Сейчас</p>
+    <div class="phoneb"><div class="scrim"></div>
+      <div class="sheet">
+        <div class="handle"></div>
+        <h4>Количество</h4>
+        <div class="chips">
+          <div class="chip">0,5</div><div class="chip">1</div><div class="chip">2</div><div class="chip">3</div><div class="chip">5</div><div class="chip">10</div>
+        </div>
+        <div class="field full">Своё число</div>
+        <div class="chips units"><div class="chip">шт</div><div class="chip">кг</div><div class="chip">г</div><div class="chip">л</div><div class="chip">уп</div></div>
+        <div class="btns"><span class="reset">Сбросить</span><span class="done">Готово</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fig">
+    <p class="cap rec">Станет <em>— в одном ряду: 0,5 · 1 · 2 · 3 · «Своё число»</em></p>
+    <div class="phoneb"><div class="scrim"></div>
+      <div class="sheet">
+        <div class="handle"></div>
+        <h4>Количество</h4>
+        <div class="chips tight">
+          <div class="chip">0,5</div><div class="chip">1</div><div class="chip">2</div><div class="chip">3</div><div class="field">Своё число</div>
+        </div>
+        <div class="chips units"><div class="chip">шт</div><div class="chip">кг</div><div class="chip">г</div><div class="chip">л</div><div class="chip">уп</div></div>
+        <div class="btns"><span class="reset">Сбросить</span><span class="done">Готово</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<ul class="notes">
+  <li>Кнопки остаются 48×48 dp (чуть уже отступы внутри), поле «Своё число» занимает остаток ряда (≈ 90 dp на экране 360 dp, больше на широких). Если на очень узком экране поле не помещается, оно переходит на следующую строку.</li>
+  <li>Своё число (5, 10, 0,8 и любое другое) вводится в поле; кнопка «Готово» работает как раньше.</li>
+</ul>
+<script>
+  // на узком экране уменьшаем макеты целиком, не меняя их раскладку (360 dp)
+  function fit() {
+    var k = Math.min(1, (document.documentElement.clientWidth - 32) / 360);
+    document.querySelectorAll('.fig').forEach(function (f) { f.style.zoom = k; });
+  }
+  fit(); addEventListener('resize', fit);
+</script>
+</body>
+</html>
