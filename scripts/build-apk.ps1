@@ -20,12 +20,12 @@ Step 'tsc'    { npx.cmd tsc --noEmit }
 Step 'lint'   { npx.cmd expo lint }
 Step 'test'   { npm.cmd test }
 if (Test-Path android\gradlew.bat) { & android\gradlew.bat --stop | Out-Null }  # otherwise Gradle keeps the android folder locked
+# prebuild may rewrite package.json: keep a copy and put it back afterwards (a plain "git checkout package.json"
+# would also throw away uncommitted changes such as newly added packages).
+$pkgBackup = Join-Path $env:TEMP 'shoppinglist-package.json'
+Copy-Item package.json $pkgBackup -Force
 Step 'prebuild' { npx.cmd expo prebuild --platform android --clean }
-# prebuild may rewrite package.json: restore it. git prints to stderr even on success, so errors are ignored here.
-$ErrorActionPreference = 'Continue'
-git checkout package.json 2>&1 | Out-Null
-$ErrorActionPreference = 'Stop'
-$global:LASTEXITCODE = 0
+Copy-Item $pkgBackup package.json -Force
 Step 'gradle' { Push-Location android; try { .\gradlew.bat assembleRelease } finally { Pop-Location } }
 
 $version = (Get-Content app.json -Raw | ConvertFrom-Json).expo.version

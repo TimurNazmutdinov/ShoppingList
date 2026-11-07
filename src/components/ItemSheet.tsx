@@ -5,6 +5,8 @@ import { t } from '@/i18n';
 import { Item, ItemPatch } from '@/db/items';
 import { Category, categoryName } from '@/logic/categories';
 import { UNITS, formatQty, parseQty } from '@/logic/history';
+import { currencySymbol, parsePrice } from '@/logic/money';
+import { useSettings } from '@/AppSettings';
 import { BottomSheet } from './BottomSheet';
 import { DateField } from './DateField';
 import { FormField, TextField } from './FormField';
@@ -34,6 +36,8 @@ function ItemForm({ item, categories, onSave, onDelete, onCreateCategory }: Omit
   const [title, setTitle] = useState(item.title);
   const [qty, setQty] = useState(item.qty === null ? '' : String(item.qty).replace('.', ','));
   const [unit, setUnit] = useState<string | null>(item.unit);
+  const { currency } = useSettings();
+  const [price, setPrice] = useState(item.price === null ? '' : String(item.price).replace('.', ','));
   const [note, setNote] = useState(item.note ?? '');
   const [categoryId, setCategoryId] = useState<number | null>(item.categoryId);
   const [date, setDate] = useState<string | null>(item.plannedDate);
@@ -47,7 +51,7 @@ function ItemForm({ item, categories, onSave, onDelete, onCreateCategory }: Omit
       setError(t('validation.titleRequired'));
       return;
     }
-    onSave(item.id, { title, qty: parseQty(qty), unit, note: note.trim() || null, categoryId, plannedDate: date, remind: remind && date !== null });
+    onSave(item.id, { title, qty: parseQty(qty), unit, price: parsePrice(price), note: note.trim() || null, categoryId, plannedDate: date, remind: remind && date !== null });
   };
 
   const addCategory = async () => {
@@ -87,6 +91,10 @@ function ItemForm({ item, categories, onSave, onDelete, onCreateCategory }: Omit
           {UNITS.map((u) => chip(u, t(`unitShort.${u}`), unit === u, () => setUnit(unit === u ? null : u)))}
         </View>
       </View>
+
+      <FormField label={t('item.priceLabel', { symbol: currencySymbol(currency) })}>
+        <TextField value={price} onChangeText={setPrice} keyboardType="decimal-pad" maxLength={12} accessibilityLabel={t('item.priceLabel', { symbol: currencySymbol(currency) })} />
+      </FormField>
 
       <Text style={styles.label}>{t('item.category')}</Text>
       <View style={styles.chips}>

@@ -8,12 +8,13 @@ export type HistoryRow = {
   title: string;
   qty: number | null;
   unit: string | null;
+  price: number | null; // последняя цена позиции
   categoryId: number | null;
   usedCount: number;
   lastUsedAt: string;
 };
 
-export type RememberInput = { title: string; qty: number | null; unit: string | null; categoryId: number | null };
+export type RememberInput = { title: string; qty: number | null; unit: string | null; price?: number | null; categoryId: number | null };
 
 // «Гречка », «гречка», «ГРЕЧКА» и «греч ка» с лишними пробелами — один товар; ё = е.
 export function normTitle(title: string): string {
@@ -43,6 +44,7 @@ export function nextHistory(prev: HistoryRow | null, input: RememberInput, now: 
     title: input.title.trim(),
     qty: input.qty ?? prev?.qty ?? null,
     unit: input.unit ?? prev?.unit ?? null,
+    price: input.price ?? prev?.price ?? null,
     categoryId: input.categoryId ?? prev?.categoryId ?? null,
     usedCount: (prev?.usedCount ?? 0) + 1,
     lastUsedAt: now,

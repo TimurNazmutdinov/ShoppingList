@@ -66,6 +66,11 @@ export const MIGRATIONS: readonly string[] = [
   INSERT INTO categories (key, color, sort) SELECT 'household', 'violet', 7 WHERE NOT EXISTS (SELECT 1 FROM categories WHERE key = 'household');
   INSERT INTO categories (key, color, sort) SELECT 'other', 'slate', 8 WHERE NOT EXISTS (SELECT 1 FROM categories WHERE key = 'other');
   `,
+  // v4: цены (стоимость позиции) у товаров и в истории
+  `
+  ALTER TABLE items ADD COLUMN price REAL;
+  ALTER TABLE history ADD COLUMN price REAL;
+  `,
 ];
 
 // Минимум, который нужен миграциям от БД (реализуют expo-sqlite и тест на sql.js).

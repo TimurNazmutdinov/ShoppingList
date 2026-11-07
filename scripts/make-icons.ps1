@@ -31,7 +31,7 @@ function Body($s, $h) {
 }
 
 # Рисует знак на прозрачной картинке size x size. mode: 'color' или 'mono' (белый силуэт).
-function Mark($size, $s, $mode, [double]$checkW = 9) {
+function Mark($size, $s, $mode, [double]$checkW = 9, $from = '#FFC83D', $to = '#F0702A') {
     $bmp = New-Object System.Drawing.Bitmap($size, $size, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
     $g = [System.Drawing.Graphics]::FromImage($bmp)
     $g.SmoothingMode = 'AntiAlias'
@@ -40,8 +40,8 @@ function Mark($size, $s, $mode, [double]$checkW = 9) {
     $body = Body $s $h
     $rect = $body.GetBounds()
     if ($mode -eq 'color') {
-        $c1 = [System.Drawing.ColorTranslator]::FromHtml('#FFC83D')
-        $c2 = [System.Drawing.ColorTranslator]::FromHtml('#F0702A')
+        $c1 = [System.Drawing.ColorTranslator]::FromHtml($from)
+        $c2 = [System.Drawing.ColorTranslator]::FromHtml($to)
         $handleRect = [System.Drawing.RectangleF]::new($rect.X, [single]((P 0 12 $s $h).Y), $rect.Width, [single]($rect.Bottom - (P 0 12 $s $h).Y))
         $brush = New-Object System.Drawing.Drawing2D.LinearGradientBrush($handleRect, $c1, $c2, 45.0)
     } else {
@@ -88,6 +88,25 @@ $icon.Save((Join-Path $out 'icon.png'), [System.Drawing.Imaging.ImageFormat]::Pn
 # notification-icon.png: 96x96 белый силуэт, галочка шире (крупнее зазор)
 (Mark 96 0.82 'mono' 11).Save((Join-Path $out 'notification-icon.png'), [System.Drawing.Imaging.ImageFormat]::Png)
 Write-Host 'Icons ready: assets\images' -ForegroundColor Green
+
+# Icons per colour profile (launcher icon follows the profile when "apply to everything" is on).
+# Default profile (vanilla) uses the main icon; every other profile gets a foreground and a legacy icon.
+$themes = Get-Content 'src/theme/themes.json' -Raw -Encoding UTF8 | ConvertFrom-Json
+$schemeDir = 'assets/icons/schemes'
+New-Item -ItemType Directory -Force $schemeDir | Out-Null
+$png = [System.Drawing.Imaging.ImageFormat]::Png
+foreach ($p in $themes.schemes.PSObject.Properties) {
+    $key = $p.Name
+    if ($key -eq 'vanilla') { continue }
+    $m = $p.Value.mark
+    (Mark 432 2.3 'color' 9 $m.from $m.to).Save((Join-Path $schemeDir "ic_scheme_$($key)_fg.png"), $png)
+    $legacy = New-Object System.Drawing.Bitmap(192, 192, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+    $lg = [System.Drawing.Graphics]::FromImage($legacy)
+    $lg.Clear([System.Drawing.ColorTranslator]::FromHtml($p.Value.iconBackground))
+    $lg.DrawImage((Mark 192 1.3 'color' 9 $m.from $m.to), 0, 0)
+    $lg.Dispose()
+    $legacy.Save((Join-Path $schemeDir "ic_scheme_$($key)_legacy.png"), $png)
+}
 
 # Preview for visual check: design\icons-preview.png
 $pv = New-Object System.Drawing.Bitmap(1100, 300, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)

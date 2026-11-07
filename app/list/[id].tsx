@@ -4,15 +4,18 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Palette, listColor, radius, useTheme } from '@/theme';
-import { t } from '@/i18n';
+import { getLanguage, t } from '@/i18n';
 import { useSettings } from '@/AppSettings';
 import { useKeyboardOverlap } from '@/useKeyboard';
 import {
-  Category, HistoryRow, Item, ItemPatch, NO_QTY, QuickQty, ShoppingList, addByTitle, createCategory, isFlagSet, loadCategories, loadItems,
-  loadList, removeItem, restoreItem, setFlag, suggest, toggleBought, updateItem,
+  Category, HistoryRow, Item, ItemPatch, NO_QTY, QuickQty, ShoppingList, addFromText, addMany, createCategory, isFlagSet, loadCategories, loadItems,
+  loadList, removeItem, restoreItem, saveItem, setFlag, suggestAll, toggleBought,
 } from '@/logic/shopping';
 import { categoryName, groupByCategory } from '@/logic/categories';
+import { currencySymbol, formatMoney, listTotals } from '@/logic/money';
 import { AddBar } from '@/components/AddBar';
+import { DishSheet } from '@/components/DishSheet';
+import { dishRows } from '@/logic/dishes';
 import { ItemRow } from '@/components/ItemRow';
 import { ItemSheet } from '@/components/ItemSheet';
 import { QtySheet } from '@/components/QtySheet';
@@ -30,7 +33,7 @@ export default function ListScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const keyboard = useKeyboardOverlap();
-  const { rememberItems } = useSettings();
+  const { rememberItems, currency } = useSettings();
   const { id } = useLocalSearchParams<{ id: string }>();
   const listId = Number(id);
 
@@ -40,6 +43,7 @@ export default function ListScreen() {
   const [text, setText] = useState('');
   const [quick, setQuick] = useState<QuickQty>(NO_QTY);
   const [qtyOpen, setQtyOpen] = useState(false);
+  const [dishOpen, setDishOpen] = useState(false);
   const [suggestions, setSuggestions] = useState<HistoryRow[]>([]);
   const [editing, setEditing] = useState<Item | null>(null);
   const [showBought, setShowBought] = useState(false);
@@ -61,9 +65,9 @@ export default function ListScreen() {
   );
 
   useEffect(() => {
-    if (!rememberItems || !text.trim()) return;
+    if (!text.trim()) return;
     let cancelled = false;
-    suggest(text)
+    suggestAll(text, rememberItems)
       .then((rows) => !cancelled && setSuggestions(rows))
       .catch((e) => console.warn(e));
     return () => {
@@ -75,7 +79,7 @@ export default function ListScreen() {
     if (toastTimer.current) clearTimeout(toastTimer.current);
   }, []);
 
-  const shownSuggestions = rememberItems && text.trim() ? suggestions : [];
+  const shownSuggestions = text.trim() ? suggestions : [];
   const toBuy = items.filter((i) => i.boughtAt === null);
   const bought = items.filter((i) => i.boughtAt !== null).sort((a, b) => (b.boughtAt ?? '').localeCompare(a.boughtAt ?? ''));
   const groups = groupByCategory(toBuy, categories);
@@ -97,7 +101,7 @@ export default function ListScreen() {
   };
 
   const add = async (title: string, preset?: HistoryRow) => {
-    await addByTitle(listId, title, { remember: rememberItems, preset, quick });
+    await addFromText(listId, title, { remember: rememberItems, preset, quick });
     setText('');
     setQuick(NO_QTY);
     await reload();
@@ -137,8 +141,15 @@ export default function ListScreen() {
     />
   );
 
+  const totals = listTotals(items);
+  const sym = currencySymbol(currency);
   const header = (
     <View>
+      {totals.priced ? (
+        <Text style={styles.totals}>
+          {t('list.totals', { bought: formatMoney(totals.bought, sym), left: formatMoney(totals.left, sym), total: formatMoney(totals.total, sym) })}
+        </Text>
+      ) : null}
       {items.length === 0 ? <Text style={styles.empty}>{t('list.empty')}</Text> : null}
       {!hintDone && toBuy.length > 0 ? (
         <View style={styles.hint} accessible accessibilityLabel={`${t('swipe.hintLeft')} / ${t('swipe.hintRight')}`}>
@@ -162,6 +173,9 @@ export default function ListScreen() {
         </Pressable>
         {list ? <View style={[styles.dot, { backgroundColor: listColor(list.color, colors.scheme) }]} /> : null}
         <Text style={styles.title} numberOfLines={1}>{list?.title ?? ''}</Text>
+        <Pressable style={styles.back} onPress={() => setDishOpen(true)} accessibilityRole="button" accessibilityLabel={t('dish.button')}>
+          <Ionicons name="restaurant-outline" size={22} color={colors.textMuted} />
+        </Pressable>
       </View>
 
       <SectionList
@@ -205,6 +219,18 @@ export default function ListScreen() {
         onQtyPress={() => setQtyOpen(true)}
       />
 
+      <DishSheet
+        visible={dishOpen}
+        categories={categories}
+        rowsFor={(dish) => dishRows(dish, getLanguage(), categories)}
+        onClose={() => setDishOpen(false)}
+        onAdd={(chosen) => {
+          setDishOpen(false);
+          addMany(listId, chosen, rememberItems)
+            .then(reload)
+            .catch((e) => console.warn(e));
+        }}
+      />
       <QtySheet
         visible={qtyOpen}
         value={quick}
@@ -224,7 +250,7 @@ export default function ListScreen() {
           return newId;
         }}
         onSave={(itemId, patch: ItemPatch) => {
-          updateItem(itemId, patch)
+          saveItem(itemId, patch, rememberItems)
             .then(reload)
             .catch((e) => console.warn(e));
           setEditing(null);
@@ -243,6 +269,7 @@ const createStyles = (colors: Palette) =>
     dot: { width: 14, height: 14, borderRadius: 7 },
     title: { color: colors.text, fontSize: 24, fontWeight: '700', flex: 1 },
     scroll: { flex: 1, paddingHorizontal: 16 },
+    totals: { color: colors.textMuted, fontSize: 13, marginBottom: 8 },
     empty: { color: colors.textMuted, fontSize: 15, marginTop: 24 },
     hint: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 10, paddingHorizontal: 12, minHeight: 32, borderRadius: 16, backgroundColor: colors.cardStrong },
     hintText: { color: colors.text, fontSize: 13, fontWeight: '600' },

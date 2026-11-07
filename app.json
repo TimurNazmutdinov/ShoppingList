@@ -2,7 +2,7 @@
   "expo": {
     "name": "ShoppingList",
     "slug": "shoppinglist",
-    "version": "0.6.1",
+    "version": "0.7.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "shoppinglist",
@@ -10,14 +10,17 @@
     "backgroundColor": "#2F2722",
     "android": {
       "package": "com.timurnazmutdinov.shoppinglist",
-      "versionCode": 2,
+      "versionCode": 4,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon-foreground.png",
         "backgroundColor": "#FFFFFF",
         "monochromeImage": "./assets/images/adaptive-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "permissions": ["android.permission.SCHEDULE_EXACT_ALARM", "android.permission.REQUEST_INSTALL_PACKAGES"]
+      "permissions": [
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.REQUEST_INSTALL_PACKAGES"
+      ]
     },
     "plugins": [
       "expo-router",
@@ -47,7 +50,10 @@
       "./plugins/withGradleProps",
       "./plugins/withReleaseSigning",
       "./plugins/withReleaseOptimizations",
-      "./plugins/withAppNameLocales"
+      "./plugins/withSchemeIcons",
+      "./plugins/withAppNameLocales",
+      "expo-sharing",
+      "expo-speech-recognition"
     ],
     "experiments": {
       "typedRoutes": true

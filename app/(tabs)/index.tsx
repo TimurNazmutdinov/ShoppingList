@@ -68,7 +68,7 @@ export default function TodayScreen() {
           section.kind === 'day' ? (
             <Text style={styles.section}>{section.title}</Text>
           ) : (
-            <ListGroupHeader title={section.title} color={section.color} count={section.data.length} onPress={() => openList(section.listId)} />
+            <ListGroupHeader title={section.title} color={section.color} onPress={() => openList(section.listId)} />
           )
         }
         ListEmptyComponent={<Text style={styles.empty}>{t('today.empty')}</Text>}

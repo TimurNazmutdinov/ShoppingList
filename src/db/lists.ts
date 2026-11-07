@@ -9,21 +9,25 @@ export type ShoppingList = {
   remind: boolean;
   total: number;
   left: number; // осталось купить
+  totalPrice: number; // сумма цен всех товаров
+  leftPrice: number; // сумма цен того, что ещё не куплено
 };
 
 type Row = {
   id: number; title: string; color: string; sort: number; planned_date: string | null; remind: number;
-  total: number; left: number;
+  total: number; left: number; total_price: number; left_price: number;
 };
 
 const toList = (r: Row): ShoppingList => ({
   id: r.id, title: r.title, color: r.color, sort: r.sort, plannedDate: r.planned_date,
-  remind: r.remind === 1, total: r.total, left: r.left,
+  remind: r.remind === 1, total: r.total, left: r.left, totalPrice: r.total_price, leftPrice: r.left_price,
 });
 
 const SELECT = `SELECT l.id, l.title, l.color, l.sort, l.planned_date, l.remind,
             (SELECT COUNT(*) FROM items i WHERE i.list_id = l.id) AS total,
-            (SELECT COUNT(*) FROM items i WHERE i.list_id = l.id AND i.bought_at IS NULL) AS "left"
+            (SELECT COUNT(*) FROM items i WHERE i.list_id = l.id AND i.bought_at IS NULL) AS "left",
+            (SELECT COALESCE(SUM(i.price), 0) FROM items i WHERE i.list_id = l.id) AS total_price,
+            (SELECT COALESCE(SUM(i.price), 0) FROM items i WHERE i.list_id = l.id AND i.bought_at IS NULL) AS left_price
        FROM lists l WHERE l.archived_at IS NULL`;
 
 export async function loadLists(): Promise<ShoppingList[]> {
@@ -77,8 +81,8 @@ export async function copyList(sourceId: number, title: string, plannedDate: str
   if (itemIds.length > 0) {
     const marks = itemIds.map(() => '?').join(',');
     await write(
-      `INSERT INTO items (list_id, title, qty, unit, note, category_id, sort, created_at)
-       SELECT ?, title, qty, unit, note, category_id, sort, ? FROM items WHERE list_id = ? AND id IN (${marks})`,
+      `INSERT INTO items (list_id, title, qty, unit, price, note, category_id, sort, created_at)
+       SELECT ?, title, qty, unit, price, note, category_id, sort, ? FROM items WHERE list_id = ? AND id IN (${marks})`,
       newId,
       now,
       sourceId,

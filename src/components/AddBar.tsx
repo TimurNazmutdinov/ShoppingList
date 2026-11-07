@@ -6,6 +6,7 @@ import { t } from '@/i18n';
 import { HistoryRow, QuickQty } from '@/logic/shopping';
 import { itemQtyLabel } from './ItemSheet';
 import { quickQtyLabel } from './QtySheet';
+import { VoiceButton } from './VoiceButton';
 
 type Props = {
   text: string;
@@ -50,11 +51,13 @@ export function AddBar({ text, onChangeText, suggestions, quick, bottomPad, onAd
           placeholder={t('list.addPlaceholder')}
           placeholderTextColor={colors.textMuted}
           returnKeyType="done"
+          multiline
+          submitBehavior="submit"
           onSubmitEditing={() => onAdd(text)}
-          blurOnSubmit={false}
-          maxLength={80}
+          maxLength={500}
           accessibilityLabel={t('list.addPlaceholder')}
         />
+        <VoiceButton onResult={(spoken) => onChangeText(text.trim() ? `${text.trim()}, ${spoken}` : spoken)} />
         <Pressable
           style={[styles.qtyBtn, quickLabel !== '' && styles.qtyBtnOn]}
           onPress={onQtyPress}
@@ -81,6 +84,8 @@ const createStyles = (colors: Palette) =>
     input: {
       flex: 1,
       minHeight: 48,
+      maxHeight: 120,
+      textAlignVertical: 'center',
       color: colors.text,
       fontSize: 17,
       borderWidth: 1,

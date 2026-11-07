@@ -1,10 +1,14 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { ApplyScope, Palette, darkSchemeKeys, lightSchemeKeys, radius, schemeDefs, useTheme } from '@/theme';
-import { logoSchemeKey } from '@/logic/schemes';
+import { ApplyScope, Palette, SchemeSetting, darkSchemeKeys, lightSchemeKeys, radius, schemeDefs, useTheme } from '@/theme';
+import { iconChange, logoSchemeKey } from '@/logic/schemes';
+import { CUSTOM_MAX, CurrencyKind } from '@/logic/money';
+import { TextField } from '@/components/FormField';
+import { backupAll } from '@/logic/sharing';
+import { useImportFlow } from '@/useImportFlow';
 import { LanguageSetting, languageNames, languages, t } from '@/i18n';
 import { AppSwitch } from '@/components/AppSwitch';
 import { SchemeThumb } from '@/components/SchemeThumb';
@@ -27,6 +31,20 @@ export default function SettingsScreen() {
   const s = useSettings();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [clearOpen, setClearOpen] = useState(false);
+  const [pendingIcon, setPendingIcon] = useState<string | null>(null);
+  const restoreFlow = useImportFlow(() => {});
+
+  // После смены профиля или охвата: нужна ли смена иконки рабочего стола и спросить ли об этом.
+  const applyChoice = (setting: SchemeSetting, scope: ApplyScope) => {
+    if (scope === 'screens' && s.iconDeclined) s.setIconDeclined(false);
+    const r = iconChange(scope, setting, s.launcherIcon, scope === 'screens' ? false : s.iconDeclined);
+    if (r.ask) setPendingIcon(r.target);
+    else if (r.target !== s.launcherIcon) s.setLauncherIcon(r.target);
+  };
+  const pickScheme = (setting: SchemeSetting) => {
+    s.setSchemeSetting(setting);
+    applyChoice(setting, s.applyScope);
+  };
   const { checkNow } = useUpdates();
   const [checkValue, setCheckValue] = useState<string | null>(null);
 
@@ -67,7 +85,7 @@ export default function SettingsScreen() {
 
         <Pressable
           style={[styles.systemRow, s.schemeSetting === 'system' && styles.systemRowActive]}
-          onPress={() => s.setSchemeSetting('system')}
+          onPress={() => pickScheme('system')}
           accessibilityRole="radio"
           accessibilityState={{ selected: s.schemeSetting === 'system' }}
           accessibilityLabel={t('theme.system')}
@@ -83,13 +101,13 @@ export default function SettingsScreen() {
         <Text style={styles.label}>{t('theme.light')}</Text>
         <View style={styles.grid}>
           {lightSchemeKeys.map((k) => (
-            <SchemeThumb key={k} schemeKey={k} selected={s.schemeSetting === k} onPress={() => s.setSchemeSetting(k)} />
+            <SchemeThumb key={k} schemeKey={k} selected={s.schemeSetting === k} onPress={() => pickScheme(k)} />
           ))}
         </View>
         <Text style={styles.label}>{t('theme.dark')}</Text>
         <View style={styles.grid}>
           {darkSchemeKeys.map((k) => (
-            <SchemeThumb key={k} schemeKey={k} selected={s.schemeSetting === k} onPress={() => s.setSchemeSetting(k)} />
+            <SchemeThumb key={k} schemeKey={k} selected={s.schemeSetting === k} onPress={() => pickScheme(k)} />
           ))}
         </View>
 
@@ -102,7 +120,10 @@ export default function SettingsScreen() {
               <Pressable
                 key={scope}
                 style={[styles.segment, active && styles.segmentActive]}
-                onPress={() => s.setApplyScope(scope)}
+                onPress={() => {
+                  s.setApplyScope(scope);
+                  applyChoice(s.schemeSetting, scope);
+                }}
                 accessibilityRole="radio"
                 accessibilityState={{ selected: active }}
                 accessibilityLabel={label}
@@ -112,6 +133,39 @@ export default function SettingsScreen() {
             );
           })}
         </View>
+
+        {s.applyScope === 'all' && s.iconDeclined ? <Text style={styles.hint}>{t('theme.iconBrand')}</Text> : null}
+
+        <Text style={styles.section}>{t('settings.currency')}</Text>
+        <View style={styles.segments}>
+          {(['KZT', 'RUB', 'CUSTOM'] as CurrencyKind[]).map((kind) => {
+            const active = s.currency.kind === kind;
+            const label = kind === 'KZT' ? '₸' : kind === 'RUB' ? '₽' : t('currency.custom');
+            return (
+              <Pressable
+                key={kind}
+                style={[styles.segment, active && styles.segmentActive]}
+                onPress={() => s.setCurrency({ ...s.currency, kind })}
+                accessibilityRole="radio"
+                accessibilityState={{ selected: active }}
+                accessibilityLabel={label}
+              >
+                <Text style={[styles.segmentText, active && styles.segmentTextActive]}>{label}</Text>
+              </Pressable>
+            );
+          })}
+        </View>
+        {s.currency.kind === 'CUSTOM' ? (
+          <View style={styles.gapTop}>
+            <TextField
+              value={s.currency.custom}
+              onChangeText={(custom) => s.setCurrency({ kind: 'CUSTOM', custom })}
+              placeholder={t('currency.customPlaceholder')}
+              maxLength={CUSTOM_MAX}
+              accessibilityLabel={t('currency.customPlaceholder')}
+            />
+          </View>
+        ) : null}
 
         <Pressable
           style={[styles.row, styles.gapTop]}
@@ -159,12 +213,55 @@ export default function SettingsScreen() {
           <Text style={styles.rowValue}>{checkValue ?? ''}</Text>
         </Pressable>
 
+        <Text style={styles.section}>{t('backup.title')}</Text>
+        <Pressable
+          style={styles.row}
+          onPress={() =>
+            backupAll().catch((e) => {
+              console.warn(e);
+              Alert.alert(t('share.failed'));
+            })
+          }
+          accessibilityRole="button"
+          accessibilityLabel={t('backup.save')}
+        >
+          <Ionicons name="cloud-upload-outline" size={22} color={colors.textMuted} />
+          <View style={styles.rowBody}>
+            <Text style={styles.rowTitleText}>{t('backup.save')}</Text>
+            <Text style={styles.hint}>{t('backup.saveHint')}</Text>
+          </View>
+        </Pressable>
+        <Pressable style={[styles.row, styles.gapTop]} onPress={restoreFlow.start} accessibilityRole="button" accessibilityLabel={t('backup.restore')}>
+          <Ionicons name="cloud-download-outline" size={22} color={colors.textMuted} />
+          <View style={styles.rowBody}>
+            <Text style={styles.rowTitleText}>{t('backup.restore')}</Text>
+            <Text style={styles.hint}>{t('backup.restoreHint')}</Text>
+          </View>
+        </Pressable>
+        {restoreFlow.dialog}
+
         <Text style={styles.section}>{t('settings.about')}</Text>
         <Text style={styles.version}>
           {t(IS_PROTOTYPE ? 'settings.versionProto' : 'settings.version', { version: appVersion, code: appVersionCodeLabel })}
         </Text>
       </ScrollView>
 
+      <ConfirmDialog
+        visible={pendingIcon !== null}
+        title={t('icon.confirmTitle')}
+        message={t('icon.confirmText')}
+        icon="image-outline"
+        cancelLabel={t('icon.keep')}
+        confirmLabel={t('icon.change')}
+        onCancel={() => {
+          s.setIconDeclined(true);
+          setPendingIcon(null);
+        }}
+        onConfirm={() => {
+          if (pendingIcon) s.setLauncherIcon(pendingIcon);
+          setPendingIcon(null);
+        }}
+      />
       <ConfirmDialog
         visible={clearOpen}
         title={t('settings.clearHistoryTitle')}

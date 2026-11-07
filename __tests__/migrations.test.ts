@@ -24,6 +24,20 @@ beforeAll(async () => {
 const NOW = '2026-11-06T09:00:00.000Z';
 
 describe('миграции', () => {
+  it('v4: цена у товаров и в истории необязательна, старые данные целы', async () => {
+    const db = new SQL.Database();
+    for (let i = 0; i < 3; i++) db.exec(MIGRATIONS[i]);
+    db.exec('PRAGMA user_version = 3');
+    db.exec(`INSERT INTO lists (title, created_at) VALUES ('Список', '${NOW}')`);
+    db.exec(`INSERT INTO items (list_id, title, qty, unit, created_at) VALUES (1, 'Молоко', 1, 'l', '${NOW}')`);
+    db.exec(`INSERT INTO history (title_norm, title, last_used_at) VALUES ('молоко', 'Молоко', '${NOW}')`);
+    await runMigrations(adapter(db));
+    expect(rows(db, 'SELECT title, qty, unit, price FROM items')).toEqual([['Молоко', 1, 'l', null]]);
+    expect(rows(db, 'SELECT title, price FROM history')).toEqual([['Молоко', null]]);
+    db.exec("UPDATE items SET price = 450.5");
+    expect(rows(db, 'SELECT price FROM items')).toEqual([[450.5]]);
+  });
+
   it('v3: восемь встроенных категорий по ключам, повторный запуск их не дублирует', async () => {
     const db = new SQL.Database();
     await runMigrations(adapter(db));

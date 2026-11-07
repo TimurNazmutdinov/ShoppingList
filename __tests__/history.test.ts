@@ -1,7 +1,7 @@
 import { HistoryRow, formatQty, nextHistory, normTitle, parseQty, rankSuggestions } from '@/logic/history';
 
 const row = (title: string, over: Partial<HistoryRow> = {}): HistoryRow => ({
-  titleNorm: normTitle(title), title, qty: null, unit: null, categoryId: null, usedCount: 1, lastUsedAt: '2026-11-01T00:00:00.000Z', ...over,
+  titleNorm: normTitle(title), title, qty: null, unit: null, price: null, categoryId: null, usedCount: 1, lastUsedAt: '2026-11-01T00:00:00.000Z', ...over,
 });
 
 describe('normTitle', () => {
@@ -36,7 +36,7 @@ describe('nextHistory — самообучение', () => {
 
   it('первая покупка: гречка 0,8 кг запоминается', () => {
     expect(nextHistory(null, { title: 'Гречка', qty: 0.8, unit: 'kg', categoryId: null }, now)).toEqual({
-      titleNorm: 'гречка', title: 'Гречка', qty: 0.8, unit: 'kg', categoryId: null, usedCount: 1, lastUsedAt: now,
+      titleNorm: 'гречка', title: 'Гречка', qty: 0.8, unit: 'kg', price: null, categoryId: null, usedCount: 1, lastUsedAt: now,
     });
   });
 
@@ -51,6 +51,13 @@ describe('nextHistory — самообучение', () => {
     const prev = nextHistory(null, { title: 'Гречка', qty: 0.8, unit: 'kg', categoryId: 3 }, now);
     const next = nextHistory(prev, { title: 'Гречка', qty: null, unit: null, categoryId: null }, now);
     expect(next).toMatchObject({ qty: 0.8, unit: 'kg', categoryId: 3 });
+  });
+
+  it('цена запоминается и не стирается, если в этот раз её нет', () => {
+    const first = nextHistory(null, { title: 'Молоко', qty: 1, unit: 'l', price: 450, categoryId: null }, now);
+    expect(first.price).toBe(450);
+    expect(nextHistory(first, { title: 'Молоко', qty: 1, unit: 'l', categoryId: null }, now).price).toBe(450);
+    expect(nextHistory(first, { title: 'Молоко', qty: 1, unit: 'l', price: 480, categoryId: null }, now).price).toBe(480);
   });
 
   it('товар только с названием запоминается без параметров', () => {

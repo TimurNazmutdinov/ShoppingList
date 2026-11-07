@@ -110,7 +110,7 @@ export default function CalendarScreen() {
           />
         )}
         renderSectionHeader={({ section }) => (
-          <ListGroupHeader title={section.title} color={section.color} count={section.data.length} onPress={() => openList(section.listId)} />
+          <ListGroupHeader title={section.title} color={section.color} onPress={() => openList(section.listId)} />
         )}
         ListHeaderComponent={grid}
         ListEmptyComponent={<Text style={styles.empty}>{t('cal.dayEmpty')}</Text>}

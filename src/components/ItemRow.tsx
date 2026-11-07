@@ -4,6 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { Palette, radius, useTheme } from '@/theme';
 import { t } from '@/i18n';
 import { Item } from '@/db/items';
+import { currencySymbol, formatMoney } from '@/logic/money';
+import { useSettings } from '@/AppSettings';
 import { itemQtyLabel } from './ItemSheet';
 import { SwipeRow } from './SwipeRow';
 
@@ -20,7 +22,8 @@ export function ItemRow({ item, onToggle, onRemove, onOpen, onSwiped }: Props) {
   const colors = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const done = item.boughtAt !== null;
-  const qty = itemQtyLabel(item);
+  const { currency } = useSettings();
+  const qty = [itemQtyLabel(item), item.price === null ? '' : formatMoney(item.price, currencySymbol(currency))].filter(Boolean).join(' · ');
   return (
     <SwipeRow
       right={{ label: done ? t('list.swipeBack') : t('list.swipeBought'), icon: done ? 'arrow-undo' : 'checkmark', bg: colors.primaryStrong, fg: colors.bg }}

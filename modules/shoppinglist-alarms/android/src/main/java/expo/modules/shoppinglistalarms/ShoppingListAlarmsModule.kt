@@ -1,9 +1,11 @@
 package expo.modules.shoppinglistalarms
 
 import android.app.AlarmManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
@@ -32,6 +34,11 @@ class ShoppingListAlarmsModule : Module() {
         .isIgnoringBatteryOptimizations(context.packageName)
     }
 
+    // key - 'default' or a profile key; all - every key (including 'default').
+    Function("setLauncherIcon") { key: String, all: List<String> ->
+      setLauncherIcon(key, all)
+    }
+
     Function("openExactAlarmSettings") {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         launch(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:${context.packageName}")))
@@ -44,6 +51,17 @@ class ShoppingListAlarmsModule : Module() {
         Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS),
         Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:${context.packageName}")),
       )
+    }
+  }
+
+  private fun setLauncherIcon(key: String, all: List<String>) {
+    val pm = context.packageManager
+    fun alias(k: String) = ComponentName(context.packageName, "${context.packageName}.icon.${k.replaceFirstChar { it.uppercase() }}")
+    pm.setComponentEnabledSetting(alias(key), PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP)
+    for (k in all) {
+      if (k != key) {
+        pm.setComponentEnabledSetting(alias(k), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
+      }
     }
   }
 

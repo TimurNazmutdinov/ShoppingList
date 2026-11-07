@@ -8,7 +8,7 @@ import { BottomSheet } from './BottomSheet';
 import { TextField } from './FormField';
 import { PrimaryButton } from './PrimaryButton';
 
-const PRESETS = [0.5, 1, 2, 3, 5];
+const PRESETS = [0.5, 1, 2, 3, 5, 10];
 
 type Props = { visible: boolean; value: QuickQty; onClose: () => void; onChange: (v: QuickQty) => void };
 
@@ -51,7 +51,7 @@ function QtyForm({ value, onChange }: Pick<Props, 'value' | 'onChange'>) {
       <View style={styles.row}>
         {PRESETS.map((p) => chip(String(p).replace('.', ','), parseQty(text) === p, () => setText(String(p).replace('.', ','))))}
       </View>
-      <TextField value={text} onChangeText={setText} keyboardType="decimal-pad" maxLength={8} accessibilityLabel={t('qty.title')} />
+      <TextField value={text} onChangeText={setText} keyboardType="decimal-pad" maxLength={8} placeholder={t('qty.custom')} accessibilityLabel={t('qty.custom')} />
       <View style={[styles.row, styles.unitRow]}>
         {UNITS.map((u) => chip(t(`unitShort.${u}`), unit === u, () => setUnit(unit === u ? null : u)))}
       </View>

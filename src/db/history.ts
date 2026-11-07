@@ -2,12 +2,12 @@ import { getDb, write } from './index';
 import { HistoryRow, RememberInput, nextHistory, normTitle, rankSuggestions } from '@/logic/history';
 
 type Row = {
-  title_norm: string; title: string; qty: number | null; unit: string | null;
+  title_norm: string; title: string; qty: number | null; unit: string | null; price: number | null;
   category_id: number | null; used_count: number; last_used_at: string;
 };
 
 const toRow = (r: Row): HistoryRow => ({
-  titleNorm: r.title_norm, title: r.title, qty: r.qty, unit: r.unit,
+  titleNorm: r.title_norm, title: r.title, qty: r.qty, unit: r.unit, price: r.price,
   categoryId: r.category_id, usedCount: r.used_count, lastUsedAt: r.last_used_at,
 });
 
@@ -32,9 +32,9 @@ export async function remember(input: RememberInput): Promise<void> {
   const prev = await findHistory(input.title);
   const next = nextHistory(prev, input, new Date().toISOString());
   await write(
-    `INSERT OR REPLACE INTO history (title_norm, title, qty, unit, category_id, used_count, last_used_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    next.titleNorm, next.title, next.qty, next.unit, next.categoryId, next.usedCount, next.lastUsedAt,
+    `INSERT OR REPLACE INTO history (title_norm, title, qty, unit, price, category_id, used_count, last_used_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    next.titleNorm, next.title, next.qty, next.unit, next.price, next.categoryId, next.usedCount, next.lastUsedAt,
   );
 }
 

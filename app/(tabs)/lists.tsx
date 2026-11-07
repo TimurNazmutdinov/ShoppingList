@@ -1,13 +1,18 @@
 import { useCallback, useMemo, useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ListColorKey, Palette, listColor, radius, useTheme } from '@/theme';
 import { t } from '@/i18n';
-import { Item, ShoppingList, copyList, createList, deleteList, loadItems, loadLists, resetBought, updateList } from '@/logic/shopping';
+import { Item, ShoppingList, copyList, createList, deleteList, ensureSampleList, loadItems, loadLists, resetBought, updateList } from '@/logic/shopping';
 import { cardDateLabel } from '@/logic/schedule';
 import { daysLeft } from '@/logic/dates';
+import { currencySymbol, formatMoney } from '@/logic/money';
+import { useSettings } from '@/AppSettings';
+import { ShareKind, shareList } from '@/logic/sharing';
+import { ShareSheet } from '@/components/ShareSheet';
+import { useImportFlow } from '@/useImportFlow';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { ListSheet } from '@/components/ListSheet';
 import { CopySheet } from '@/components/CopySheet';
@@ -18,16 +23,20 @@ export default function ListsScreen() {
   const colors = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
+  const { currency } = useSettings();
   const [lists, setLists] = useState<ShoppingList[]>([]);
   const [menu, setMenu] = useState<ShoppingList | null>(null);
   const [edit, setEdit] = useState<{ open: boolean; list: ShoppingList | null }>({ open: false, list: null });
   const [copy, setCopy] = useState<{ list: ShoppingList; items: Item[] } | null>(null);
   const [confirm, setConfirm] = useState<ShoppingList | null>(null);
+  const [shareFor, setShareFor] = useState<ShoppingList | null>(null);
 
   const reload = useCallback(async () => setLists(await loadLists()), []);
   useFocusEffect(
     useCallback(() => {
-      reload().catch((e) => console.warn(e));
+      ensureSampleList()
+        .then(reload)
+        .catch((e) => console.warn(e));
     }, [reload]),
   );
 
@@ -37,6 +46,18 @@ export default function ListsScreen() {
       .then(reload)
       .catch((e) => console.warn(e));
     setEdit({ open: false, list: null });
+  };
+
+  const importFlow = useImportFlow(() => {
+    reload().catch((e) => console.warn(e));
+  });
+
+  const doShare = (list: ShoppingList, kind: ShareKind) => {
+    setShareFor(null);
+    shareList(list.id, kind, currencySymbol(currency)).catch((e) => {
+      console.warn(e);
+      Alert.alert(t('share.failed'));
+    });
   };
 
   const open = (list: ShoppingList) => router.push({ pathname: '/list/[id]', params: { id: String(list.id) } } as never);
@@ -58,7 +79,8 @@ export default function ListsScreen() {
   const renderList = ({ item: l }: { item: ShoppingList }) => {
     const color = listColor(l.color, colors.scheme);
     const progress = l.total === 0 ? 0 : (l.total - l.left) / l.total;
-    const status = l.total === 0 ? t('lists.noItems') : l.left === 0 ? t('lists.allDone') : t('lists.left', { left: l.left, total: l.total });
+    const base = l.total === 0 ? t('lists.noItems') : l.left === 0 ? t('lists.allDone') : t('lists.left', { left: l.left, total: l.total });
+    const status = l.leftPrice > 0 ? `${base} · ${formatMoney(l.leftPrice, currencySymbol(currency))}` : base;
     return (
       <Pressable
         style={styles.card}
@@ -91,7 +113,14 @@ export default function ListsScreen() {
 
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
-      <ScreenHeader title={t('lists.title')} />
+      <ScreenHeader
+        title={t('lists.title')}
+        right={
+          <Pressable style={styles.headerBtn} onPress={importFlow.start} accessibilityRole="button" accessibilityLabel={t('import.button')}>
+            <Ionicons name="download-outline" size={24} color={colors.textMuted} />
+          </Pressable>
+        }
+      />
       <FlatList
         data={lists}
         keyExtractor={(l) => String(l.id)}
@@ -115,6 +144,10 @@ export default function ListsScreen() {
               setMenu(null);
             })}
             {menuRow('copy-outline', t('lists.menuCopy'), () => startCopy(menu))}
+            {menuRow('share-social-outline', t('share.title'), () => {
+              setShareFor(menu);
+              setMenu(null);
+            })}
             {menu.total - menu.left > 0
               ? menuRow('refresh-outline', t('lists.menuReset'), () => {
                   resetBought(menu.id)
@@ -131,6 +164,8 @@ export default function ListsScreen() {
         ) : null}
       </BottomSheet>
 
+      <ShareSheet list={shareFor} onClose={() => setShareFor(null)} onPick={doShare} />
+      {importFlow.dialog}
       <ListSheet
         visible={edit.open}
         list={edit.list}
@@ -209,6 +244,7 @@ const createStyles = (colors: Palette) =>
       borderColor: colors.outline,
     },
     fabText: { color: colors.onPrimary, fontSize: 16, fontWeight: '700' },
+    headerBtn: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
     menuTitle: { color: colors.text, fontSize: 20, fontWeight: '600', marginBottom: 6 },
     menuRow: { flexDirection: 'row', alignItems: 'center', gap: 14, minHeight: 56 },
     menuText: { color: colors.text, fontSize: 17 },

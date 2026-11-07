@@ -1,5 +1,5 @@
 import { contrastRatio } from '@/logic/color';
-import { activeSchemeKey, logoSchemeKey, splashSchemeKey } from '@/logic/schemes';
+import { DEFAULT_ICON, activeSchemeKey, iconChange, launcherIconKey, logoSchemeKey, splashSchemeKey } from '@/logic/schemes';
 import {
   SchemeKey,
   buildPalette,
@@ -131,5 +131,34 @@ describe('куда применять цвета профиля', () => {
     expect(splashSchemeKey('screens', 'berry', 'light')).toBe(themeDefaults.lightScheme);
     expect(splashSchemeKey('screens', 'powder', 'dark')).toBe(themeDefaults.darkScheme);
     expect(splashSchemeKey('screens', 'powder', null)).toBe(themeDefaults.darkScheme);
+  });
+});
+
+describe('иконка рабочего стола', () => {
+  it('«Только к экранам» — всегда основная', () => {
+    expect(launcherIconKey('screens', 'powder')).toBe(DEFAULT_ICON);
+    expect(launcherIconKey('screens', 'system')).toBe(DEFAULT_ICON);
+  });
+
+  it('«Ко всему»: профиль; «Янтарь» и «Как в системе» — основная', () => {
+    expect(launcherIconKey('all', 'powder')).toBe('powder');
+    expect(launcherIconKey('all', 'cocoa')).toBe('cocoa');
+    expect(launcherIconKey('all', themeDefaults.lightScheme)).toBe(DEFAULT_ICON);
+    expect(launcherIconKey('all', 'system')).toBe(DEFAULT_ICON);
+  });
+
+  it('смена иконки: новая — вопрос, возврат к основной и отказ — без вопроса', () => {
+    expect(iconChange('all', 'powder', DEFAULT_ICON, false)).toEqual({ target: 'powder', ask: true });
+    expect(iconChange('all', 'powder', 'powder', false)).toEqual({ target: 'powder', ask: false });
+    expect(iconChange('screens', 'powder', 'powder', false)).toEqual({ target: DEFAULT_ICON, ask: false });
+    expect(iconChange('all', 'powder', DEFAULT_ICON, true)).toEqual({ target: DEFAULT_ICON, ask: false });
+  });
+
+  it('у каждого профиля (кроме «Янтаря») есть файлы иконки', () => {
+    const fsx = jest.requireActual('fs') as typeof import('fs');
+    for (const k of keys.filter((x) => x !== themeDefaults.lightScheme)) {
+      expect(fsx.existsSync('assets/icons/schemes/ic_scheme_' + k + '_fg.png')).toBe(true);
+      expect(fsx.existsSync('assets/icons/schemes/ic_scheme_' + k + '_legacy.png')).toBe(true);
+    }
   });
 });

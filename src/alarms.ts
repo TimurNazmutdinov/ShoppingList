@@ -6,6 +6,7 @@ type AlarmsModule = {
   isIgnoringBatteryOptimizations(): boolean;
   openExactAlarmSettings(): void;
   openBatterySettings(): void;
+  setLauncherIcon(key: string, all: string[]): void;
 };
 
 // Локальный нативный модуль (modules/shoppinglist-alarms). В Expo Go и вне Android его нет:
@@ -37,4 +38,13 @@ export function openExactAlarmSettings(): void {
 
 export function openBatterySettings(): void {
   native?.openBatterySettings();
+}
+
+// Включает иконку рабочего стола: key — 'default' или ключ профиля, all — все возможные ключи.
+export function setLauncherIcon(key: string, all: string[]): void {
+  try {
+    native?.setLauncherIcon(key, all);
+  } catch (e) {
+    console.warn('launcher icon', e);
+  }
 }

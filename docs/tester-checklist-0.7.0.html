@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8">
+<title>ShoppingList 0.7.0 — чек-лист тестировщика</title>
+<style>
+@page { size: A4; margin: 14mm 12mm; }
+* { box-sizing: border-box; }
+body { font-family: "Segoe UI", Arial, sans-serif; color: #222; font-size: 11.5px; line-height: 1.35; }
+h1 { font-size: 22px; margin: 0 0 2px; }
+.sub { color: #666; margin-bottom: 10px; }
+h2 { font-size: 14px; margin: 16px 0 5px; padding: 4px 8px; background: #FFE9A8; border-radius: 4px; break-after: avoid; }
+.box { border: 1px solid #bbb; border-radius: 6px; padding: 8px 10px; margin: 8px 0; }
+.box b { color: #8a4b00; }
+table { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
+th { text-align: left; font-size: 10.5px; color: #555; border-bottom: 2px solid #999; padding: 3px 4px; }
+td { border-bottom: 1px solid #ddd; padding: 4px; vertical-align: top; }
+tr { break-inside: avoid; }
+td.n { width: 24px; color: #888; }
+td.r { width: 96px; white-space: nowrap; }
+.cb { display: inline-block; width: 11px; height: 11px; border: 1.5px solid #444; border-radius: 2px; margin-right: 3px; vertical-align: -1px; }
+td.note { width: 120px; }
+.fill { border-bottom: 1px solid #888; display: inline-block; min-width: 130px; height: 14px; }
+.small { color: #666; font-size: 10.5px; }
+</style></head><body>
+
+<h1>ShoppingList 0.7.0 — чек-лист тестировщика</h1>
+<div class="sub">Версия 0.7.0 (сборка 4). Проходите пункты по порядку, отмечайте ☐ «Ок» или ☐ «Не ок» и пишите заметку, что именно не так.</div>
+
+<div class="box">
+<b>Кто тестирует:</b> <span class="fill"></span> &nbsp; <b>Телефон / Android:</b> <span class="fill"></span> &nbsp; <b>Язык приложения:</b> <span class="fill" style="min-width:70px"></span> &nbsp; <b>Дата:</b> <span class="fill" style="min-width:70px"></span>
+</div>
+<div class="box small">
+<b>Перед началом.</b> 1) Если на телефоне стоит предыдущая версия, это нормально, можно проверять обновление поверх. 2) Часть пунктов (пример списка при первом запуске) видна только на чистой установке: если очень хочется проверить, сохраните резервную копию (раздел 8), удалите приложение, поставьте заново. 3) Для голосового ввода нужен интернет. 4) Если что-то работает странно, сфотографируйте экран и напишите, что нажимали перед этим.
+</div>
+
+<h2>1. Запуск и заставка</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">1</td><td>Откройте приложение.</td><td>Продукты залетают в пакет по очереди, пакет растёт, подпрыгивает, рисуется галочка, появляются название и девиз «Добавил — Купил — Смахнул».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">2</td><td>Во время заставки коснитесь экрана.</td><td>Сразу показывается готовый знак; повторное касание открывает приложение.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">3</td><td>Закройте и откройте приложение несколько раз.</td><td>Не вылетает, фон и цвета не «мигают».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">4</td><td>Только на чистой установке: откройте вкладку «Списки».</td><td>Есть пример списка «Продукты» (молоко, хлеб, яйца, яблоки). Его можно удалить.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок <span class="cb"></span>Нет чист. уст.</td><td class="note"></td></tr></table>
+
+<h2>2. Товары, подсказки, каталог</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">5</td><td>Создайте список. В строке внизу начните вводить «мол», «порош», «посуд».</td><td>Появляются подсказки из каталога (молоко, стиральный порошок, средство для мытья посуды). Нажатие на подсказку добавляет товар сразу с категорией.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">6</td><td>Добавьте «молоко», откройте товар, поставьте 1 л и цену. Добавьте «молоко» ещё раз.</td><td>Второй раз количество, единица и цена подставляются сами (запоминание работает сразу).</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">7</td><td>Нажмите кнопку весов рядом с «+».</td><td>В количестве есть кнопки 0,5 / 1 / 2 / 3 / 5 / 10 и поле «Своё число»; выбранное применяется к следующему товару.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">8</td><td>Введите в строке «молоко, хлеб, 2 кг сыра» и нажмите «+».</td><td>Добавилось три товара, у сыра 2 кг.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">9</td><td>Вставьте в строку список из мессенджера (по товару в строке) и нажмите «+».</td><td>Каждая строка стала отдельным товаром.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">10</td><td>Откройте товар: измените название, категорию (в том числе «+ Своя»), дату, «Напомнить», заметку.</td><td>Всё сохраняется; товары сгруппированы по категориям.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>3. Смахивание</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">11</td><td>Смахните товар вправо.</td><td>Товар «куплен»; внизу сообщение «куплено» с кнопкой «Отменить» (можно успеть прочитать).</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">12</td><td>Смахните товар влево.</td><td>Товар удалён; кнопка «Отменить» возвращает его.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">13</td><td>Откройте раздел «Куплено» и смахните товар вправо.</td><td>Товар возвращается в список.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>4. Цены и валюта</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">14</td><td>Поставьте цену нескольким товарам (поле «Цена»).</td><td>В строке товара видна цена; над списком — «Куплено … · Осталось … · Всего …»; на карточке списка — сумма остатка.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">15</td><td>Отметьте товар купленным.</td><td>Суммы «Куплено» и «Осталось» пересчитались.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">16</td><td>В «Настройках» → «Валюта» выберите ₽, затем «Своя» и введите своё обозначение.</td><td>Во всех ценах и итогах символ меняется; по умолчанию тенге ₸.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>5. Блюда</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">17</td><td>В списке нажмите значок «Блюда» (вверху справа), выберите «Плов».</td><td>Показан набор продуктов с количеством; можно снять галочки, изменить название и количество, добавить «+ Свой продукт».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">18</td><td>Нажмите «Добавить в список».</td><td>Выбранные продукты добавлены в список с количеством и категориями.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">19</td><td>Проверьте остальные блюда (бешбармак, манты, лагман, баурсаки, борщ, оливье, блины).</td><td>Названия понятны, набор продуктов разумный. Напишите, чего не хватает.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>6. Голосовой ввод</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">20</td><td>Нажмите значок микрофона рядом с «+» (при включённом интернете).</td><td>При первом использовании появляется сообщение про интернет; после «Понятно, начать» телефон просит доступ к микрофону.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">21</td><td>Скажите «молоко хлеб яйца».</td><td>Распознанный текст попадает в строку; после «+» товары добавляются. Напишите, насколько точно распознаёт на вашем языке.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">22</td><td>Повторно нажмите микрофон.</td><td>Сообщение про интернет больше не показывается.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>7. Поделиться и импорт</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">23</td><td>На карточке списка «⋯» → «Поделиться» → «Текстом».</td><td>Открывается меню Android; в мессенджере приходит список с ☐/✓, количеством, ценой и итогом.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">24</td><td>«Поделиться» → «Текстовый файл (.txt)».</td><td>Файл отправляется и читается на другом телефоне или компьютере.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">25</td><td>«Поделиться» → «PDF».</td><td>Создаётся аккуратный PDF: название, товары по категориям с рамками-галочками, итог. Русские и казахские буквы читаются.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">26</td><td>«Поделиться» → «Файл для приложения»; отправьте его на другой телефон с ShoppingList.</td><td>На другом телефоне «Списки» → значок «Импорт из файла» → выбрать файл → «Добавить»: список появился со всеми товарами, ценами и категориями.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок <span class="cb"></span>Нет 2-го тел.</td><td class="note"></td></tr>
+<tr><td class="n">27</td><td>Попробуйте импортировать посторонний файл (фото, документ).</td><td>Сообщение «Это не файл ShoppingList…», ничего не ломается.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>8. Резервная копия</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">28</td><td>«Настройки» → «Резервная копия» → «Сохранить копию»; сохраните файл (например, в «Файлы» или отправьте себе).</td><td>Создаётся один файл со всеми списками.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">29</td><td>«Восстановить из файла» → выберите этот файл → «Добавить».</td><td>Списки из файла добавляются к текущим (появятся копии), существующие не меняются.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>9. Даты, «Сегодня», «Календарь»</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">30</td><td>Поставьте списку или товару дату на сегодня и на завтра.</td><td>На карточке списка дата («сегодня», «завтра»); вкладка «Сегодня» показывает «Купить сегодня» по спискам: заголовок списка, под ним товары (без цифры рядом с названием).</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">31</td><td>Вкладка «Календарь»: выберите день с покупками.</td><td>Цветные точки у дней; под сеткой товары дня сгруппированы по спискам; нажатие на заголовок открывает список.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">32</td><td>«⋯» на списке → «Копировать»; поправьте название, дату, состав.</td><td>Создаётся новый список, исходный не меняется.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">33</td><td>«⋯» → «Снять отметки "куплено"».</td><td>Все товары возвращаются в «К покупке».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>10. Напоминания</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">34</td><td>«Настройки» → «Напоминания» → «Проверить уведомление».</td><td>Через 10 секунд приходит всплывающее уведомление.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">35</td><td>Поставьте товару сегодняшнюю дату с «Напомнить» и временем напоминания через 2–3 минуты; закройте приложение.</td><td>Приходит «Сегодня купить: …». Нажатие открывает «Сегодня».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">36</td><td>Блок «Состояние напоминаний».</td><td>Видно: уведомления, точные будильники, батарея, сколько запланировано. Если что-то красное — работает кнопка «Открыть настройку».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>11. Настройки, цвета, иконка, язык</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">37</td><td>Выберите несколько цветовых профилей (светлые и тёмные) и «Как в системе».</td><td>Цвета экранов меняются сразу и сохраняются после перезапуска.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">38</td><td>Выберите «Ко всему: заставка и ярлык» и профиль не янтарного цвета.</td><td>Спрашивает «Сменить ярлык?». «Сменить» меняет иконку на рабочем столе (когда приложение уйдёт в фон), «Не менять» оставляет прежнюю. Заставка и логотип перекрашены.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">39</td><td>Переключите на «Только к экранам».</td><td>Логотип, заставка и ярлык возвращаются к янтарным.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">40</td><td>Переключите язык: русский, казахский, English.</td><td>Тексты меняются сразу. Для казахского: проверьте единицы «шт», «уп» и названия продуктов и блюд, напишите, что звучит неправильно.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">41</td><td>Тумблер «Запоминать параметры товаров» и кнопка «Очистить историю покупок».</td><td>При выключенном параметры не запоминаются; очистка убирает запомненное, списки остаются.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>12. Обновление и общее</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">42</td><td>«Настройки» → «Проверить сейчас».</td><td>«Последняя» или экран обновления, если вышла новая версия; без вылетов.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">43</td><td>Попользуйтесь приложением 10–15 минут как обычно.</td><td>Без вылетов, рывков и «зависаний»; кнопки достаточно крупные.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">44</td><td>Общее впечатление: что понравилось, что неудобно, чего не хватает?</td><td class="small">Напишите свободно в заметках ниже.</td><td class="r"></td><td class="note"></td></tr></table>
+
+<div class="box" style="min-height:110px"><b>Заметки и пожелания:</b></div>
+<div class="small">Если что-то сломалось, напишите: на каком экране, что нажимали, что ожидали и что получилось (по возможности со снимком экрана). Спасибо за помощь!</div>
+</body></html>

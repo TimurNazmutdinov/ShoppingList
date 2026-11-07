@@ -6,6 +6,7 @@ export type Item = {
   title: string;
   qty: number | null;
   unit: string | null;
+  price: number | null; // стоимость позиции
   note: string | null;
   categoryId: number | null;
   plannedDate: string | null;
@@ -16,13 +17,13 @@ export type Item = {
 };
 
 type Row = {
-  id: number; list_id: number; title: string; qty: number | null; unit: string | null; note: string | null;
+  id: number; list_id: number; title: string; qty: number | null; unit: string | null; price: number | null; note: string | null;
   category_id: number | null; planned_date: string | null; remind: number; bought_at: string | null; sort: number; created_at: string;
 };
 
 export type ItemRow = Row;
 export const toItem = (r: Row): Item => ({
-  id: r.id, listId: r.list_id, title: r.title, qty: r.qty, unit: r.unit, note: r.note,
+  id: r.id, listId: r.list_id, title: r.title, qty: r.qty, unit: r.unit, price: r.price, note: r.note,
   categoryId: r.category_id, plannedDate: r.planned_date, remind: r.remind === 1, boughtAt: r.bought_at, sort: r.sort, createdAt: r.created_at,
 });
 
@@ -32,16 +33,17 @@ export async function loadItems(listId: number): Promise<Item[]> {
   return rows.map(toItem);
 }
 
-export type NewItem = { listId: number; title: string; qty: number | null; unit: string | null; categoryId: number | null };
+export type NewItem = { listId: number; title: string; qty: number | null; unit: string | null; price?: number | null; categoryId: number | null };
 
 export async function addItem(input: NewItem): Promise<void> {
   await write(
-    `INSERT INTO items (list_id, title, qty, unit, category_id, sort, created_at)
-     VALUES (?, ?, ?, ?, ?, (SELECT COALESCE(MAX(sort), 0) + 1 FROM items WHERE list_id = ?), ?)`,
+    `INSERT INTO items (list_id, title, qty, unit, price, category_id, sort, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, (SELECT COALESCE(MAX(sort), 0) + 1 FROM items WHERE list_id = ?), ?)`,
     input.listId,
     input.title.trim(),
     input.qty,
     input.unit,
+    input.price ?? null,
     input.categoryId,
     input.listId,
     new Date().toISOString(),
@@ -52,6 +54,7 @@ export type ItemPatch = {
   title: string;
   qty: number | null;
   unit: string | null;
+  price: number | null;
   note: string | null;
   categoryId: number | null;
   plannedDate: string | null;
@@ -60,8 +63,8 @@ export type ItemPatch = {
 
 export async function updateItem(id: number, p: ItemPatch): Promise<void> {
   await write(
-    'UPDATE items SET title = ?, qty = ?, unit = ?, note = ?, category_id = ?, planned_date = ?, remind = ? WHERE id = ?',
-    p.title.trim(), p.qty, p.unit, p.note, p.categoryId, p.plannedDate, p.remind && p.plannedDate ? 1 : 0, id,
+    'UPDATE items SET title = ?, qty = ?, unit = ?, price = ?, note = ?, category_id = ?, planned_date = ?, remind = ? WHERE id = ?',
+    p.title.trim(), p.qty, p.unit, p.price, p.note, p.categoryId, p.plannedDate, p.remind && p.plannedDate ? 1 : 0, id,
   );
 }
 
@@ -76,8 +79,8 @@ export async function deleteItem(id: number): Promise<void> {
 // Отмена удаления: товар возвращается с прежним номером и параметрами.
 export async function restoreItem(item: Item): Promise<void> {
   await write(
-    `INSERT OR REPLACE INTO items (id, list_id, title, qty, unit, note, category_id, planned_date, remind, bought_at, sort, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    item.id, item.listId, item.title, item.qty, item.unit, item.note, item.categoryId, item.plannedDate, item.remind ? 1 : 0, item.boughtAt, item.sort, item.createdAt,
+    `INSERT OR REPLACE INTO items (id, list_id, title, qty, unit, price, note, category_id, planned_date, remind, bought_at, sort, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    item.id, item.listId, item.title, item.qty, item.unit, item.price, item.note, item.categoryId, item.plannedDate, item.remind ? 1 : 0, item.boughtAt, item.sort, item.createdAt,
   );
 }
