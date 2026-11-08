@@ -3,8 +3,8 @@ import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { ApplyScope, Palette, SchemeSetting, darkSchemeKeys, lightSchemeKeys, radius, schemeDefs, useTheme } from '@/theme';
-import { iconChange, logoSchemeKey } from '@/logic/schemes';
+import { ApplyScope, Palette, SchemeSetting, darkSchemeKeys, lightSchemeKeys, radius, useTheme } from '@/theme';
+import { iconChange } from '@/logic/schemes';
 import { CUSTOM_MAX, CurrencyKind } from '@/logic/money';
 import { TextField } from '@/components/FormField';
 import { backupAll } from '@/logic/sharing';
@@ -12,7 +12,6 @@ import { useImportFlow } from '@/useImportFlow';
 import { LanguageSetting, languageNames, languages, t } from '@/i18n';
 import { AppSwitch } from '@/components/AppSwitch';
 import { SchemeThumb } from '@/components/SchemeThumb';
-import { LogoMark } from '@/components/LogoMark';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { BottomSheet } from '@/components/BottomSheet';
 import { useSettings } from '@/AppSettings';
@@ -78,172 +77,179 @@ export default function SettingsScreen() {
       <ScreenHeader title={t('settings.title')} />
       <ScrollView showsVerticalScrollIndicator={false}>
         <Text style={styles.section}>{t('theme.profile')}</Text>
-        <View style={styles.preview}>
-          <LogoMark size={64} colors={schemeDefs[logoSchemeKey(s.applyScope, s.schemeKey)].mark} />
-          <Text style={styles.hint}>{s.applyScope === 'all' ? t('theme.scopeAllHint') : t('theme.scopeScreensHint')}</Text>
-        </View>
+        <View style={styles.block}>
+          <Pressable
+            style={styles.row}
+            onPress={() => pickScheme('system')}
+            accessibilityRole="radio"
+            accessibilityState={{ selected: s.schemeSetting === 'system' }}
+            accessibilityLabel={t('theme.system')}
+          >
+            <Ionicons name="phone-portrait-outline" size={22} color={colors.textMuted} />
+            <View style={styles.rowBody}>
+              <Text style={styles.rowTitleText}>{t('theme.system')}</Text>
+              <Text style={styles.hint}>{t('theme.systemHint')}</Text>
+            </View>
+            {s.schemeSetting === 'system' ? <Ionicons name="checkmark-circle" size={24} color={colors.primaryStrong} /> : null}
+          </Pressable>
 
-        <Pressable
-          style={[styles.systemRow, s.schemeSetting === 'system' && styles.systemRowActive]}
-          onPress={() => pickScheme('system')}
-          accessibilityRole="radio"
-          accessibilityState={{ selected: s.schemeSetting === 'system' }}
-          accessibilityLabel={t('theme.system')}
-        >
-          <Ionicons name="phone-portrait-outline" size={22} color={colors.textMuted} />
-          <View style={styles.rowBody}>
-            <Text style={styles.rowTitleText}>{t('theme.system')}</Text>
-            <Text style={styles.hint}>{t('theme.systemHint')}</Text>
+          <Text style={styles.label}>{t('theme.light')}</Text>
+          <View style={styles.grid}>
+            {lightSchemeKeys.map((k) => (
+              <SchemeThumb key={k} schemeKey={k} selected={s.schemeSetting === k} onPress={() => pickScheme(k)} />
+            ))}
           </View>
-          {s.schemeSetting === 'system' ? <Ionicons name="checkmark-circle" size={24} color={colors.primaryStrong} /> : null}
-        </Pressable>
+          <Text style={styles.label}>{t('theme.dark')}</Text>
+          <View style={styles.grid}>
+            {darkSchemeKeys.map((k) => (
+              <SchemeThumb key={k} schemeKey={k} selected={s.schemeSetting === k} onPress={() => pickScheme(k)} />
+            ))}
+          </View>
 
-        <Text style={styles.label}>{t('theme.light')}</Text>
-        <View style={styles.grid}>
-          {lightSchemeKeys.map((k) => (
-            <SchemeThumb key={k} schemeKey={k} selected={s.schemeSetting === k} onPress={() => pickScheme(k)} />
-          ))}
-        </View>
-        <Text style={styles.label}>{t('theme.dark')}</Text>
-        <View style={styles.grid}>
-          {darkSchemeKeys.map((k) => (
-            <SchemeThumb key={k} schemeKey={k} selected={s.schemeSetting === k} onPress={() => pickScheme(k)} />
-          ))}
-        </View>
+          <Text style={styles.label}>{t('theme.scope')}</Text>
+          <View style={styles.segments}>
+            {(['screens', 'all'] as ApplyScope[]).map((scope) => {
+              const active = s.applyScope === scope;
+              const label = scope === 'all' ? t('theme.scopeAll') : t('theme.scopeScreens');
+              return (
+                <Pressable
+                  key={scope}
+                  style={[styles.segment, active && styles.segmentActive]}
+                  onPress={() => {
+                    s.setApplyScope(scope);
+                    applyChoice(s.schemeSetting, scope);
+                  }}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected: active }}
+                  accessibilityLabel={label}
+                >
+                  <Text style={[styles.segmentText, active && styles.segmentTextActive]}>{label}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
 
-        <Text style={styles.label}>{t('theme.scope')}</Text>
-        <View style={styles.segments}>
-          {(['screens', 'all'] as ApplyScope[]).map((scope) => {
-            const active = s.applyScope === scope;
-            const label = scope === 'all' ? t('theme.scopeAll') : t('theme.scopeScreens');
-            return (
-              <Pressable
-                key={scope}
-                style={[styles.segment, active && styles.segmentActive]}
-                onPress={() => {
-                  s.setApplyScope(scope);
-                  applyChoice(s.schemeSetting, scope);
-                }}
-                accessibilityRole="radio"
-                accessibilityState={{ selected: active }}
-                accessibilityLabel={label}
-              >
-                <Text style={[styles.segmentText, active && styles.segmentTextActive]}>{label}</Text>
-              </Pressable>
-            );
-          })}
+          {s.applyScope === 'all' && s.iconDeclined ? <Text style={[styles.hint, styles.hintPad]}>{t('theme.iconBrand')}</Text> : null}
         </View>
-
-        {s.applyScope === 'all' && s.iconDeclined ? <Text style={styles.hint}>{t('theme.iconBrand')}</Text> : null}
 
         <Text style={styles.section}>{t('settings.currency')}</Text>
-        <View style={styles.segments}>
-          {(['KZT', 'RUB', 'CUSTOM'] as CurrencyKind[]).map((kind) => {
-            const active = s.currency.kind === kind;
-            const label = kind === 'KZT' ? '₸' : kind === 'RUB' ? '₽' : t('currency.custom');
-            return (
-              <Pressable
-                key={kind}
-                style={[styles.segment, active && styles.segmentActive]}
-                onPress={() => s.setCurrency({ ...s.currency, kind })}
-                accessibilityRole="radio"
-                accessibilityState={{ selected: active }}
-                accessibilityLabel={label}
-              >
-                <Text style={[styles.segmentText, active && styles.segmentTextActive]}>{label}</Text>
-              </Pressable>
-            );
-          })}
-        </View>
-        {s.currency.kind === 'CUSTOM' ? (
-          <View style={styles.gapTop}>
-            <TextField
-              value={s.currency.custom}
-              onChangeText={(custom) => s.setCurrency({ kind: 'CUSTOM', custom })}
-              placeholder={t('currency.customPlaceholder')}
-              maxLength={CUSTOM_MAX}
-              accessibilityLabel={t('currency.customPlaceholder')}
-            />
+        <View style={styles.block}>
+          <View style={[styles.segments, styles.segmentsTop]}>
+            {(['KZT', 'RUB', 'CUSTOM'] as CurrencyKind[]).map((kind) => {
+              const active = s.currency.kind === kind;
+              const label = kind === 'KZT' ? '₸' : kind === 'RUB' ? '₽' : t('currency.custom');
+              return (
+                <Pressable
+                  key={kind}
+                  style={[styles.segment, active && styles.segmentActive]}
+                  onPress={() => s.setCurrency({ ...s.currency, kind })}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected: active }}
+                  accessibilityLabel={label}
+                >
+                  <Text style={[styles.segmentText, active && styles.segmentTextActive]}>{label}</Text>
+                </Pressable>
+              );
+            })}
           </View>
-        ) : null}
+          {s.currency.kind === 'CUSTOM' ? (
+            <View style={styles.fieldPad}>
+              <TextField
+                value={s.currency.custom}
+                onChangeText={(custom) => s.setCurrency({ kind: 'CUSTOM', custom })}
+                placeholder={t('currency.customPlaceholder')}
+                maxLength={CUSTOM_MAX}
+                accessibilityLabel={t('currency.customPlaceholder')}
+              />
+            </View>
+          ) : null}
 
-        <Pressable
-          style={[styles.row, styles.gapTop]}
-          onPress={() => setSheetOpen(true)}
-          accessibilityRole="button"
-          accessibilityLabel={`${t('settings.language')}: ${langLabel}`}
-        >
-          <Ionicons name="language-outline" size={22} color={colors.textMuted} />
-          <Text style={styles.rowTitle}>{t('settings.language')}</Text>
-          <Text style={styles.rowValue}>{langLabel}</Text>
-          <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
-        </Pressable>
+          <Pressable
+            style={[styles.row, styles.divider]}
+            onPress={() => setSheetOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel={`${t('settings.language')}: ${langLabel}`}
+          >
+            <Ionicons name="language-outline" size={22} color={colors.textMuted} />
+            <Text style={styles.rowTitle}>{t('settings.language')}</Text>
+            <Text style={styles.rowValue}>{langLabel}</Text>
+            <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+          </Pressable>
 
-        <Pressable
-          style={[styles.row, styles.gapTop]}
-          onPress={() => router.push('/reminders' as never)}
-          accessibilityRole="button"
-          accessibilityLabel={`${t('reminders.title')}: ${remindersValue}`}
-        >
-          <Ionicons name="notifications-outline" size={22} color={colors.textMuted} />
-          <Text style={styles.rowTitle}>{t('reminders.title')}</Text>
-          <Text style={styles.rowValue}>{remindersValue}</Text>
-          <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
-        </Pressable>
+          <Pressable
+            style={[styles.row, styles.divider]}
+            onPress={() => router.push('/reminders' as never)}
+            accessibilityRole="button"
+            accessibilityLabel={`${t('reminders.title')}: ${remindersValue}`}
+          >
+            <Ionicons name="notifications-outline" size={22} color={colors.textMuted} />
+            <Text style={styles.rowTitle}>{t('reminders.title')}</Text>
+            <Text style={styles.rowValue}>{remindersValue}</Text>
+            <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+          </Pressable>
+        </View>
 
         <Text style={styles.section}>{t('settings.hints')}</Text>
-        <View style={styles.row}>
-          <Ionicons name="bulb-outline" size={22} color={colors.textMuted} />
-          <View style={styles.rowBody}>
-            <Text style={styles.rowTitleText}>{t('settings.remember')}</Text>
-            <Text style={styles.hint}>{t('settings.rememberHint')}</Text>
+        <View style={styles.block}>
+          <View style={styles.row}>
+            <Ionicons name="bulb-outline" size={22} color={colors.textMuted} />
+            <View style={styles.rowBody}>
+              <Text style={styles.rowTitleText}>{t('settings.remember')}</Text>
+              <Text style={styles.hint}>{t('settings.rememberHint')}</Text>
+            </View>
+            <AppSwitch value={s.rememberItems} onValueChange={s.setRememberItems} accessibilityLabel={t('settings.remember')} />
           </View>
-          <AppSwitch value={s.rememberItems} onValueChange={s.setRememberItems} accessibilityLabel={t('settings.remember')} />
+
+          <Pressable style={[styles.row, styles.divider]} onPress={() => setClearOpen(true)} accessibilityRole="button" accessibilityLabel={t('settings.clearHistory')}>
+            <Ionicons name="trash-outline" size={22} color={colors.textMuted} />
+            <Text style={styles.rowTitle}>{t('settings.clearHistory')}</Text>
+          </Pressable>
         </View>
 
-        <Pressable style={[styles.row, styles.gapTop]} onPress={() => setClearOpen(true)} accessibilityRole="button" accessibilityLabel={t('settings.clearHistory')}>
-          <Ionicons name="trash-outline" size={22} color={colors.textMuted} />
-          <Text style={styles.rowTitle}>{t('settings.clearHistory')}</Text>
-        </Pressable>
-
         <Text style={styles.section}>{t('settings.updates')}</Text>
-        <Pressable style={styles.row} onPress={() => onCheckNow().catch((e) => console.warn(e))} accessibilityRole="button" accessibilityLabel={`${t('settings.checkNow')}${checkValue ? `: ${checkValue}` : ''}`}>
-          <Ionicons name="refresh-outline" size={22} color={colors.textMuted} />
-          <Text style={styles.rowTitle}>{t('settings.checkNow')}</Text>
-          <Text style={styles.rowValue}>{checkValue ?? ''}</Text>
-        </Pressable>
+        <View style={styles.block}>
+          <Pressable style={styles.row} onPress={() => onCheckNow().catch((e) => console.warn(e))} accessibilityRole="button" accessibilityLabel={`${t('settings.checkNow')}${checkValue ? `: ${checkValue}` : ''}`}>
+            <Ionicons name="refresh-outline" size={22} color={colors.textMuted} />
+            <Text style={styles.rowTitle}>{t('settings.checkNow')}</Text>
+            <Text style={styles.rowValue}>{checkValue ?? ''}</Text>
+          </Pressable>
+        </View>
 
         <Text style={styles.section}>{t('backup.title')}</Text>
-        <Pressable
-          style={styles.row}
-          onPress={() =>
-            backupAll().catch((e) => {
-              console.warn(e);
-              Alert.alert(t('share.failed'));
-            })
-          }
-          accessibilityRole="button"
-          accessibilityLabel={t('backup.save')}
-        >
-          <Ionicons name="cloud-upload-outline" size={22} color={colors.textMuted} />
-          <View style={styles.rowBody}>
-            <Text style={styles.rowTitleText}>{t('backup.save')}</Text>
-            <Text style={styles.hint}>{t('backup.saveHint')}</Text>
-          </View>
-        </Pressable>
-        <Pressable style={[styles.row, styles.gapTop]} onPress={restoreFlow.start} accessibilityRole="button" accessibilityLabel={t('backup.restore')}>
-          <Ionicons name="cloud-download-outline" size={22} color={colors.textMuted} />
-          <View style={styles.rowBody}>
-            <Text style={styles.rowTitleText}>{t('backup.restore')}</Text>
-            <Text style={styles.hint}>{t('backup.restoreHint')}</Text>
-          </View>
-        </Pressable>
+        <View style={styles.block}>
+          <Pressable
+            style={styles.row}
+            onPress={() =>
+              backupAll().catch((e) => {
+                console.warn(e);
+                Alert.alert(t('share.failed'));
+              })
+            }
+            accessibilityRole="button"
+            accessibilityLabel={t('backup.save')}
+          >
+            <Ionicons name="cloud-upload-outline" size={22} color={colors.textMuted} />
+            <View style={styles.rowBody}>
+              <Text style={styles.rowTitleText}>{t('backup.save')}</Text>
+              <Text style={styles.hint}>{t('backup.saveHint')}</Text>
+            </View>
+          </Pressable>
+          <Pressable style={[styles.row, styles.divider]} onPress={restoreFlow.start} accessibilityRole="button" accessibilityLabel={t('backup.restore')}>
+            <Ionicons name="cloud-download-outline" size={22} color={colors.textMuted} />
+            <View style={styles.rowBody}>
+              <Text style={styles.rowTitleText}>{t('backup.restore')}</Text>
+              <Text style={styles.hint}>{t('backup.restoreHint')}</Text>
+            </View>
+          </Pressable>
+        </View>
         {restoreFlow.dialog}
 
         <Text style={styles.section}>{t('settings.about')}</Text>
-        <Text style={styles.version}>
-          {t(IS_PROTOTYPE ? 'settings.versionProto' : 'settings.version', { version: appVersion, code: appVersionCodeLabel })}
-        </Text>
+        <View style={[styles.block, styles.lastBlock]}>
+          <Text style={styles.version}>
+            {t(IS_PROTOTYPE ? 'settings.versionProto' : 'settings.version', { version: appVersion, code: appVersionCodeLabel })}
+          </Text>
+        </View>
       </ScrollView>
 
       <ConfirmDialog
@@ -310,46 +316,34 @@ const createStyles = (colors: Palette) =>
   StyleSheet.create({
     root: { flex: 1, backgroundColor: colors.bg, padding: 20, paddingBottom: 0 },
     section: { color: colors.primaryStrong, fontSize: 14, fontWeight: '700', marginTop: 22, marginBottom: 8 },
-    label: { color: colors.textMuted, fontSize: 14, marginTop: 14, marginBottom: 8 },
+    // Группа настроек: один блок с рамкой, строки внутри разделены линией.
+    block: { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.card, overflow: 'hidden' },
+    lastBlock: { marginBottom: 32 },
+    divider: { borderTopWidth: 1, borderTopColor: colors.cardBorder },
+    label: { color: colors.textMuted, fontSize: 14, marginTop: 14, marginBottom: 8, paddingHorizontal: 14 },
     hint: { color: colors.textMuted, fontSize: 13, marginTop: 4, flexShrink: 1 },
-    grid: { flexDirection: 'row', flexWrap: 'wrap' },
-    preview: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 12 },
-    systemRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 12,
-      minHeight: 56,
-      backgroundColor: colors.card,
-      borderWidth: 1,
-      borderColor: colors.cardBorder,
-      borderRadius: radius.card,
-      paddingHorizontal: 14,
-      paddingVertical: 10,
-    },
-    segments: { flexDirection: 'row', backgroundColor: colors.cardStrong, borderRadius: radius.button, padding: 4, gap: 4 },
+    hintPad: { paddingHorizontal: 14, paddingBottom: 14 },
+    fieldPad: { paddingHorizontal: 14, paddingBottom: 14 },
+    grid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 14 },
+    segments: { flexDirection: 'row', backgroundColor: colors.cardStrong, borderRadius: radius.button, padding: 4, gap: 4, marginHorizontal: 14, marginBottom: 14 },
+    segmentsTop: { marginTop: 14 },
     segment: { flex: 1, minHeight: 48, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4, borderRadius: radius.button - 3 },
     segmentActive: { backgroundColor: colors.primary, borderWidth: 1, borderColor: colors.outline },
     segmentText: { color: colors.text, fontSize: 14, textAlign: 'center' },
     segmentTextActive: { color: colors.onPrimary, fontWeight: '600' },
-    systemRowActive: { borderWidth: 3, borderColor: colors.primaryStrong },
     row: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 12,
       minHeight: 56,
-      backgroundColor: colors.card,
-      borderWidth: 1,
-      borderColor: colors.cardBorder,
-      borderRadius: radius.card,
       paddingHorizontal: 14,
       paddingVertical: 10,
     },
-    gapTop: { marginTop: 18 },
     rowBody: { flex: 1 },
     rowTitleText: { color: colors.text, fontSize: 17 },
     rowTitle: { color: colors.text, fontSize: 17, flex: 1 },
     rowValue: { color: colors.textMuted, fontSize: 16, flexShrink: 1, textAlign: 'right' },
-    version: { color: colors.textMuted, fontSize: 14, marginBottom: 32 },
+    version: { color: colors.textMuted, fontSize: 14, padding: 14 },
     sheetTitle: { color: colors.text, fontSize: 20, fontWeight: '600', marginBottom: 8 },
     option: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 56, paddingVertical: 10 },
     optionDivider: { borderTopWidth: 1, borderTopColor: colors.border },

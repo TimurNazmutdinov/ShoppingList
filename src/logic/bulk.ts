@@ -73,7 +73,9 @@ export function parseBulkPart(raw: string, markers: ReadonlySet<string> = priceM
   const asName = (t: string[]): BulkItem => ({ title: t.join(' '), qty: null, unit: null });
   if (all.length === 0) return asName([]);
 
-  const { rest, price } = extractPrice(all, markers);
+  const { rest: beforePrice, price } = extractPrice(all, markers);
+  // «сыр 2 кг за 3000 ₸»: «за» перед ценой — связка, не часть названия
+  const rest = price !== undefined && beforePrice.length > 1 && beforePrice[beforePrice.length - 1].toLowerCase() === 'за' ? beforePrice.slice(0, -1) : beforePrice;
   if (price !== undefined && rest.length === 0) return asName(all); // «450 ₸» без названия — это название
   const tokens = rest;
   const withPrice = (item: BulkItem): BulkItem => (price === undefined ? item : { ...item, price });

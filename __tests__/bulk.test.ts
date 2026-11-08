@@ -60,6 +60,14 @@ describe('цена в тексте', () => {
     expect(parseBulkPart('хлеб 120 руб.')).toEqual({ title: 'хлеб', qty: null, unit: null, price: 120 });
   });
 
+  it('«за» перед ценой — связка: количество и название не теряются', () => {
+    expect(parseBulkPart('Масло 1 кг за 5000 тг')).toEqual({ title: 'Масло', qty: 1, unit: 'kg', price: 5000 });
+    expect(parseBulkPart('Масло сливочное 1 кг за 5 000 ₸')).toEqual({ title: 'Масло сливочное', qty: 1, unit: 'kg', price: 5000 });
+    expect(parseBulkPart('2 кг сыра за 3000 тенге')).toEqual({ title: 'сыра', qty: 2, unit: 'kg', price: 3000 });
+    expect(parseBulkPart('хлеб за 120 ₸')).toEqual({ title: 'хлеб', qty: null, unit: null, price: 120 });
+    expect(parseBulkPart('за 120 ₸')).toEqual({ title: 'за', qty: null, unit: null, price: 120 });
+  });
+
   it('группы тысяч и дробная цена', () => {
     expect(parseBulkPart('сыр 2 кг 3 000 ₸')).toEqual({ title: 'сыр', qty: 2, unit: 'kg', price: 3000 });
     expect(parseBulkPart('сок 1,5 л 1 250,50 ₸')).toEqual({ title: 'сок', qty: 1.5, unit: 'l', price: 1250.5 });

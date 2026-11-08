@@ -22,9 +22,9 @@
     "track": "#E4E4EC",
     "text": "#16142B",
     "textMuted": "#5C5977",
-    "primary": "#5DCAA5",
-    "onPrimary": "#04342C",
-    "primaryStrong": "#16906A",
+    "primary": "#3D5AFE",
+    "onPrimary": "#FFFFFF",
+    "primaryStrong": "#2A3FD0",
     "warn": "#C2521F",
     "outline": "#5C5977"
    },
