@@ -40,7 +40,8 @@ powershell -ExecutionPolicy Bypass -File scripts\build-apk.ps1
 1. `gh release create v<версия> release\ShoppingList-<версия>.apk --repo TimurNazmutdinov/ShoppingList-android-apk --title ... --notes ...`
 2. `powershell -ExecutionPolicy Bypass -File scripts\make-latest.ps1` создаёт `latest.json` в `C:\Projects\ShoppingList-android-apk` из готового APK (размер берётся из файла) и заметок `docs\release-notes\<версия>.json`. Затем обновить `latest.json` в `main` репозитория APK: `{ "version", "versionCode", "url", "apkUrl", "size", "notes": { "ru": [], "kk": [], "en": [] } }`. `size` и SHA-256 — только из готового файла.
 3. Push репозитория APK, затем тег и push основного репозитория.
-Перед публикацией — вопрос пользователю.
+4. **Проверка раздачи:** `curl -sIL <apkUrl>` должен дать 200 и тот же `Content-Length`, что у файла. Если GitHub отвечает 504 (так было с v0.7.4: путь `…/ShoppingList-0.7.4.apk` не отдавался, хотя файл загружен, а через API отдавался): загрузить тот же APK под другим именем (`ShoppingList-<версия>-arm64.apk`: `gh release upload`), удалить неработающий файл (`gh release delete-asset`), прописать новую ссылку в `apkUrl` в `latest.json` и сделать push репозитория APK. `raw.githubusercontent.com` обновляется до 5 минут.
+Релиз выкладывается сразу после проверки файла, без вопроса: пользователь проверяет сборку обновлением в приложении.
 
 ## README репозитория релизов
 > ShoppingList — приложение «список покупок» для Android (прототип для тестирования).
