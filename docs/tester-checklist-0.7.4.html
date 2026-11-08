@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8">
+<title>ShoppingList 0.7.4 — чек-лист тестировщика</title>
+<style>
+@page { size: A4; margin: 14mm 12mm; }
+* { box-sizing: border-box; }
+body { font-family: "Segoe UI", Arial, sans-serif; color: #222; font-size: 11.5px; line-height: 1.35; }
+h1 { font-size: 22px; margin: 0 0 2px; }
+.sub { color: #666; margin-bottom: 10px; }
+h2 { font-size: 14px; margin: 16px 0 5px; padding: 4px 8px; background: #FFE9A8; border-radius: 4px; break-after: avoid; }
+.box { border: 1px solid #bbb; border-radius: 6px; padding: 8px 10px; margin: 8px 0; }
+.box b { color: #8a4b00; }
+table { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
+th { text-align: left; font-size: 10.5px; color: #555; border-bottom: 2px solid #999; padding: 3px 4px; }
+td { border-bottom: 1px solid #ddd; padding: 4px; vertical-align: top; }
+tr { break-inside: avoid; }
+td.n { width: 24px; color: #888; }
+td.r { width: 96px; white-space: nowrap; }
+.cb { display: inline-block; width: 11px; height: 11px; border: 1.5px solid #444; border-radius: 2px; margin-right: 3px; vertical-align: -1px; }
+td.note { width: 120px; }
+.fill { border-bottom: 1px solid #888; display: inline-block; min-width: 130px; height: 14px; }
+.small { color: #666; font-size: 10.5px; }
+</style></head><body>
+
+<h1>ShoppingList 0.7.4 — чек-лист тестировщика</h1>
+<div class="sub">Версия 0.7.4 (сборка 8). Проходите пункты по порядку, отмечайте ☐ «Ок» или ☐ «Не ок» и пишите заметку, что именно не так. Разделы 2–8 — новое в этой версии; остальное — проверка, что прежнее не сломалось.</div>
+
+<div class="box">
+<b>Кто тестирует:</b> <span class="fill"></span> &nbsp; <b>Телефон / Android:</b> <span class="fill"></span> &nbsp; <b>Язык приложения:</b> <span class="fill" style="min-width:70px"></span> &nbsp; <b>Дата:</b> <span class="fill" style="min-width:70px"></span>
+</div>
+<div class="box small">
+<b>Перед началом.</b> 1) Если на телефоне стоит предыдущая версия, это нормально — проверяйте обновление поверх. 2) Для голосового ввода нужен интернет. 3) Для «Купить снова» в истории должны быть покупки: сначала поработайте с обычными списками и отметьте товары купленными. 4) Для проверки ярлыков приложение нужно открыть хотя бы один раз после обновления. 5) Если что-то работает странно, сфотографируйте экран и напишите, что нажимали перед этим.
+</div>
+
+<h2>1. Установка и запуск</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">1</td><td>Поставьте 0.7.4 поверх 0.7.3 («Настройки» → «Проверить сейчас» или файлом APK).</td><td>Обновление ставится, списки, товары, цены и настройки на месте. На экране «Нужно обновить приложение» нет списка «что сделано»: только версия, размер и кнопка «Обновить».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">2</td><td>Откройте приложение, дождитесь заставки; коснитесь экрана во время заставки.</td><td>Заставка проигрывается; касание сразу показывает готовый знак, повторное касание открывает приложение.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">3</td><td>Закройте и откройте приложение несколько раз.</td><td>Не вылетает, цвета не «мигают».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>2. Новое: режим «В магазин»</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">4</td><td>Откройте список с несколькими товарами (лучше с ценами и в разных категориях).</td><td>Над строкой добавления слева кнопка «значок + В магазин», справа «Блюда». Пока открыта клавиатура, обе кнопки скрыты.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">5</td><td>Нажмите «В магазин».</td><td>Крупные строки по категориям (флажок, название крупно); сверху «Осталось N из M» и полоса, справа «ещё на … ₸» (если есть цены). Снизу только строка «Забыли что-то? Добавить…» и «+»: микрофона, калькулятора и «Блюд» нет.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">6</td><td>Положите телефон и не трогайте экран дольше, чем он гаснет обычно (например, 2 минуты).</td><td>Экран не гаснет, пока открыт режим.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">7</td><td>Нажмите на товар.</td><td>Товар «куплен»: счётчик и полоса меняются, товар уходит в свёрнутый раздел «Куплено · N». Смахивать не нужно.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">8</td><td>Нажмите «Куплено · N», затем на купленный товар.</td><td>Раздел раскрывается; нажатие возвращает товар в список.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">9</td><td>Введите товар в строку внизу и нажмите «+».</td><td>Товар появился в списке режима.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">10</td><td>Отметьте все товары.</td><td>Экран «Всё купили!»: число товаров и итог в ₸, кнопка «Готово».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">11</td><td>Выйдите: «Готово», крестик «×» вверху и системная кнопка «назад» (по очереди, открывая режим заново).</td><td>Каждый способ возвращает к обычному списку; купленное лежит в разделе «Куплено».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">12</td><td>Откройте тот же список заново; затем оставьте телефон без касаний.</td><td>Обычный вид (режим не запоминается); экран снова гаснет, как всегда.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>3. Новое: «Купить снова»</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">13</td><td>Создайте пустой список (в истории уже есть покупки; «Запоминать параметры товаров» включено).</td><td>Блок «Купить снова» с кнопками (до 8): чаще покупаемое первым, у кнопки прошлое количество («Молоко 1 л»).</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">14</td><td>Нажмите на кнопку в блоке.</td><td>Товар добавился с прошлым количеством и ценой; из блока он пропал.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">15</td><td>В списке с товарами нажмите в пустую строку ввода.</td><td>Над строкой ряд «Часто:» с прокруткой вбок; того, что уже лежит в списке и не куплено, в ряду нет.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">16</td><td>Нажмите на кнопку в ряду «Часто:».</td><td>Товар добавился, клавиатура осталась, ряд обновился.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">17</td><td>Начните печатать название.</td><td>Ряд «Часто:» сменяется обычными подсказками по буквам.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">18</td><td>«Настройки» → выключите «Запоминать параметры товаров», вернитесь в пустой список и в строку ввода.</td><td>Блока «Купить снова» и ряда «Часто:» нет. Включите тумблер обратно.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>4. Новое: бюджет списка</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">19</td><td>«Списки» → «⋯» → изменить список (или создайте новый).</td><td>В окне есть поле «Бюджет, ₸ · необязательно» (валюта — из «Настроек»). Введите 15000 и сохраните.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">20</td><td>Откройте список и добавьте товары с ценами на сумму меньше бюджета.</td><td>Внизу над строкой ввода: «Итого X из 15 000 ₸», полоса, «Осталось в бюджете …». Верхней строки «Куплено · Осталось · Всего» нет.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">21</td><td>Добавьте товары так, чтобы сумма стала больше бюджета.</td><td>Внизу «Больше бюджета на …» цветом предупреждения (словами, не только цветом), полоса полная.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">22</td><td>Откройте вкладку «Списки».</td><td>На карточке: сумма и «бюджет 15 000 ₸», полоса бюджета; у списка без бюджета: сумма и «без бюджета».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">23</td><td>Откройте список и уберите бюджет (пустое поле).</td><td>Внизу снова обычная строка «Куплено · Осталось · Всего» над списком.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">24</td><td>Задайте бюджет, «Настройки» → «Сохранить копию», удалите этот список, затем «Восстановить из файла».</td><td>Список вернулся вместе с бюджетом.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">25</td><td>«⋯» → «Копировать» у списка с бюджетом.</td><td>Копия получила тот же бюджет.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>5. Новое: ярлыки на иконке</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">26</td><td>Откройте приложение один раз и закройте. Долго нажмите на иконку на рабочем столе.</td><td>Меню из трёх пунктов со значками: «Добавить товар», «Сегодня», «Новый список».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">27</td><td>Выберите «Добавить товар».</td><td>Открывается последний открытый список, курсор в строке ввода, клавиатура поднята. Заставки нет.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">28</td><td>Выберите «Сегодня».</td><td>Открывается вкладка «Сегодня» без заставки.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">29</td><td>Выберите «Новый список».</td><td>Открывается вкладка «Списки» с окном создания списка; после закрытия окно не появляется само.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">30</td><td>Откройте список, нажмите «назад» после входа через ярлык «Добавить товар».</td><td>Возвращает на вкладку «Списки», а не закрывает приложение.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">31</td><td>Смените язык приложения на другой, чем язык телефона, закройте приложение и снова долго нажмите на иконку.</td><td>Подписи ярлыков на языке приложения. Напишите, если казахские подписи звучат неправильно.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">32</td><td>«Настройки» → «Ко всему: заставка и ярлык» → любой неянтарный профиль (согласитесь сменить иконку); закройте приложение и долго нажмите на новую иконку.</td><td>Ярлыки по-прежнему на месте и работают.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок <span class="cb"></span>Не менял иконку</td><td class="note"></td></tr></table>
+
+<h2>6. Новое: «Ночь» и «Как в системе»</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">33</td><td>«Настройки» → профиль «Ночь».</td><td>Кнопки голубые (в том числе «+», «Готово», «Сохранить»); текст на них читается.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">34</td><td>Выберите «Как в системе».</td><td>Под ним две строки: «Светлая тема телефона — Янтарь» и «Тёмная тема телефона — Какао»; на миниатюрах метки «день» и «ночь».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">35</td><td>Нажмите на «Светлая тема телефона», выберите другой светлый профиль; затем на «Тёмная тема телефона» — другой тёмный.</td><td>Каждое окно показывает 7 профилей нужного типа; выбор виден в строке и на метке миниатюры.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">36</td><td>Переключите тему телефона (светлая ↔ тёмная) в системных настройках и вернитесь в приложение.</td><td>Приложение работает в цветах выбранного дневного или ночного профиля.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">37</td><td>Нажмите на любую миниатюру ниже.</td><td>Включается постоянный профиль; две строки и метки «день» / «ночь» пропадают.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">38</td><td>Выберите «Как в системе», закройте приложение и откройте снова.</td><td>Свои дневной и ночной профили сохранились.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">39</td><td>«Сохранить копию», смените дневной и ночной профили, затем «Восстановить из файла» → копия.</td><td>Профили «Как в системе» вернулись такими, как были в копии.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>7. Быстрый ввод, голос и числа словами</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">40</td><td>Введите «масло 1 кг за 5000 тг» и «+».</td><td>Добавилось «Масло» с «1 кг · 5 000 ₸» (слово «за» не мешает).</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">41</td><td>Введите «рис одна пачка 500 тенге», «две пачки чая», «яйца десять штук» (по очереди).</td><td>Количество и единица распознаются: «Рис» 1 уп · 500 ₸, «чая» 2 уп, «яйца» 10 шт.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">42</td><td>Нажмите микрофон и скажите «рис одна пачка 500 тенге».</td><td>Текст в строке и предпросмотр; после «+» добавлен «Рис» с 1 уп и ценой 500. Напишите, как записались слова.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">43</td><td>Добавьте товар с количеством и ценой через калькулятор у «+». Посмотрите на кнопку рядом с «+» после добавления.</td><td>Кнопка снова показывает калькулятор без значений. Если на ней остаётся количество или цена, напишите, что именно делали перед этим.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">44</td><td>Введите «молоко 1 л 450 ₸, хлеб, сыр 2 кг 3 000 ₸» и «+».</td><td>Добавились три товара с количеством и ценами, как раньше.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>8. «Настройки»: «Белая» и рамки</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">45</td><td>«Настройки» → профиль «Белая».</td><td>Кнопки синие, а не мятные; текст на них читается.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">46</td><td>Пролистайте «Настройки» целиком.</td><td>Каждая группа (оформление, валюта и язык, подсказки, обновления, резервная копия, о приложении) лежит в одном блоке с рамкой; сверху нет логотипа и пояснения.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>9. Товары, подсказки, цены, блюда</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">47</td><td>Начните вводить «мол», «порош», «посуд».</td><td>Подсказки из каталога; нажатие добавляет товар с категорией.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">48</td><td>Добавьте «молоко» 1 л с ценой, отметьте купленным и добавьте «молоко» ещё раз.</td><td>Второй раз количество, единица и цена подставляются сами.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">49</td><td>Нажмите на «1 л · 450 ₸» справа в строке товара и поправьте цену.</td><td>Открывается «Количество и цена»; после «Готово» итоги пересчитываются.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">50</td><td>Нажмите «Блюда», выберите блюдо и добавьте в список; создайте своё блюдо.</td><td>Продукты добавляются с количеством и ценами; своё блюдо сохраняется и выбирается.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">51</td><td>Смахните товар вправо и влево; в «Куплено» смахните вправо.</td><td>Куплен с «Отменить» / удалён с «Отменить» / возвращён в список.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>10. Поделиться, копия, даты и напоминания</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">52</td><td>«⋯» на списке → «Поделиться» → «Текстом» и «PDF».</td><td>Меню Android; список с количеством, ценой и итогом; в PDF читаются русские и казахские буквы.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">53</td><td>«Настройки» → «Сохранить копию», затем «Восстановить из файла».</td><td>Списки добавляются как копии, свои блюда не дублируются.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">54</td><td>Поставьте списку дату на сегодня; «⋯» → «Копировать».</td><td>«Сегодня» показывает список; копия создаётся, исходный не меняется.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">55</td><td>«Настройки» → «Напоминания» → «Проверить уведомление».</td><td>Через 10 секунд приходит уведомление.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>11. Обновление и общее</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">56</td><td>«Настройки» → «Проверить сейчас».</td><td>«Последняя» или экран обновления; без вылетов.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">57</td><td>Попользуйтесь приложением 10–15 минут как обычно.</td><td>Без вылетов, рывков и «зависаний»; кнопки достаточно крупные.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">58</td><td>Общее впечатление: что понравилось, что неудобно, чего не хватает?</td><td class="small">Напишите свободно в заметках ниже.</td><td class="r"></td><td class="note"></td></tr></table>
+
+<div class="box" style="min-height:110px"><b>Заметки и пожелания:</b></div>
+<div class="small">Если что-то сломалось, напишите: на каком экране, что нажимали, что ожидали и что получилось (по возможности со снимком экрана). Спасибо за помощь!</div>
+</body></html>

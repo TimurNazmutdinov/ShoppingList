@@ -80,7 +80,7 @@ sections.push({ title: 'Цветовые профили', rows: Object.values(th
 sections.push({ title: 'Цвета списков', rows: themes.goalColors.map((c) => ({ ru: c.name.ru, kk: c.name.kk })) });
 
 // ---------- чек-лист тестировщика (разбор готового HTML) ----------
-const chk = rd('docs/tester-checklist-0.7.2.html');
+const chk = rd('docs/tester-checklist-0.7.4.html');
 const decode = (s) => s.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').trim();
 const checklist = [];
 for (const m of chk.matchAll(/<h2>([\s\S]*?)<\/h2>\s*<table>([\s\S]*?)<\/table>/g)) {
@@ -89,7 +89,7 @@ for (const m of chk.matchAll(/<h2>([\s\S]*?)<\/h2>\s*<table>([\s\S]*?)<\/table>/
   }));
   checklist.push({ title: decode(m[1]), rows });
 }
-fs.writeFileSync(R + 'docs/review-data.json', JSON.stringify({ version: '0.7.2', words: sections, checklist }, null, 1));
+fs.writeFileSync(R + 'docs/review-data.json', JSON.stringify({ version: '0.7.4', words: sections, checklist }, null, 1));
 
 const json = (v) => JSON.stringify(v).replace(/</g, '\\u003c');
 const BASE_CSS = `
@@ -146,7 +146,7 @@ const wordsHtml = `<!doctype html><html lang="ru"><head><meta charset="utf-8"><m
 <script>
 ${COMMON_JS}
 const DATA=${json(sections)};
-const KEY='shoppinglist-kk-review-0.7.2';
+const KEY='shoppinglist-kk-review-0.7.4';
 const state=loadState(KEY);state.rows=state.rows||{};
 let filter='all';
 const flat=[];let n=0;
@@ -186,7 +186,7 @@ $$('[data-f]').forEach(b=>b.addEventListener('click',()=>{filter=b.dataset.f;$$(
 $('#allok').addEventListener('click',()=>{flat.forEach(r=>{const s=state.rows[r.id]=state.rows[r.id]||{};if(!s.s)s.s='ok'});saveState(KEY,state);paint()});
 $('#reset').addEventListener('click',()=>{if(confirm('Стереть все отметки и ответы?')){state.rows={};saveState(KEY,state);paint()}});
 function report(){
-  const L=['ShoppingList, казахские слова, версия 0.7.2','Проверил(а): '+(state.who||'—'),''];
+  const L=['ShoppingList, казахские слова, версия 0.7.4','Проверил(а): '+(state.who||'—'),''];
   const fixes=flat.filter(r=>(state.rows[r.id]||{}).s==='fix');
   L.push('Исправить ('+fixes.length+'):');
   fixes.forEach(r=>{const s=state.rows[r.id];L.push('№'+r.id+' ['+r.sec+'] '+r.ru+' | было: '+r.kk+' | правильно: '+(s.t||'(не указано)'))});
@@ -202,9 +202,9 @@ fs.writeFileSync(R + 'docs/kazakh-words-interactive.html', wordsHtml);
 
 // ---------- интерактивный чек-лист ----------
 const checkHtml = `<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ShoppingList 0.7.2 — чек-лист тестировщика</title><style>${BASE_CSS}</style></head><body>
+<title>ShoppingList 0.7.4 — чек-лист тестировщика</title><style>${BASE_CSS}</style></head><body>
 <header>
-<h1>ShoppingList 0.7.2 — чек-лист тестировщика</h1>
+<h1>ShoppingList 0.7.4 — чек-лист тестировщика</h1>
 <div class="sub">Проходите пункты по порядку, отмечайте результат и пишите заметку. Всё сохраняется само.</div>
 <div class="bar"><i id="bar"></i></div><div class="sub" id="stat"></div>
 <div class="tools">
@@ -222,7 +222,7 @@ const checkHtml = `<!doctype html><html lang="ru"><head><meta charset="utf-8"><m
 <script>
 ${COMMON_JS}
 const DATA=${json(checklist)};
-const KEY='shoppinglist-checklist-0.7.2';
+const KEY='shoppinglist-checklist-0.7.4';
 const state=loadState(KEY);state.rows=state.rows||{};
 let filter='all';
 const flat=[];const root=$('#root');
@@ -259,7 +259,7 @@ root.addEventListener('input',e=>{if(!e.target.classList.contains('t'))return;co
 $$('[data-f]').forEach(b=>b.addEventListener('click',()=>{filter=b.dataset.f;$$('[data-f]').forEach(x=>x.classList.toggle('on',x===b));paint()}));
 $('#reset').addEventListener('click',()=>{if(confirm('Стереть все отметки и заметки?')){state.rows={};state.gen='';$('#gen').value='';saveState(KEY,state);paint()}});
 function report(){
-  const L=['ShoppingList 0.7.2, отчёт тестировщика','Имя: '+(state.who||'—')+' | Телефон: '+(state.phone||'—')+' | Android: '+(state.android||'—')+' | Язык: '+(state.lang||'—'),''];
+  const L=['ShoppingList 0.7.4, отчёт тестировщика','Имя: '+(state.who||'—')+' | Телефон: '+(state.phone||'—')+' | Android: '+(state.android||'—')+' | Язык: '+(state.lang||'—'),''];
   const fails=flat.filter(r=>(state.rows[r.id]||{}).s==='fail');
   L.push('Не ок ('+fails.length+'):');
   fails.forEach(r=>{const s=state.rows[r.id];L.push('№'+r.id+' ['+r.sec+'] '+r.what+' — '+(s.t||'(без заметки)'))});

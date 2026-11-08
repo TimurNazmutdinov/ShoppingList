@@ -53,10 +53,10 @@ async function build(kind) {
   };
 
   newPage();
-  text(isWords ? 'ShoppingList — все слова на казахском' : 'ShoppingList 0.7.2 — чек-лист тестировщика', M, y - 14, 17, bold);
+  text(isWords ? 'ShoppingList — все слова на казахском' : 'ShoppingList 0.7.4 — чек-лист тестировщика', M, y - 14, 17, bold);
   y -= 22;
   const intro = isWords
-    ? 'Версия 0.7.2. Для каждой строки отметьте «верно» или «исправить» и впишите, как правильно по-казахски. Пометки в фигурных скобках ({n}, {title}) — место для числа или названия: их не меняйте. Заполняйте в Adobe Acrobat или просмотре Google Диска; на телефоне удобнее интерактивная страница.'
+    ? 'Версия 0.7.4. Для каждой строки отметьте «верно» или «исправить» и впишите, как правильно по-казахски. Пометки в фигурных скобках ({n}, {title}) — место для числа или названия: их не меняйте. Заполняйте в Adobe Acrobat или просмотре Google Диска; на телефоне удобнее интерактивная страница.'
     : 'Проходите пункты по порядку: отметьте результат и впишите заметку. Если проверить невозможно, выберите «Нет возм.». Заполняйте в Adobe Acrobat или просмотре Google Диска; на телефоне удобнее интерактивная страница.';
   for (const l of wrap(intro, font, 9, W - 2 * M)) { text(l, M, y - 10, 9, font, GREY); y -= 12; }
   y -= 6;
@@ -128,7 +128,7 @@ async function build(kind) {
   pages.forEach((p, i) => p.drawText(`Страница ${i + 1} из ${pages.length}`, { x: W / 2 - 36, y: 22, size: 8, font, color: GREY }));
   form.updateFieldAppearances(font);
   const bytes = await doc.save();
-  const out = `C:/Projects/ShoppingList/docs/${isWords ? 'kazakh-words-0.7.2-form.pdf' : 'tester-checklist-0.7.2-form.pdf'}`;
+  const out = `C:/Projects/ShoppingList/docs/${isWords ? 'kazakh-words-0.7.4-form.pdf' : 'tester-checklist-0.7.4-form.pdf'}`;
   fs.writeFileSync(out, bytes);
   const check = await PDFDocument.load(bytes);
   console.log(kind, 'pages', check.getPageCount(), 'fields', check.getForm().getFields().length, 'KB', Math.round(bytes.length / 1024));
