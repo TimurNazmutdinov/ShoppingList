@@ -51,6 +51,41 @@ describe('parseBulk / isStructured', () => {
   });
 });
 
+describe('слова-числа (голосовой ввод)', () => {
+  it('«рис одна пачка 500 тенге» — количество, упаковка и цена', () => {
+    expect(parseBulkPart('Рис одна пачка 500 тенге')).toEqual({ title: 'Рис', qty: 1, unit: 'pack', price: 500 });
+    expect(parseBulkPart('Рис одна упаковка 500 тенге')).toEqual({ title: 'Рис', qty: 1, unit: 'pack', price: 500 });
+    expect(parseBulkPart('Рис две пачки 1 000 тг')).toEqual({ title: 'Рис', qty: 2, unit: 'pack', price: 1000 });
+  });
+
+  it('слово-число в начале и падежные формы единиц', () => {
+    expect(parseBulkPart('две пачки риса')).toEqual({ title: 'риса', qty: 2, unit: 'pack' });
+    expect(parseBulkPart('рис одну пачку')).toEqual({ title: 'рис', qty: 1, unit: 'pack' });
+    expect(parseBulkPart('пять пачек чая')).toEqual({ title: 'чая', qty: 5, unit: 'pack' });
+    expect(parseBulkPart('один литр молока')).toEqual({ title: 'молока', qty: 1, unit: 'l' });
+  });
+
+  it('другие единицы, полтора, казахские и английские слова', () => {
+    expect(parseBulkPart('яйца десять штук')).toEqual({ title: 'яйца', qty: 10, unit: 'pcs' });
+    expect(parseBulkPart('молоко один литр 450 ₸')).toEqual({ title: 'молоко', qty: 1, unit: 'l', price: 450 });
+    expect(parseBulkPart('сахар полтора кг')).toEqual({ title: 'сахар', qty: 1.5, unit: 'kg' });
+    expect(parseBulkPart('сүт екі литр')).toEqual({ title: 'сүт', qty: 2, unit: 'l' });
+    expect(parseBulkPart('rice two pack')).toEqual({ title: 'rice', qty: 2, unit: 'pack' });
+  });
+
+  it('слово-число без единицы остаётся в названии', () => {
+    expect(parseBulkPart('Три медведя')).toEqual({ title: 'Три медведя', qty: null, unit: null });
+    expect(parseBulkPart('Пять звёзд')).toEqual({ title: 'Пять звёзд', qty: null, unit: null });
+    expect(parseBulkPart('рис одна')).toEqual({ title: 'рис одна', qty: null, unit: null });
+    expect(parseBulkPart('constructor кг')).toEqual({ title: 'constructor кг', qty: null, unit: null });
+  });
+
+  it('в списке: каждый товар разбирается отдельно', () => {
+    const items = parseBulk('рис одна пачка 500 тенге, хлеб');
+    expect(items.map((i) => [i.title, i.qty, i.unit, i.price])).toEqual([['рис', 1, 'pack', 500], ['хлеб', null, null, undefined]]);
+  });
+});
+
 describe('цена в тексте', () => {
   it('число со значком — цена: ₸, тг, тенге, слитно и раздельно', () => {
     expect(parseBulkPart('хлеб 120 ₸')).toEqual({ title: 'хлеб', qty: null, unit: null, price: 120 });

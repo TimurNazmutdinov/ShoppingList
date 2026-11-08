@@ -8,8 +8,19 @@ const UNIT_WORDS: Record<string, string> = {
   кг: 'kg', килограмм: 'kg', килограмма: 'kg', kg: 'kg',
   г: 'g', гр: 'g', грамм: 'g', грамма: 'g', граммов: 'g', g: 'g',
   л: 'l', литр: 'l', литра: 'l', литров: 'l', l: 'l',
-  уп: 'pack', упаковка: 'pack', упаковки: 'pack', пачка: 'pack', пачки: 'pack', қап: 'pack', pack: 'pack',
+  уп: 'pack', упаковка: 'pack', упаковки: 'pack', упаковку: 'pack', упаковок: 'pack', пачка: 'pack', пачки: 'pack', пачку: 'pack', пачек: 'pack', қап: 'pack', pack: 'pack',
   liter: 'l', liters: 'l', litre: 'l', litres: 'l', gram: 'g', grams: 'g', kilogram: 'kg', kilograms: 'kg', piece: 'pcs', pieces: 'pcs',
+};
+
+// Слова-числа, как их записывает распознавание речи («одна пачка»): считаются количеством только рядом со словом-единицей.
+const NUMBER_WORDS: Record<string, number> = {
+  один: 1, одна: 1, одно: 1, одну: 1, два: 2, две: 2, три: 3, четыре: 4, пять: 5, шесть: 6, семь: 7, восемь: 8, девять: 9, десять: 10, полтора: 1.5, полторы: 1.5,
+  бір: 1, екі: 2, үш: 3, төрт: 4, бес: 5, алты: 6, жеті: 7, сегіз: 8, тоғыз: 9, он: 10,
+  one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10,
+};
+const numberWord = (token: string): number | null => {
+  const key = token.toLowerCase();
+  return Object.prototype.hasOwnProperty.call(NUMBER_WORDS, key) ? NUMBER_WORDS[key] : null;
 };
 
 // Значки цены: число со значком — цена («450 ₸», «450тг», «3 000 тенге»); число без значка остаётся в названии.
@@ -66,7 +77,7 @@ function extractPrice(tokens: string[], markers: ReadonlySet<string>): { rest: s
 }
 
 // Одна часть → название, количество, единица, цена.
-// «2 кг сыра» и «сыр 2 кг», «2 яйца», «яйца 10 шт», «сыр 2 кг 3000 ₸»; число в конце без единицы («Йогурт 3») остаётся в названии.
+// «2 кг сыра» и «сыр 2 кг», «2 яйца», «яйца 10 шт», «сыр 2 кг 3000 ₸», «рис одна пачка»; число в конце без единицы («Йогурт 3») остаётся в названии.
 export function parseBulkPart(raw: string, markers: ReadonlySet<string> = priceMarkers()): BulkItem {
   const cleaned = raw.replace(BULLET, '').replace(NUMBERING, '').trim();
   const all = cleaned.split(/\s+/).filter(Boolean);
@@ -80,16 +91,19 @@ export function parseBulkPart(raw: string, markers: ReadonlySet<string> = priceM
   const tokens = rest;
   const withPrice = (item: BulkItem): BulkItem => (price === undefined ? item : { ...item, price });
 
-  if (tokens.length >= 2 && NUMBER.test(tokens[0])) {
-    const qty = toNumber(tokens[0]);
+  if (tokens.length >= 2) {
     const unit = UNIT_WORDS[tokens[1].toLowerCase()];
-    if (unit && tokens.length >= 3) return withPrice({ title: tokens.slice(2).join(' '), qty, unit });
-    if (!unit && qty > 0) return withPrice({ title: tokens.slice(1).join(' '), qty, unit: null });
+    const qty = NUMBER.test(tokens[0]) ? toNumber(tokens[0]) : unit ? numberWord(tokens[0]) : null;
+    if (qty !== null) {
+      if (unit && tokens.length >= 3) return withPrice({ title: tokens.slice(2).join(' '), qty, unit });
+      if (!unit && qty > 0) return withPrice({ title: tokens.slice(1).join(' '), qty, unit: null });
+    }
   }
   if (tokens.length >= 3) {
     const unit = UNIT_WORDS[tokens[tokens.length - 1].toLowerCase()];
     const numToken = tokens[tokens.length - 2];
-    if (unit && NUMBER.test(numToken)) return withPrice({ title: tokens.slice(0, -2).join(' '), qty: toNumber(numToken), unit });
+    const qty = NUMBER.test(numToken) ? toNumber(numToken) : unit ? numberWord(numToken) : null;
+    if (unit && qty !== null) return withPrice({ title: tokens.slice(0, -2).join(' '), qty, unit });
   }
   return withPrice(asName(tokens));
 }
