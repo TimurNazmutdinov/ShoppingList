@@ -3,9 +3,9 @@ import { AppState, Linking, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { File } from 'expo-file-system';
-import { Palette, radius, useTheme } from '@/theme';
-import { getLanguage, t } from '@/i18n';
-import { UpdateInfo, megabytes, notesFor } from '@/logic/updates';
+import { Palette, useTheme } from '@/theme';
+import { t } from '@/i18n';
+import { UpdateInfo, megabytes } from '@/logic/updates';
 import { Download, installApk, openInstallSettings, startDownload } from '@/updater';
 import { appVersion } from '@/version';
 import { PrimaryButton } from '@/components/PrimaryButton';
@@ -18,7 +18,6 @@ type Phase = 'idle' | 'downloading' | 'installing' | 'permission' | 'error';
 export function UpdateScreen({ info }: { info: UpdateInfo }) {
   const colors = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
-  const notes = notesFor(info, getLanguage());
   const [phase, setPhase] = useState<Phase>('idle');
   const [progress, setProgress] = useState({ done: 0, total: info.size ?? 0 });
   const download = useRef<Download | null>(null);
@@ -124,13 +123,6 @@ export function UpdateScreen({ info }: { info: UpdateInfo }) {
         {phase === 'error' ? t('update.error') : t('update.title')}
       </Text>
       <Text style={styles.versions}>{t('update.versions', { version: info.version, current: appVersion })}{sizeText}</Text>
-      {notes.length > 0 && (
-        <View style={styles.notes}>
-          {notes.map((n) => (
-            <Text key={n} style={styles.note}>• {n}</Text>
-          ))}
-        </View>
-      )}
       <View style={styles.button}>
         <PrimaryButton label={phase === 'error' ? t('update.retry') : t('update.button')} onPress={start} />
         {phase === 'error' && <PillButton label={t('update.manual')} onPress={openManual} />}
@@ -162,8 +154,6 @@ const createStyles = (colors: Palette) =>
     title: { color: colors.text, fontSize: 22, fontWeight: '600', textAlign: 'center', marginTop: 16 },
     versions: { color: colors.textMuted, fontSize: 14, textAlign: 'center', marginTop: 6 },
     text: { color: colors.text, fontSize: 15, textAlign: 'center', marginTop: 10 },
-    notes: { alignSelf: 'stretch', backgroundColor: colors.card, borderRadius: radius.button, padding: 12, marginTop: 16, gap: 4 },
-    note: { color: colors.text, fontSize: 15 },
     track: { alignSelf: 'stretch', height: 10, borderRadius: 5, backgroundColor: colors.track, marginVertical: 16, overflow: 'hidden' },
     fill: { height: 10, borderRadius: 5, backgroundColor: colors.primaryStrong },
     button: { alignSelf: 'stretch', marginTop: 16, gap: 4 },
