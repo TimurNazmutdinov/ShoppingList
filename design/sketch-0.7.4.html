@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ShoppingList 0.7.4 — эскиз</title>
+<style>
+  :root {
+    --bg: #F6F0E7; --card: #FFFDF9; --cb: #E8DCCB; --cs: #EFE4D3; --text: #3A2E22; --muted: #76634F;
+    --primary: #D9B48C; --onp: #3A2512; --strong: #9C6B3C; --outline: #76634F;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; background: #E4DDD2; color: #2a2a2a; font-family: system-ui, "Segoe UI", Roboto, sans-serif; line-height: 1.4; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  h2 { font-size: 17px; margin: 30px 0 4px; }
+  p.lead { margin: 0 0 8px; color: #555; font-size: 14px; max-width: 780px; }
+  .row { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; margin-top: 10px; }
+  .fig { width: 360px; }
+  .cap { font-weight: 700; font-size: 14px; margin: 0 0 6px; }
+  .cap em { font-style: normal; font-weight: 400; color: #666; }
+  .rec { color: #1b7a43; }
+  ul.notes { margin: 8px 0 0; padding-left: 18px; font-size: 13px; color: #555; max-width: 780px; }
+  svg.i { width: 22px; height: 22px; }
+
+  /* экран списка */
+  .lscreen { position: relative; background: var(--bg); border: 1px solid #b9b0a2; border-radius: 22px; overflow: hidden; color: var(--text); display: flex; flex-direction: column; min-height: 470px; }
+  .lhead { display: flex; align-items: center; gap: 10px; padding: 8px 12px; }
+  .lhead .btn { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 22px; }
+  .lhead .ttl { flex: 1; font-size: 22px; font-weight: 700; }
+  .dot { width: 14px; height: 14px; border-radius: 50%; background: #7A5BC4; }
+  .lbody { padding: 0 16px; flex: 1; }
+  .item { display: flex; align-items: center; gap: 14px; min-height: 52px; padding: 8px 14px; background: var(--card); border: 1px solid var(--cb); border-radius: 12px; margin-bottom: 8px; }
+  .chk { width: 26px; height: 26px; border: 2px solid var(--outline); border-radius: 8px; flex: none; }
+  .item .t { flex: 1; font-size: 17px; }
+  .item .q { color: var(--muted); font-size: 15px; }
+  .item .q.tap { background: var(--cs); border-radius: 10px; padding: 6px 10px; border-bottom: 2px solid var(--primary); }
+  .bar { background: var(--card); border-top: 1px solid var(--cb); padding: 10px 12px 14px; }
+  .irow { display: flex; align-items: center; gap: 8px; }
+  .inp { flex: 1; min-height: 48px; display: flex; align-items: center; padding: 0 16px; border: 1px solid var(--outline); border-radius: 24px; background: var(--bg); color: var(--muted); font-size: 15px; line-height: 1.25; }
+  .inp.typed { color: var(--text); font-size: 16px; }
+  .circ { width: 48px; height: 48px; border-radius: 24px; border: 1px solid var(--outline); display: flex; align-items: center; justify-content: center; color: var(--muted); flex: none; text-align: center; font-size: 12px; font-weight: 700; line-height: 1.1; }
+  .circ.plus { background: var(--primary); border-color: var(--primary); color: var(--onp); font-size: 28px; font-weight: 400; }
+  .circ.on { background: var(--cs); border: 2px solid var(--strong); color: var(--text); }
+  .circ.rec { background: var(--primary); border-color: var(--strong); color: var(--onp); }
+  .tip { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; padding: 6px 6px 6px 14px; min-height: 48px; border-radius: 24px; background: var(--cs); font-size: 13px; color: var(--text); }
+  .tip .tx { flex: 1; }
+  .tip .lnk { color: var(--strong); font-weight: 700; white-space: nowrap; }
+  .tip .x { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 18px; }
+  .prev { margin: 0 0 8px; padding: 10px 14px; border-radius: 16px; background: var(--cs); font-size: 14px; }
+  .prev b { font-size: 13px; color: var(--strong); letter-spacing: .3px; }
+  .prev .ln { display: flex; justify-content: space-between; gap: 10px; margin-top: 3px; }
+  .prev .ln span:last-child { color: var(--muted); }
+  .prev .tot { border-top: 1px solid var(--cb); margin-top: 6px; padding-top: 6px; font-weight: 700; display: flex; justify-content: space-between; }
+  .listen { display: flex; align-items: center; gap: 12px; margin: 0 0 8px; padding: 12px 14px; border-radius: 16px; background: var(--cs); font-size: 14px; }
+  .pulse { width: 48px; height: 48px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 0 6px rgba(217,180,140,.45), 0 0 0 12px rgba(217,180,140,.2); display: flex; align-items: center; justify-content: center; flex: none; color: var(--onp); }
+  .listen .tx { flex: 1; }
+  .listen .tx small { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
+
+  /* окна снизу и диалог */
+  .phoneb { background: #8c8898; border-radius: 22px; overflow: hidden; border: 1px solid #b9b0a2; }
+  .scrim { height: 60px; }
+  .sheet { background: #FFFDF9; border-radius: 28px 28px 0 0; padding: 12px 22px 18px; color: var(--text); }
+  .handle { width: 44px; height: 5px; border-radius: 3px; background: #E6DCC8; margin: 0 auto 14px; }
+  .sheet h4 { margin: 0 0 10px; font-size: 20px; font-weight: 600; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .chip { min-width: 48px; min-height: 48px; padding: 0 6px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--outline); border-radius: 12px; font-size: 16px; }
+  .field { flex: 1; min-width: 88px; min-height: 48px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--outline); background: #fff; border-radius: 12px; color: var(--muted); font-size: 14px; white-space: nowrap; }
+  .field.full { width: 100%; flex: none; margin-bottom: 10px; font-size: 16px; padding: 0 14px; }
+  .field .sfx { color: var(--text); font-weight: 700; }
+  .lbl { font-size: 13px; color: var(--muted); margin: 0 0 4px; }
+  .btns { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+  .btns .reset { color: var(--muted); font-weight: 600; font-size: 17px; padding: 0 14px; }
+  .btns .done { flex: 1; min-height: 52px; background: var(--primary); color: var(--onp); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 17px; }
+  .dim { background: rgba(40, 30, 20, .45); padding: 70px 22px; border-radius: 22px; }
+  .dialog { background: var(--card); border-radius: 20px; padding: 20px; color: var(--text); }
+  .dialog h4 { margin: 0 0 8px; font-size: 19px; }
+  .dialog p { margin: 0 0 10px; font-size: 15px; }
+  .dialog .ex { background: var(--cs); border-radius: 12px; padding: 8px 12px; font-size: 14px; margin-bottom: 12px; }
+  .dialog .acts { display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px; }
+  .dialog .acts span { min-height: 48px; padding: 0 16px; display: flex; align-items: center; font-weight: 700; border-radius: 12px; color: var(--muted); }
+  .dialog .acts span.ok { background: var(--primary); color: var(--onp); }
+  .help h5 { margin: 12px 0 2px; font-size: 15px; }
+  .help p { margin: 0; font-size: 14px; color: var(--muted); }
+  .help .ex { display: inline-block; margin-top: 4px; background: var(--cs); border-radius: 10px; padding: 5px 10px; font-size: 14px; color: var(--text); }
+
+  /* блюда */
+  .drow { display: flex; align-items: center; gap: 6px; min-height: 56px; }
+  .drow .ck { width: 48px; height: 52px; display: flex; align-items: center; justify-content: center; }
+  .drow .ck i { width: 24px; height: 24px; border-radius: 7px; background: var(--strong); display: block; color: #fff; text-align: center; font-style: normal; font-size: 15px; line-height: 24px; }
+  .drow .nm { flex: 1; min-width: 0; }
+  .drow .in { min-height: 48px; display: flex; align-items: center; padding: 0 10px; border: 1px solid var(--outline); border-radius: 12px; background: #fff; font-size: 16px; }
+  .drow .qt { width: 52px; } .drow .un { width: 24px; color: var(--muted); font-size: 14px; } .drow .pr { width: 64px; justify-content: flex-end; }
+  .dhead { display: flex; gap: 6px; font-size: 12px; color: var(--muted); padding-left: 48px; margin: 4px 0 -2px; }
+  .dhead span:nth-child(1) { flex: 1; } .dhead span:nth-child(2) { width: 82px; } .dhead span:nth-child(3) { width: 64px; text-align: right; }
+  .shead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .shead h4 { margin: 0; }
+  .toplink { color: var(--strong); font-weight: 700; font-size: 15px; min-height: 48px; display: flex; align-items: center; padding: 0 6px; }
+  .dchips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+  .dchip { min-height: 52px; padding: 0 18px; display: flex; align-items: center; border-radius: 12px; background: var(--cs); font-size: 17px; }
+  .dchip.add { background: transparent; border: 1.5px dashed var(--strong); color: var(--strong); font-weight: 700; }
+  .mrow { display: flex; align-items: center; gap: 2px; min-height: 56px; border-bottom: 1px solid var(--cb); font-size: 17px; }
+  .mrow .nm { flex: 1; padding-left: 4px; }
+  .mrow .nm small { display: block; font-size: 12px; color: var(--muted); }
+  .mrow .ab { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 20px; }
+  .mrow .ab.del { color: #B9471B; }
+  .sub { font-size: 14px; color: var(--strong); font-weight: 700; padding: 10px 4px; }
+  table.g { border-collapse: collapse; font-size: 14px; background: var(--card); border-radius: 12px; overflow: hidden; max-width: 780px; }
+  table.g th, table.g td { padding: 7px 12px; border-bottom: 1px solid var(--cb); text-align: left; }
+  table.g th { background: var(--cs); font-size: 13px; }
+
+  /* 0.8 */
+  svg.i.s { width: 18px; height: 18px; }
+  .lhead .btn.sm { width: 40px; }
+  .lhead .ttl { min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pill { white-space:nowrap; flex:none; display:flex; align-items:center; gap:6px; min-height:40px; padding:0 10px; border-radius:20px; background: var(--primary); color: var(--onp); font-weight:700; font-size:13px; outline: 3px dashed #1b7a43; outline-offset: 2px; }
+  .cat { font-size:12px; font-weight:700; letter-spacing:.4px; color: var(--muted); margin: 8px 2px 6px; }
+  .fab.left { right:auto; left:14px; }
+  .fab.new, .shoprow.new { outline: 3px dashed #1b7a43; outline-offset: 2px; }
+  .shoprow { display:flex; align-items:center; gap:10px; min-height:52px; padding:0 14px; border-radius:14px; background: var(--primary); color: var(--onp); font-weight:700; font-size:16px; margin: 4px 0 6px; }
+  .shoprow small { font-weight:400; font-size:12px; margin-left:auto; }
+  .fab { position:absolute; right:14px; bottom:84px; display:flex; align-items:center; gap:8px; min-height:44px; padding:0 14px; border-radius:22px; background: var(--card); border:1px solid var(--outline); font-weight:700; font-size:14px; box-shadow: 0 2px 6px rgba(0,0,0,.12); }
+  .lscreen.shop { min-height: 560px; }
+  .prog { margin: 0 16px 6px; padding: 10px 14px; border-radius: 14px; background: var(--cs); }
+  .prog .pl { display:flex; justify-content:space-between; align-items:baseline; font-size:15px; }
+  .prog .pl b { font-size: 17px; } .prog .pl span { color: var(--muted); font-size: 14px; }
+  .pbar { height: 8px; border-radius: 4px; background: #E6D8C3; margin-top: 8px; overflow:hidden; }
+  .pbar i { display:block; height: 100%; border-radius: 4px; background: var(--strong); }
+  .pbar.thin { height: 5px; margin-top: 6px; }
+  .item.big { min-height: 64px; } .item.big .chk { width: 32px; height: 32px; border-radius: 9px; } .item.big .t { font-size: 20px; } .item.big .q { font-size: 17px; }
+  .bought { display:flex; justify-content:space-between; align-items:center; min-height:48px; color: var(--muted); font-weight:700; font-size: 13px; letter-spacing: .4px; padding: 0 4px; }
+  .hintline { font-size: 12.5px; color: var(--muted); text-align:center; margin: 0 0 8px; }
+  .done-all { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; padding-bottom: 30px; }
+  .bigok { width: 84px; height: 84px; border-radius: 50%; background: var(--primary); color: var(--onp); display:flex; align-items:center; justify-content:center; }
+  .da-t { font-size: 24px; font-weight: 700; margin-top: 8px; } .da-s { color: var(--muted); font-size: 16px; }
+  .again { margin-top: 18px; padding: 14px; border-radius: 16px; background: var(--card); border: 1px solid var(--cb); }
+  .ag-h { font-size: 18px; font-weight: 700; } .ag-s { font-size: 13px; color: var(--muted); margin: 2px 0 10px; }
+  .agchips { display:flex; flex-wrap: wrap; gap: 8px; }
+  .agc { display:inline-flex; align-items:center; gap:5px; min-height: 44px; padding: 0 12px; border-radius: 22px; background: var(--cs); font-size: 15px; white-space: nowrap; }
+  .agc small { color: var(--muted); font-size: 13px; }
+  .agc.fade { opacity: .45; }
+  .agrow { display:flex; align-items:center; gap: 6px; margin: 0 0 8px; overflow: hidden; }
+  .agl { font-size: 13px; color: var(--muted); font-weight: 700; flex: none; }
+  .inp.focus { border: 2px solid var(--strong); color: var(--text); }
+  .kbd { margin: 10px -12px -14px; height: 70px; background: #D9D3C8; color: #8a8478; font-size: 12px; display:flex; align-items:center; justify-content:center; }
+  .dots { display:flex; gap: 12px; margin: 2px 0 12px; } .dots i { width: 30px; height: 30px; border-radius: 50%; display:block; }
+  .field.new { outline: 3px dashed #1b7a43; outline-offset: 2px; }
+  .budget { margin: 0 12px 8px; padding: 10px 14px; border-radius: 14px; background: var(--card); border: 1px solid var(--cb); font-size: 15px; }
+  .budget .bl { display:flex; justify-content:space-between; } .budget .bl span:last-child { color: var(--muted); }
+  .budget .bs { font-size: 13px; color: var(--muted); margin-top: 6px; }
+  .budget.over { border-color: #B9471B; } .budget.over .pbar i { background: #B9471B; } .budget.over .bs { color: #B9471B; font-weight: 700; }
+  .lcard { background: var(--card); border: 1px solid var(--cb); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; }
+  .lc1 { display:flex; align-items:center; gap: 8px; font-size: 17px; } .lc1 b { flex: 1; } .lcd { color: var(--muted); font-size: 13px; }
+  .lc2 { color: var(--muted); font-size: 13px; margin-top: 4px; }
+  .lc3 { display:flex; justify-content:space-between; font-size: 14px; margin-top: 6px; font-weight: 700; } .lcb { color: var(--muted); font-weight: 400; }
+  .home { position: relative; height: 470px; border-radius: 22px; overflow: hidden; background: linear-gradient(160deg,#BFD9E8,#E7D9EC 60%,#F3E3D3); border: 1px solid #b9b0a2; }
+  .menu { position:absolute; left: 92px; top: 150px; width: 220px; background: #FBFBFD; border-radius: 18px; box-shadow: 0 8px 24px rgba(0,0,0,.2); padding: 6px 0; color: #1d1d22; }
+  .mi { display:flex; align-items:center; gap: 12px; min-height: 52px; padding: 0 16px; font-size: 16px; }
+  .mic { width: 32px; height: 32px; border-radius: 50%; background: #F1E6D6; color: #6E4A26; display:flex; align-items:center; justify-content:center; }
+  .appic { position:absolute; left: 110px; top: 342px; display:flex; flex-direction:column; align-items:center; gap: 6px; font-size: 12px; color: #1B2A36; }
+  .ico { width: 64px; height: 64px; border-radius: 50%; background: #fff; display:flex; align-items:center; justify-content:center; box-shadow: 0 2px 6px rgba(0,0,0,.15); }
+  .apps { position:absolute; left: 24px; right: 24px; bottom: 26px; display:flex; justify-content:space-around; }
+  .ghost { position:absolute; width: 56px; height: 56px; border-radius: 50%; background: rgba(255,255,255,.55); }
+
+  .infobox { max-width: 780px; background: #FFF9EC; border: 1px solid #E2CFA8; border-radius: 12px; padding: 10px 14px; font-size: 13.5px; color: #4a3f30; margin: 6px 0 4px; }
+  h2 em.q5 { font-style: normal; font-weight: 400; color: #8a6a3a; font-size: 14px; }
+  .chk.on { display:flex; align-items:center; justify-content:center; font-weight:700; font-size:16px; }
+  .stitle { font-size: 12.5px; font-weight: 700; letter-spacing: .4px; color: var(--strong); margin: 4px 2px 8px; }
+  .sblock { background: var(--card); border: 1px solid var(--cb); border-radius: 14px; padding: 4px 12px 12px; }
+  .srow { display:flex; align-items:center; gap: 12px; min-height: 56px; border-bottom: 1px solid var(--cb); }
+  .srow.child { padding-left: 34px; }
+  .srow.new { outline: 2px dashed #1b7a43; outline-offset: -2px; border-radius: 8px; }
+  .st { flex: 1; font-size: 16px; } .st small { display:block; font-size: 12.5px; color: var(--muted); }
+  .chev { color: var(--muted); font-size: 22px; }
+  .radio { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--outline); flex: none; }
+  .radio.on { border: 7px solid var(--strong); }
+  .slbl { font-size: 12.5px; color: var(--muted); margin: 10px 0 6px; }
+  .swrow { display:flex; flex-wrap: wrap; gap: 8px; }
+  .sw { position: relative; width: 38px; height: 38px; border-radius: 50%; border: 1px solid rgba(0,0,0,.18); display:flex; align-items:center; justify-content:center; }
+  .sw i, .mini i { width: 16px; height: 16px; border-radius: 5px; display:block; }
+  .sw.tagd { box-shadow: 0 0 0 3px var(--strong); }
+  .sw em { position:absolute; bottom: -15px; font-style: normal; font-size: 10px; color: var(--strong); font-weight: 700; }
+  .mini { width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(0,0,0,.18); display:flex; align-items:center; justify-content:center; flex: none; }
+  code { background: #efe7da; padding: 0 4px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ic-calc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8 7.5h8"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01" stroke-width="2.4"/></g></symbol>
+  <symbol id="ic-mic" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></g></symbol>
+  <symbol id="ic-help" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.6 2.2c-.8.5-1.2 1-1.2 1.9M12 17h.01"/></g></symbol>
+  <symbol id="ic-dish" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v6a2.5 2.5 0 0 0 5 0V3M8.5 3v18"/><path d="M17 21V3c-2.5 1.5-3.5 4.5-3.5 8H17"/></g></symbol>
+  <symbol id="ic-cart" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2.2l2.3 11h10.3l2-8H6.3"/><circle cx="9.5" cy="19.5" r="1.4"/><circle cx="16.5" cy="19.5" r="1.4"/></g></symbol>
+  <symbol id="ic-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="ic-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-ok" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></g></symbol>
+  <symbol id="ic-list" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r=".9" fill="currentColor"/><circle cx="4.5" cy="12" r=".9" fill="currentColor"/><circle cx="4.5" cy="18" r=".9" fill="currentColor"/></g></symbol>
+  <symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="logo" viewBox="0 0 120 120"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E2BB8E"/><stop offset="1" stop-color="#A86F3E"/></linearGradient><mask id="lm"><rect width="120" height="120" fill="#fff"/><path d="M44 72 L55.5 83.5 L77 59" fill="none" stroke="#000" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></mask></defs><path d="M45 48 C45 13 75 13 75 48" fill="none" stroke="url(#lg)" stroke-width="7" stroke-linecap="round"/><path mask="url(#lm)" d="M27 41 H93 Q95 41 95.5 44 L90.5 95 Q90 102 83 102 H37 Q30 102 29.5 95 L24.5 44 Q25 41 27 41 Z" fill="url(#lg)"/></symbol>
+</svg>
+
+<h1>ShoppingList 0.7.4 — эскиз: «В магазине», «Купить снова», бюджет, ярлыки, «Ночь», «Как в системе»</h1>
+<p class="lead">Цвета и размеры настоящего приложения (профиль «Беж», ширина 360 dp). Ответьте «ок» по каждому пункту или что поменять. Где кнопки сейчас стоят чуть иначе — агент сверит с текущим экраном.</p>
+<div class="infobox"><b>Уже в коде, войдёт в 0.7.4 без эскиза</b> (docs/NEXT.md): п. 32 — экран обновления без списка «что сделано»; п. 33 — числа словами в быстром вводе («рис одна пачка 500 тенге»).<br>
+<b>Открытые вопросы из NEXT.md:</b> (а) «Ночь» и (б) «Как в системе» — пункты 5 и 6 этого эскиза; (в) «1 кг · 5000» остаётся в калькуляторе — нужны шаги, как повторить; (г) почему 0.7.3 не сразу ставилась — позже встала сама, в этот выпуск не входит.</div>
+
+<!-- ============ 1 ============ -->
+<h2>1. Режим «В магазине»</h2>
+<p class="lead">Крупные строки, экран не гаснет, сверху — сколько осталось и на какую сумму. Нажатие на товар — «куплено» (смахивать не нужно, случайно не удалишь). Купленное уходит вниз.</p>
+<div class="row">
+  <div class="fig"><p class="cap rec">А. Вход <em>— плавающая кнопка слева, напротив «Блюда» (рекомендую)</em></p>
+    <div class="lscreen">
+      <div class="lhead"><span class="btn"><svg class="i"><use href="#ic-back"/></svg></span><span class="dot" style="background:#2E9E5B"></span><span class="ttl">Продукты</span><span class="btn sm"><svg class="i"><use href="#ic-help"/></svg></span></div>
+      <div class="lbody">
+        <div class="cat">МОЛОЧНОЕ</div>
+        <div class="item"><span class="chk"></span><span class="t">Молоко</span><span class="q">1 л · 450 ₸</span></div>
+        <div class="item"><span class="chk"></span><span class="t">Сыр</span><span class="q">300 г · 1 900 ₸</span></div>
+        <div class="cat">ХЛЕБ</div>
+        <div class="item"><span class="chk"></span><span class="t">Хлеб</span><span class="q">1 шт · 250 ₸</span></div>
+        <div class="item"><span class="chk"></span><span class="t">Батон</span><span class="q">1 шт</span></div>
+      </div>
+      <div class="fab left new"><svg class="i s"><use href="#ic-cart"/></svg>В магазин</div>
+      <div class="fab"><svg class="i s"><use href="#ic-dish"/></svg>Блюда</div>
+      <div class="bar"><div class="irow"><span class="inp">Добавить товар или список…</span><span class="circ"><svg class="i"><use href="#ic-mic"/></svg></span><span class="circ"><svg class="i"><use href="#ic-calc"/></svg></span><span class="circ plus">+</span></div></div>
+    </div></div>
+
+  <div class="fig"><p class="cap">А2. Вход <em>— или строкой под заголовком</em></p>
+    <div class="lscreen" style="min-height:250px">
+      <div class="lhead"><span class="btn"><svg class="i"><use href="#ic-back"/></svg></span><span class="dot" style="background:#2E9E5B"></span><span class="ttl">Продукты</span><span class="btn sm"><svg class="i"><use href="#ic-help"/></svg></span></div>
+      <div class="lbody">
+        <div class="shoprow new"><svg class="i"><use href="#ic-cart"/></svg><span>Я в магазине</span><small>крупно, экран не гаснет</small></div>
+        <div class="cat">МОЛОЧНОЕ</div>
+        <div class="item"><span class="chk"></span><span class="t">Молоко</span><span class="q">1 л · 450 ₸</span></div>
+      </div>
+    </div>
+    <ul class="notes" style="padding-left:16px"><li>Минус: занимает строку над товарами.</li><li>Значком в шапке не делаем: рядом с длинным названием списка не помещается, а одиночный значок непонятен (как было с «Блюдами»).</li></ul>
+  </div>
+
+  <div class="fig"><p class="cap rec">Б. В магазине</p>
+    <div class="lscreen shop">
+      <div class="lhead"><span class="btn"><svg class="i"><use href="#ic-x"/></svg></span><span class="dot" style="background:#2E9E5B"></span><span class="ttl">Продукты</span></div>
+      <div class="prog">
+        <div class="pl"><b>Осталось 5 из 12</b><span>ещё на 7 450 ₸</span></div>
+        <div class="pbar"><i style="width:58%"></i></div>
+      </div>
+      <div class="lbody">
+        <div class="cat">МОЛОЧНОЕ</div>
+        <div class="item big"><span class="chk"></span><span class="t">Молоко</span><span class="q">1 л</span></div>
+        <div class="item big"><span class="chk"></span><span class="t">Сыр</span><span class="q">300 г</span></div>
+        <div class="cat">ХЛЕБ</div>
+        <div class="item big"><span class="chk"></span><span class="t">Хлеб</span><span class="q">1 шт</span></div>
+        <div class="bought"><span>КУПЛЕНО · 7</span><svg class="i s"><use href="#ic-down"/></svg></div>
+      </div>
+      <div class="bar"><div class="hintline">Экран не гаснет · нажмите на товар — куплено</div>
+        <div class="irow"><span class="inp">Забыли что-то? Добавить…</span><span class="circ plus">+</span></div></div>
+    </div></div>
+
+  <div class="fig"><p class="cap">В. Всё купили</p>
+    <div class="lscreen shop">
+      <div class="lhead"><span class="btn"><svg class="i"><use href="#ic-x"/></svg></span><span class="dot" style="background:#2E9E5B"></span><span class="ttl">Продукты</span></div>
+      <div class="done-all">
+        <div class="bigok"><svg viewBox="0 0 24 24" width="44" height="44"><use href="#ic-ok"/></svg></div>
+        <div class="da-t">Всё купили!</div>
+        <div class="da-s">12 товаров · 9 980 ₸</div>
+      </div>
+      <div class="bar"><div class="btns"><span class="done">Готово</span></div>
+        <div class="hintline" style="margin:8px 0 0">Купленное останется в разделе «Куплено» — как сейчас</div></div>
+    </div></div>
+</div>
+<ul class="notes">
+  <li>Выход — «×» вверху или «Готово». Режим не запоминается: открыли список снова — обычный вид.</li>
+  <li>Строка 64 dp, название 20 sp, флажок 32 dp. Голос, калькулятор и «Блюда» в режиме скрыты — только быстрое «+».</li>
+  <li>Нужен пакет <b>expo-keep-awake</b> (официальный Expo, маленький) — чтобы экран не гас. Нужно ваше «да».</li>
+</ul>
+
+<!-- ============ 2 ============ -->
+<h2>2. «Купить снова» — частые покупки одним касанием</h2>
+<p class="lead">Кнопки из истории покупок: что берёте чаще всего, с прошлым количеством и ценой. Нажали — товар добавился. Уже добавленные не показываются.</p>
+<div class="row">
+  <div class="fig"><p class="cap rec">А. Пустой список</p>
+    <div class="lscreen">
+      <div class="lhead"><span class="btn"><svg class="i"><use href="#ic-back"/></svg></span><span class="dot" style="background:#3B7DD8"></span><span class="ttl">На неделю</span><span class="btn sm"><svg class="i"><use href="#ic-help"/></svg></span></div>
+      <div class="lbody">
+        <div class="again">
+          <div class="ag-h">Купить снова</div>
+          <div class="ag-s">Нажмите — товар добавится, как в прошлый раз</div>
+          <div class="agchips">
+            <span class="agc">Молоко <small>1 л</small></span><span class="agc">Хлеб</span><span class="agc">Яйца <small>10 шт</small></span>
+            <span class="agc">Сыр <small>300 г</small></span><span class="agc">Бананы <small>1 кг</small></span><span class="agc">Гречка <small>0,8 кг</small></span>
+            <span class="agc">Кефир <small>1 л</small></span><span class="agc">Помидоры <small>1 кг</small></span>
+          </div>
+        </div>
+      </div>
+      <div class="bar"><div class="irow"><span class="inp">Добавить товар или список…</span><span class="circ"><svg class="i"><use href="#ic-mic"/></svg></span><span class="circ"><svg class="i"><use href="#ic-calc"/></svg></span><span class="circ plus">+</span></div></div>
+    </div></div>
+
+  <div class="fig"><p class="cap rec">Б. Список не пустой <em>— нажали в пустую строку ввода</em></p>
+    <div class="lscreen">
+      <div class="lhead"><span class="btn"><svg class="i"><use href="#ic-back"/></svg></span><span class="dot" style="background:#3B7DD8"></span><span class="ttl">На неделю</span><span class="btn sm"><svg class="i"><use href="#ic-help"/></svg></span></div>
+      <div class="lbody">
+        <div class="item"><span class="chk"></span><span class="t">Молоко</span><span class="q">1 л</span></div>
+        <div class="item"><span class="chk"></span><span class="t">Хлеб</span><span class="q">1 шт</span></div>
+      </div>
+      <div class="bar">
+        <div class="agrow"><span class="agl">Часто:</span><span class="agc">Яйца <small>10 шт</small></span><span class="agc">Сыр <small>300 г</small></span><span class="agc">Бананы</span><span class="agc fade">Гре…</span></div>
+        <div class="irow"><span class="inp focus">|</span><span class="circ"><svg class="i"><use href="#ic-mic"/></svg></span><span class="circ"><svg class="i"><use href="#ic-calc"/></svg></span><span class="circ plus">+</span></div>
+        <div class="kbd">клавиатура</div>
+      </div>
+    </div></div>
+</div>
+<ul class="notes">
+  <li>Порядок — по тому, как часто покупаете (таблица истории уже есть). До 8 кнопок в пустом списке, в строке «Часто» — прокрутка вбок.</li>
+  <li>Как начали печатать — ряд «Часто» сменяется обычными подсказками по буквам (как сейчас).</li>
+  <li>Выключен «Запоминать параметры товаров» — кнопок нет. Новых пакетов не нужно.</li>
+</ul>
+
+<!-- ============ 3 ============ -->
+<h2>3. Бюджет списка</h2>
+<p class="lead">Необязательный лимит на список. Сравнивается со всей суммой списка (купленное + осталось).</p>
+<div class="row">
+  <div class="fig"><p class="cap rec">А. Окно списка <em>— новое поле «Бюджет»</em></p>
+    <div class="phoneb"><div class="scrim"></div><div class="sheet"><div class="handle"></div>
+      <h4>Список</h4>
+      <div class="lbl">Название</div><div class="field full" style="color:var(--text)">Продукты</div>
+      <div class="lbl">Цвет</div>
+      <div class="dots"><i style="background:#2E9E5B;outline:3px solid var(--strong)"></i><i style="background:#3B7DD8"></i><i style="background:#7A5BC4"></i><i style="background:#C9567A"></i><i style="background:#D4823A"></i><i style="background:#2A9D8F"></i></div>
+      <div class="lbl" style="margin-bottom:8px">Бюджет <span style="opacity:.8">· необязательно</span></div>
+      <div class="field full new"><span style="color:var(--text)">15 000</span><span class="sfx">₸</span></div>
+      <div class="lbl" style="margin-top:2px">Цвета, дата и «Напомнить» — как сейчас (здесь сокращено)</div>
+      <div class="btns" style="margin-top:10px"><span class="reset">Отмена</span><span class="done">Сохранить</span></div>
+    </div></div></div>
+
+  <div class="fig"><p class="cap rec">Б. Внизу списка <em>— в пределах бюджета</em></p>
+    <div class="lscreen" style="min-height:330px">
+      <div class="lhead"><span class="btn"><svg class="i"><use href="#ic-back"/></svg></span><span class="dot" style="background:#2E9E5B"></span><span class="ttl">Продукты</span><span class="btn sm"><svg class="i"><use href="#ic-help"/></svg></span></div>
+      <div class="lbody">
+        <div class="item"><span class="chk"></span><span class="t">Мясо</span><span class="q">1 кг · 4 500 ₸</span></div>
+        <div class="item"><span class="chk"></span><span class="t">Рис</span><span class="q">1 уп · 600 ₸</span></div>
+      </div>
+      <div class="budget"><div class="bl"><span>Итого <b>12 500 ₸</b></span><span>из 15 000 ₸</span></div><div class="pbar"><i style="width:83%"></i></div><div class="bs">Осталось в бюджете 2 500 ₸</div></div>
+      <div class="bar"><div class="irow"><span class="inp">Добавить товар или список…</span><span class="circ"><svg class="i"><use href="#ic-mic"/></svg></span><span class="circ"><svg class="i"><use href="#ic-calc"/></svg></span><span class="circ plus">+</span></div></div>
+    </div></div>
+
+  <div class="fig"><p class="cap">В. Больше бюджета</p>
+    <div class="lscreen" style="min-height:330px">
+      <div class="lhead"><span class="btn"><svg class="i"><use href="#ic-back"/></svg></span><span class="dot" style="background:#2E9E5B"></span><span class="ttl">Продукты</span><span class="btn sm"><svg class="i"><use href="#ic-help"/></svg></span></div>
+      <div class="lbody">
+        <div class="item"><span class="chk"></span><span class="t">Мясо</span><span class="q">1 кг · 4 500 ₸</span></div>
+        <div class="item"><span class="chk"></span><span class="t">Торт</span><span class="q">1 шт · 4 500 ₸</span></div>
+      </div>
+      <div class="budget over"><div class="bl"><span>Итого <b>17 000 ₸</b></span><span>из 15 000 ₸</span></div><div class="pbar"><i style="width:100%"></i></div><div class="bs">Больше бюджета на 2 000 ₸</div></div>
+      <div class="bar"><div class="irow"><span class="inp">Добавить товар или список…</span><span class="circ"><svg class="i"><use href="#ic-mic"/></svg></span><span class="circ"><svg class="i"><use href="#ic-calc"/></svg></span><span class="circ plus">+</span></div></div>
+    </div></div>
+
+  <div class="fig"><p class="cap">Г. Карточка на вкладке «Списки»</p>
+    <div class="lscreen" style="min-height:0;padding:14px 16px 6px">
+      <div class="lcard"><div class="lc1"><span class="dot" style="background:#2E9E5B"></span><b>Продукты</b><span class="lcd">сегодня</span></div>
+        <div class="lc2">Осталось купить 7 из 12</div>
+        <div class="lc3"><span>12 500 ₸</span><span class="lcb">бюджет 15 000 ₸</span></div>
+        <div class="pbar thin"><i style="width:83%"></i></div></div>
+      <div class="lcard"><div class="lc1"><span class="dot" style="background:#3B7DD8"></span><b>Хозтовары</b><span class="lcd">пт, 14 нояб</span></div>
+        <div class="lc2">Осталось купить 3 из 5</div>
+        <div class="lc3"><span>4 200 ₸</span><span class="lcb">без бюджета</span></div></div>
+    </div></div>
+</div>
+<ul class="notes">
+  <li>Нет бюджета — внизу списка остаётся только сумма, как сейчас.</li>
+  <li>Цвет «больше бюджета» — <code>warn</code> профиля (в «Беже» — терракотовый), текст всегда словами, не только цветом.</li>
+  <li>Бюджет попадает в резервную копию и в «Поделиться» файлом. Миграция БД: новая колонка <code>lists.budget</code> (данные не теряются).</li>
+</ul>
+
+<!-- ============ 4 ============ -->
+<h2>4. Ярлыки на иконке приложения</h2>
+<p class="lead">Долгое нажатие на иконку ShoppingList на рабочем столе — меню из трёх действий. Любое можно перетащить на рабочий стол отдельной иконкой (так устроен Android).</p>
+<div class="row">
+  <div class="fig"><p class="cap rec">Рабочий стол, долгое нажатие</p>
+    <div class="home">
+      <div class="menu">
+        <div class="mi"><span class="mic"><svg class="i"><use href="#ic-plus"/></svg></span>Добавить товар</div>
+        <div class="mi"><span class="mic"><svg class="i"><use href="#ic-sun"/></svg></span>Сегодня</div>
+        <div class="mi"><span class="mic"><svg class="i"><use href="#ic-list"/></svg></span>Новый список</div>
+      </div>
+      <div class="appic"><div class="ico"><svg viewBox="0 0 120 120" width="46" height="46"><use href="#logo"/></svg></div><span>ShoppingList</span></div>
+      <div class="ghost" style="left:24px;top:342px"></div><div class="ghost" style="left:206px;top:342px"></div><div class="ghost" style="left:282px;top:342px"></div>
+      <div class="ghost" style="left:24px;top:60px"></div><div class="ghost" style="left:110px;top:60px"></div><div class="ghost" style="left:206px;top:60px"></div><div class="ghost" style="left:282px;top:60px"></div>
+    </div></div>
+</div>
+<ul class="notes">
+  <li><b>Добавить товар</b> — открывается последний список, курсор сразу в строке ввода, клавиатура поднята.</li>
+  <li><b>Сегодня</b> — вкладка «Сегодня». <b>Новый список</b> — окно создания списка.</li>
+  <li>Подписи на трёх языках, по языку приложения. Заставка при входе через ярлык не показывается. Без новых пакетов (настройка сборки).</li>
+</ul>
+
+<!-- ============ 5 ============ -->
+<h2>5. Профиль «Ночь»: кнопки под цвет знака <em class="q5">(открытый вопрос «а»)</em></h2>
+<p class="lead">Сейчас в «Ночи» кнопки мятные, а знак сине-голубой — как было в «Белой» до 0.7.3. Синий как в «Белой» (#3D5AFE) на тёмном фоне сливается с карточками (контраст 2,7 при норме 3), поэтому предлагаю светлее.</p>
+<div class="row">
+  <div class="fig"><p class="cap rec">А. Голубой, как верх знака (рекомендую)</p>
+    <div class="lscreen" style="--bg:#1B1740;--card:#2A2560;--cb:#2A2560;--cs:#3C3489;--text:#FFFFFF;--muted:#AFA9EC;--outline:#AFA9EC;--primary:#1EC8F2;--onp:#04253A;--strong:#1EC8F2;min-height:330px">
+      <div class="lhead"><span class="btn"><svg class="i"><use href="#ic-back"/></svg></span><span class="dot" style="background:#62CBF5"></span><span class="ttl">Продукты</span><svg viewBox="0 0 120 120" width="34" height="34" style="margin-right:6px"><defs><linearGradient id="ng1EC8F2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1EC8F2"/><stop offset="1" stop-color="#2433F5"/></linearGradient></defs><path d="M45 48 C45 13 75 13 75 48" fill="none" stroke="url(#ng1EC8F2)" stroke-width="7" stroke-linecap="round"/><path d="M27 41 H93 Q95 41 95.5 44 L90.5 95 Q90 102 83 102 H37 Q30 102 29.5 95 L24.5 44 Q25 41 27 41 Z" fill="url(#ng1EC8F2)"/><path d="M44 72 L55.5 83.5 L77 59" fill="none" stroke="#1B1740" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="lbody">
+        <div class="item"><span class="chk"></span><span class="t">Молоко</span><span class="q">1 л</span></div>
+        <div class="item"><span class="chk on" style="background:#1EC8F2;border-color:#1EC8F2;color:#04253A">✓</span><span class="t" style="text-decoration:line-through;color:var(--muted)">Хлеб</span><span class="q">1 шт</span></div>
+        <div class="btns" style="margin:10px 0 6px"><span class="done">Готово</span></div>
+      </div>
+      <div class="bar"><div class="irow"><span class="inp">Добавить товар…</span><span class="circ"><svg class="i"><use href="#ic-mic"/></svg></span><span class="circ plus">+</span></div></div>
+    </div>
+    <ul class="notes" style="padding-left:16px"><li>Кнопка #1EC8F2, текст на ней тёмный. Контраст с фоном 8,5, текста 8,0.</li></ul></div>
+  <div class="fig"><p class="cap">Б. Светло-синий</p>
+    <div class="lscreen" style="--bg:#1B1740;--card:#2A2560;--cb:#2A2560;--cs:#3C3489;--text:#FFFFFF;--muted:#AFA9EC;--outline:#AFA9EC;--primary:#6F8BFF;--onp:#0B1240;--strong:#6F8BFF;min-height:330px">
+      <div class="lhead"><span class="btn"><svg class="i"><use href="#ic-back"/></svg></span><span class="dot" style="background:#62CBF5"></span><span class="ttl">Продукты</span><svg viewBox="0 0 120 120" width="34" height="34" style="margin-right:6px"><defs><linearGradient id="ng6F8BFF" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1EC8F2"/><stop offset="1" stop-color="#2433F5"/></linearGradient></defs><path d="M45 48 C45 13 75 13 75 48" fill="none" stroke="url(#ng6F8BFF)" stroke-width="7" stroke-linecap="round"/><path d="M27 41 H93 Q95 41 95.5 44 L90.5 95 Q90 102 83 102 H37 Q30 102 29.5 95 L24.5 44 Q25 41 27 41 Z" fill="url(#ng6F8BFF)"/><path d="M44 72 L55.5 83.5 L77 59" fill="none" stroke="#1B1740" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="lbody">
+        <div class="item"><span class="chk"></span><span class="t">Молоко</span><span class="q">1 л</span></div>
+        <div class="item"><span class="chk on" style="background:#6F8BFF;border-color:#6F8BFF;color:#0B1240">✓</span><span class="t" style="text-decoration:line-through;color:var(--muted)">Хлеб</span><span class="q">1 шт</span></div>
+        <div class="btns" style="margin:10px 0 6px"><span class="done">Готово</span></div>
+      </div>
+      <div class="bar"><div class="irow"><span class="inp">Добавить товар…</span><span class="circ"><svg class="i"><use href="#ic-mic"/></svg></span><span class="circ plus">+</span></div></div>
+    </div>
+    <ul class="notes" style="padding-left:16px"><li>Кнопка #6F8BFF, текст тёмный. Контраст с фоном 5,5, текста 5,8.</li></ul></div>
+  <div class="fig"><p class="cap">В. Как сейчас — мятный</p>
+    <div class="lscreen" style="--bg:#1B1740;--card:#2A2560;--cb:#2A2560;--cs:#3C3489;--text:#FFFFFF;--muted:#AFA9EC;--outline:#AFA9EC;--primary:#5DCAA5;--onp:#04342C;--strong:#5DCAA5;min-height:330px">
+      <div class="lhead"><span class="btn"><svg class="i"><use href="#ic-back"/></svg></span><span class="dot" style="background:#62CBF5"></span><span class="ttl">Продукты</span><svg viewBox="0 0 120 120" width="34" height="34" style="margin-right:6px"><defs><linearGradient id="ng5DCAA5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1EC8F2"/><stop offset="1" stop-color="#2433F5"/></linearGradient></defs><path d="M45 48 C45 13 75 13 75 48" fill="none" stroke="url(#ng5DCAA5)" stroke-width="7" stroke-linecap="round"/><path d="M27 41 H93 Q95 41 95.5 44 L90.5 95 Q90 102 83 102 H37 Q30 102 29.5 95 L24.5 44 Q25 41 27 41 Z" fill="url(#ng5DCAA5)"/><path d="M44 72 L55.5 83.5 L77 59" fill="none" stroke="#1B1740" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="lbody">
+        <div class="item"><span class="chk"></span><span class="t">Молоко</span><span class="q">1 л</span></div>
+        <div class="item"><span class="chk on" style="background:#5DCAA5;border-color:#5DCAA5;color:#04342C">✓</span><span class="t" style="text-decoration:line-through;color:var(--muted)">Хлеб</span><span class="q">1 шт</span></div>
+        <div class="btns" style="margin:10px 0 6px"><span class="done">Готово</span></div>
+      </div>
+      <div class="bar"><div class="irow"><span class="inp">Добавить товар…</span><span class="circ"><svg class="i"><use href="#ic-mic"/></svg></span><span class="circ plus">+</span></div></div>
+    </div>
+    <ul class="notes" style="padding-left:16px"><li>Без изменений.</li></ul></div>
+</div>
+<ul class="notes"><li>Меняются <code>primary</code>, <code>onPrimary</code>, <code>primaryStrong</code> профиля «Ночь» в <code>themes.json</code>; тесты контраста — как для «Белой».</li></ul>
+
+<!-- ============ 6 ============ -->
+<h2>6. «Как в системе»: какие профили днём и ночью <em class="q5">(открытый вопрос «б»)</em></h2>
+<p class="lead">Сейчас «Как в системе» всегда берёт «Янтарь» при светлой теме телефона и «Какао» при тёмной — выбрать нельзя и не видно, что именно включится.</p>
+<div class="row">
+  <div class="fig"><p class="cap">А. Сейчас</p>
+    <div class="lscreen" style="min-height:0;padding:12px 16px">
+      <div class="stitle">ЦВЕТОВОЙ ПРОФИЛЬ</div>
+      <div class="sblock">
+        <div class="srow"><span class="radio on"></span><span class="st">Как в системе<small>светлая или тёмная — как в телефоне</small></span></div>
+        <div class="slbl">Светлые</div><div class="swrow"><span class="sw" title="Белая" style="background:#FFFFFF"><i style="background:linear-gradient(135deg,#1EC8F2,#2433F5)"></i></span><span class="sw" title="Пудра" style="background:#FBF1F4"><i style="background:linear-gradient(135deg,#FF8A7A,#D8306E)"></i></span><span class="sw" title="Беж" style="background:#F6F0E7"><i style="background:linear-gradient(135deg,#E2BB8E,#A86F3E)"></i></span><span class="sw" title="Янтарь" style="background:#FFF8E6"><i style="background:linear-gradient(135deg,#FFC83D,#F0702A)"></i></span><span class="sw" title="Персик" style="background:#FFF3EC"><i style="background:linear-gradient(135deg,#FFA24C,#E8403A)"></i></span><span class="sw" title="Мята" style="background:#EDF8F3"><i style="background:linear-gradient(135deg,#3DD6A6,#0B7F7A)"></i></span><span class="sw" title="Небо" style="background:#EEF5FC"><i style="background:linear-gradient(135deg,#8CC2F7,#2F6FCB)"></i></span></div>
+        <div class="slbl">Тёмные</div><div class="swrow"><span class="sw" title="Ночь" style="background:#1B1740"><i style="background:linear-gradient(135deg,#1EC8F2,#2433F5)"></i></span><span class="sw" title="Сумерки" style="background:#2B2840"><i style="background:linear-gradient(135deg,#C6B8FF,#7B63F0)"></i></span><span class="sw" title="Графит" style="background:#262A33"><i style="background:linear-gradient(135deg,#86E6C8,#2FAF8A)"></i></span><span class="sw" title="Глубокое море" style="background:#1E3236"><i style="background:linear-gradient(135deg,#8CF0CF,#2BB8A8)"></i></span><span class="sw" title="Изумруд" style="background:#17332B"><i style="background:linear-gradient(135deg,#8CF0CF,#2BB8A8)"></i></span><span class="sw" title="Ягода" style="background:#33232E"><i style="background:linear-gradient(135deg,#FFB3A8,#FF6B9B)"></i></span><span class="sw" title="Какао" style="background:#2F2722"><i style="background:linear-gradient(135deg,#FFE07A,#FF9A55)"></i></span></div>
+      </div>
+    </div></div>
+  <div class="fig"><p class="cap rec">Б. Выбор дневного и ночного профиля (рекомендую)</p>
+    <div class="lscreen" style="min-height:0;padding:12px 16px">
+      <div class="stitle">ЦВЕТОВОЙ ПРОФИЛЬ</div>
+      <div class="sblock">
+        <div class="srow"><span class="radio on"></span><span class="st">Как в системе<small>меняется вместе с темой телефона</small></span></div>
+        <div class="srow child new"><span class="mini" style="background:#FFF8E6"><i style="background:linear-gradient(135deg,#FFC83D,#F0702A)"></i></span><span class="st">Светлая тема телефона<small>Янтарь</small></span><span class="chev">›</span></div>
+        <div class="srow child new"><span class="mini" style="background:#2F2722"><i style="background:linear-gradient(135deg,#FFE07A,#FF9A55)"></i></span><span class="st">Тёмная тема телефона<small>Какао</small></span><span class="chev">›</span></div>
+        <div class="slbl">Светлые</div><div class="swrow"><span class="sw" title="Белая" style="background:#FFFFFF"><i style="background:linear-gradient(135deg,#1EC8F2,#2433F5)"></i></span><span class="sw" title="Пудра" style="background:#FBF1F4"><i style="background:linear-gradient(135deg,#FF8A7A,#D8306E)"></i></span><span class="sw" title="Беж" style="background:#F6F0E7"><i style="background:linear-gradient(135deg,#E2BB8E,#A86F3E)"></i></span><span class="sw tagd" title="Янтарь" style="background:#FFF8E6"><i style="background:linear-gradient(135deg,#FFC83D,#F0702A)"></i><em>день</em></span><span class="sw" title="Персик" style="background:#FFF3EC"><i style="background:linear-gradient(135deg,#FFA24C,#E8403A)"></i></span><span class="sw" title="Мята" style="background:#EDF8F3"><i style="background:linear-gradient(135deg,#3DD6A6,#0B7F7A)"></i></span><span class="sw" title="Небо" style="background:#EEF5FC"><i style="background:linear-gradient(135deg,#8CC2F7,#2F6FCB)"></i></span></div>
+        <div class="slbl">Тёмные</div><div class="swrow"><span class="sw" title="Ночь" style="background:#1B1740"><i style="background:linear-gradient(135deg,#1EC8F2,#2433F5)"></i></span><span class="sw" title="Сумерки" style="background:#2B2840"><i style="background:linear-gradient(135deg,#C6B8FF,#7B63F0)"></i></span><span class="sw" title="Графит" style="background:#262A33"><i style="background:linear-gradient(135deg,#86E6C8,#2FAF8A)"></i></span><span class="sw" title="Глубокое море" style="background:#1E3236"><i style="background:linear-gradient(135deg,#8CF0CF,#2BB8A8)"></i></span><span class="sw" title="Изумруд" style="background:#17332B"><i style="background:linear-gradient(135deg,#8CF0CF,#2BB8A8)"></i></span><span class="sw" title="Ягода" style="background:#33232E"><i style="background:linear-gradient(135deg,#FFB3A8,#FF6B9B)"></i></span><span class="sw tagd" title="Какао" style="background:#2F2722"><i style="background:linear-gradient(135deg,#FFE07A,#FF9A55)"></i><em>ночь</em></span></div>
+      </div>
+    </div>
+    <ul class="notes" style="padding-left:16px"><li>Нажатие на «Светлая тема телефона» — окно с 7 светлыми профилями, на «Тёмная» — с 7 тёмными.</li><li>Нажатие на миниатюру ниже — постоянный профиль (без «Как в системе»), как сейчас.</li><li>Метки «день» / «ночь» на миниатюрах — какие профили включатся.</li></ul></div>
+</div>
+<ul class="notes"><li>По умолчанию остаются «Янтарь» и «Какао». Выбор хранится в настройках и в резервной копии. Миниатюры нарисованы упрощённо — в приложении как сейчас.</li></ul>
+
+</body>
+</html>

@@ -5,6 +5,8 @@ import { DEFAULT_LIST_COLOR, ListColorKey, Palette, listColor, listColorDefs, us
 import { t } from '@/i18n';
 import { useSettings } from '@/AppSettings';
 import { ShoppingList } from '@/db/lists';
+import { parseBudget } from '@/logic/budget';
+import { currencySymbol } from '@/logic/money';
 import { BottomSheet } from './BottomSheet';
 import { DateField } from './DateField';
 import { FormField, TextField } from './FormField';
@@ -14,7 +16,7 @@ type Props = {
   visible: boolean;
   list: ShoppingList | null; // null — создание нового
   onClose: () => void;
-  onSave: (title: string, color: ListColorKey, plannedDate: string | null, remind: boolean) => void;
+  onSave: (title: string, color: ListColorKey, plannedDate: string | null, remind: boolean, budget: number | null) => void;
   onDelete: (list: ShoppingList) => void;
 };
 
@@ -30,7 +32,9 @@ export function ListSheet({ visible, list, onClose, onSave, onDelete }: Props) {
 function ListForm({ list, onSave, onDelete }: Pick<Props, 'list' | 'onSave' | 'onDelete'>) {
   const colors = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
-  const { language } = useSettings();
+  const { language, currency } = useSettings();
+  const symbol = currencySymbol(currency);
+  const [budget, setBudget] = useState(list?.budget ? String(list.budget).replace('.', ',') : '');
   const [title, setTitle] = useState(list?.title ?? '');
   const [color, setColor] = useState<ListColorKey>((list?.color as ListColorKey) ?? DEFAULT_LIST_COLOR);
   const [date, setDate] = useState<string | null>(list?.plannedDate ?? null);
@@ -42,7 +46,7 @@ function ListForm({ list, onSave, onDelete }: Pick<Props, 'list' | 'onSave' | 'o
       setError(t('validation.titleRequired'));
       return;
     }
-    onSave(title, color, date, remind && date !== null);
+    onSave(title, color, date, remind && date !== null, parseBudget(budget));
   };
 
   return (
@@ -70,6 +74,9 @@ function ListForm({ list, onSave, onDelete }: Pick<Props, 'list' | 'onSave' | 'o
           );
         })}
       </View>
+      <FormField label={t('lists.budgetLabel', { symbol })}>
+        <TextField value={budget} onChangeText={setBudget} keyboardType="decimal-pad" maxLength={12} accessibilityLabel={t('lists.budgetLabel', { symbol })} />
+      </FormField>
       <DateField date={date} remind={remind} onChange={(d, r) => { setDate(d); setRemind(r); }} />
       <View style={styles.buttons}>
         {list ? (

@@ -27,6 +27,12 @@ export async function suggest(query: string, limit = 5): Promise<HistoryRow[]> {
   return rankSuggestions(rows.map(toRow), q, limit);
 }
 
+// Самые частые покупки: сначала по числу использований, затем по свежести (для «Купить снова»).
+export async function topHistory(limit: number): Promise<HistoryRow[]> {
+  const rows = await getDb().getAllAsync<Row>('SELECT * FROM history ORDER BY used_count DESC, last_used_at DESC LIMIT ?', limit);
+  return rows.map(toRow);
+}
+
 // Вызывается, когда товар отмечен купленным: запоминаем параметры этой покупки.
 export async function remember(input: RememberInput): Promise<void> {
   const prev = await findHistory(input.title);

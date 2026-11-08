@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Linking, StyleSheet, Text, View } from 'react-native';
 import { ErrorBoundaryProps, Stack } from 'expo-router';
 import * as NativeSplash from 'expo-splash-screen';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,6 +10,7 @@ import { Appearance, loadAppearance } from '@/db/appearance';
 import { AppSettingsProvider } from '@/AppSettings';
 import { useReminderSync } from '@/notifications';
 import { UpdatesProvider, useUpdates } from '@/Updates';
+import { isShortcutUrl } from '@/logic/shortcuts';
 import { UpdateScreen } from '@/components/UpdateScreen';
 import { SplashScreen } from '@/components/SplashScreen';
 import { PrimaryButton } from '@/components/PrimaryButton';
@@ -47,6 +48,19 @@ export default function RootLayout() {
   // Живая заставка сообщает, что закончилась (по окончании анимации или по касанию).
   const [splashDone, setSplashDone] = useState(false);
   const onSplashFinished = useCallback(() => setSplashDone(true), []);
+  // Вход через ярлык на иконке — без заставки (null — ещё не знаем, с чего открыли).
+  const [viaShortcut, setViaShortcut] = useState<boolean | null>(null);
+  const skipSplash = viaShortcut === true;
+
+  useEffect(() => {
+    Linking.getInitialURL()
+      .then((url) => setViaShortcut(isShortcutUrl(url)))
+      .catch(() => setViaShortcut(false));
+  }, []);
+
+  useEffect(() => {
+    if (skipSplash && appearance) hideNativeSplash();
+  }, [skipSplash, appearance]);
 
   useEffect(() => {
     // Тема и язык читаются до показа экранов, чтобы не было «мигания».
@@ -63,7 +77,10 @@ export default function RootLayout() {
     hideNativeSplash();
     throw new Error(error);
   }
-  if (!appearance || !splashDone) {
+  if (!appearance || viaShortcut === null) {
+    return <SplashScreen appearance={null} onShown={hideNativeSplash} onFinished={onSplashFinished} />;
+  }
+  if (!splashDone && !skipSplash) {
     return <SplashScreen appearance={appearance} onShown={hideNativeSplash} onFinished={onSplashFinished} />;
   }
 

@@ -24,6 +24,19 @@ beforeAll(async () => {
 const NOW = '2026-11-06T09:00:00.000Z';
 
 describe('миграции', () => {
+  it('v6: бюджет списка необязателен; старые данные целы', async () => {
+    const db = new SQL.Database();
+    for (let i = 0; i < 5; i++) db.exec(MIGRATIONS[i]);
+    db.exec('PRAGMA user_version = 5');
+    db.exec(`INSERT INTO lists (title, created_at) VALUES ('Список', '${NOW}')`);
+    db.exec(`INSERT INTO items (list_id, title, price, created_at) VALUES (1, 'Молоко', 450, '${NOW}')`);
+    await runMigrations(adapter(db));
+    expect(rows(db, 'SELECT title, budget FROM lists')).toEqual([['Список', null]]);
+    expect(rows(db, 'SELECT title, price FROM items')).toEqual([['Молоко', 450]]);
+    db.exec('UPDATE lists SET budget = 15000.5');
+    expect(rows(db, 'SELECT budget FROM lists')).toEqual([[15000.5]]);
+  });
+
   it('v5: свои блюда; старые данные целы, продукты блюда удаляются вместе с блюдом', async () => {
     const db = new SQL.Database();
     for (let i = 0; i < 4; i++) db.exec(MIGRATIONS[i]);
@@ -131,7 +144,7 @@ describe('миграции', () => {
     expect(Number(rows(db, 'PRAGMA user_version')[0][0])).toBe(MIGRATIONS.length);
     expect(rows(db, 'SELECT title, qty, unit FROM items')).toEqual([['Порошок', 1, 'уп']]);
     const idx = rows(db, "SELECT name FROM sqlite_master WHERE type = 'index' AND name LIKE 'idx_%'").map((r) => r[0]);
-    expect(idx).toHaveLength(5);
+    expect(idx).toHaveLength(6);
   });
 
   it('повторный запуск ничего не ломает', async () => {

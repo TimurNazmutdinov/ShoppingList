@@ -7,6 +7,7 @@ export type ShoppingList = {
   sort: number;
   plannedDate: string | null;
   remind: boolean;
+  budget: number | null; // необязательный лимит на список
   total: number;
   left: number; // осталось купить
   totalPrice: number; // сумма цен всех товаров
@@ -14,16 +15,16 @@ export type ShoppingList = {
 };
 
 type Row = {
-  id: number; title: string; color: string; sort: number; planned_date: string | null; remind: number;
+  id: number; title: string; color: string; sort: number; planned_date: string | null; remind: number; budget: number | null;
   total: number; left: number; total_price: number; left_price: number;
 };
 
 const toList = (r: Row): ShoppingList => ({
   id: r.id, title: r.title, color: r.color, sort: r.sort, plannedDate: r.planned_date,
-  remind: r.remind === 1, total: r.total, left: r.left, totalPrice: r.total_price, leftPrice: r.left_price,
+  remind: r.remind === 1, budget: r.budget, total: r.total, left: r.left, totalPrice: r.total_price, leftPrice: r.left_price,
 });
 
-const SELECT = `SELECT l.id, l.title, l.color, l.sort, l.planned_date, l.remind,
+const SELECT = `SELECT l.id, l.title, l.color, l.sort, l.planned_date, l.remind, l.budget,
             (SELECT COUNT(*) FROM items i WHERE i.list_id = l.id) AS total,
             (SELECT COUNT(*) FROM items i WHERE i.list_id = l.id AND i.bought_at IS NULL) AS "left",
             (SELECT COALESCE(SUM(i.price), 0) FROM items i WHERE i.list_id = l.id) AS total_price,
@@ -40,22 +41,23 @@ export async function loadList(id: number): Promise<ShoppingList | null> {
   return row ? toList(row) : null;
 }
 
-export async function createList(title: string, color: string, plannedDate: string | null = null, remind = false): Promise<number> {
+export async function createList(title: string, color: string, plannedDate: string | null = null, remind = false, budget: number | null = null): Promise<number> {
   const res = await write(
-    'INSERT INTO lists (title, color, sort, planned_date, remind, created_at) VALUES (?, ?, (SELECT COALESCE(MAX(sort), 0) + 1 FROM lists), ?, ?, ?)',
+    'INSERT INTO lists (title, color, sort, planned_date, remind, budget, created_at) VALUES (?, ?, (SELECT COALESCE(MAX(sort), 0) + 1 FROM lists), ?, ?, ?, ?)',
     title.trim(),
     color,
     plannedDate,
     remind && plannedDate ? 1 : 0,
+    budget,
     new Date().toISOString(),
   );
   return res.lastInsertRowId;
 }
 
-export async function updateList(id: number, title: string, color: string, plannedDate: string | null, remind: boolean): Promise<void> {
+export async function updateList(id: number, title: string, color: string, plannedDate: string | null, remind: boolean, budget: number | null = null): Promise<void> {
   await write(
-    'UPDATE lists SET title = ?, color = ?, planned_date = ?, remind = ? WHERE id = ?',
-    title.trim(), color, plannedDate, remind && plannedDate ? 1 : 0, id,
+    'UPDATE lists SET title = ?, color = ?, planned_date = ?, remind = ?, budget = ? WHERE id = ?',
+    title.trim(), color, plannedDate, remind && plannedDate ? 1 : 0, budget, id,
   );
 }
 
@@ -63,18 +65,19 @@ export async function deleteList(id: number): Promise<void> {
   await write('DELETE FROM lists WHERE id = ?', id);
 }
 
-// Копия списка: тот же цвет, выбранные товары (без отметок «куплено» и дат), новое название и дата.
+// Копия списка: тот же цвет и бюджет, выбранные товары (без отметок «куплено» и дат), новое название и дата.
 // Товары копируются одним запросом, не по одному.
 export async function copyList(sourceId: number, title: string, plannedDate: string | null, remind: boolean, itemIds: number[]): Promise<number> {
   const now = new Date().toISOString();
-  const src = await getDb().getFirstAsync<{ color: string }>('SELECT color FROM lists WHERE id = ?', sourceId);
+  const src = await getDb().getFirstAsync<{ color: string; budget: number | null }>('SELECT color, budget FROM lists WHERE id = ?', sourceId);
   const res = await write(
-    `INSERT INTO lists (title, color, sort, planned_date, remind, created_at)
-     VALUES (?, ?, (SELECT COALESCE(MAX(sort), 0) + 1 FROM lists), ?, ?, ?)`,
+    `INSERT INTO lists (title, color, sort, planned_date, remind, budget, created_at)
+     VALUES (?, ?, (SELECT COALESCE(MAX(sort), 0) + 1 FROM lists), ?, ?, ?, ?)`,
     title.trim(),
     src?.color ?? 'green',
     plannedDate,
     remind && plannedDate ? 1 : 0,
+    src?.budget ?? null,
     now,
   );
   const newId = res.lastInsertRowId;

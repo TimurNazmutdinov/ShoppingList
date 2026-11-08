@@ -1,5 +1,5 @@
 import { contrastRatio } from '@/logic/color';
-import { DEFAULT_ICON, activeSchemeKey, iconChange, launcherIconKey, logoSchemeKey, splashSchemeKey } from '@/logic/schemes';
+import { DEFAULT_ICON, DEFAULT_PICKS, activeSchemeKey, cleanPicks, iconChange, isPickFor, launcherIconKey, logoSchemeKey, splashSchemeKey } from '@/logic/schemes';
 import {
   SchemeKey,
   buildPalette,
@@ -160,5 +160,60 @@ describe('иконка рабочего стола', () => {
       expect(fsx.existsSync('assets/icons/schemes/ic_scheme_' + k + '_fg.png')).toBe(true);
       expect(fsx.existsSync('assets/icons/schemes/ic_scheme_' + k + '_legacy.png')).toBe(true);
     }
+  });
+});
+
+describe('«Как в системе»: свои профили для светлой и тёмной темы телефона', () => {
+  const picks = { light: 'powder', dark: 'berry' } as const;
+
+  it('по умолчанию — «Янтарь» и «Какао»', () => {
+    expect(DEFAULT_PICKS).toEqual({ light: 'vanilla', dark: 'cocoa' });
+    expect(activeSchemeKey('system', 'light')).toBe('vanilla');
+    expect(activeSchemeKey('system', 'dark')).toBe('cocoa');
+  });
+
+  it('выбор пользователя: светлый — при светлой теме, тёмный — при тёмной; нет данных → тёмный', () => {
+    expect(activeSchemeKey('system', 'light', picks)).toBe('powder');
+    expect(activeSchemeKey('system', 'dark', picks)).toBe('berry');
+    expect(activeSchemeKey('system', null, picks)).toBe('berry');
+    expect(activeSchemeKey('system', undefined, picks)).toBe('berry');
+  });
+
+  it('постоянный профиль главнее выбора для «Как в системе»', () => {
+    expect(activeSchemeKey('sky', 'dark', picks)).toBe('sky');
+    expect(activeSchemeKey('night', 'light', picks)).toBe('night');
+  });
+
+  it('«Ко всему»: заставка в цвет выбранного профиля; «Только к экранам» — фирменная', () => {
+    expect(splashSchemeKey('all', 'system', 'light', picks)).toBe('powder');
+    expect(splashSchemeKey('all', 'system', 'dark', picks)).toBe('berry');
+    expect(splashSchemeKey('screens', 'system', 'light', picks)).toBe(themeDefaults.lightScheme);
+    expect(splashSchemeKey('screens', 'system', 'dark', picks)).toBe(themeDefaults.darkScheme);
+  });
+
+  it('иконка при «Как в системе» и «Ко всему» — по выбранному светлому профилю', () => {
+    expect(launcherIconKey('all', 'system', picks)).toBe('powder');
+    expect(launcherIconKey('all', 'system', { light: 'vanilla', dark: 'berry' })).toBe(DEFAULT_ICON);
+    expect(launcherIconKey('screens', 'system', picks)).toBe(DEFAULT_ICON);
+    expect(iconChange('all', 'system', DEFAULT_ICON, false, picks)).toEqual({ target: 'powder', ask: true });
+    expect(iconChange('all', 'system', 'powder', false, picks)).toEqual({ target: 'powder', ask: false });
+    expect(iconChange('all', 'system', 'powder', false, { light: 'vanilla', dark: 'berry' })).toEqual({ target: DEFAULT_ICON, ask: false });
+  });
+
+  it('профиль подходит только своей теме; мусор → профиль по умолчанию', () => {
+    expect(isPickFor('light', 'powder')).toBe(true);
+    expect(isPickFor('light', 'berry')).toBe(false);
+    expect(isPickFor('dark', 'berry')).toBe(true);
+    expect(isPickFor('dark', 'neon')).toBe(false);
+    expect(isPickFor('dark', 5)).toBe(false);
+    expect(cleanPicks('powder', 'berry')).toEqual({ light: 'powder', dark: 'berry' });
+    expect(cleanPicks('berry', 'powder')).toEqual(DEFAULT_PICKS);
+    expect(cleanPicks(undefined, null)).toEqual(DEFAULT_PICKS);
+    expect(cleanPicks('sky', 'zzz')).toEqual({ light: 'sky', dark: 'cocoa' });
+  });
+
+  it('«Ночь»: кнопки голубые, как верх знака', () => {
+    const t = schemeDefs.night.tokens;
+    expect([t.primary, t.onPrimary, t.primaryStrong]).toEqual(['#1EC8F2', '#04253A', '#1EC8F2']);
   });
 });

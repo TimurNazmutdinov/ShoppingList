@@ -3,7 +3,7 @@ import { ExchangeFile, ExportCategory, ExportDish, ExportHistory, ExportItem, Ex
 import { normTitle } from '@/logic/history';
 import { loadUserDishes } from './dishes';
 
-type ListRow = { id: number; title: string; color: string; planned_date: string | null };
+type ListRow = { id: number; title: string; color: string; planned_date: string | null; budget: number | null };
 type ItemRow = {
   list_id: number; title: string; qty: number | null; unit: string | null; price: number | null; note: string | null;
   planned_date: string | null; bought_at: string | null; cat_key: string | null; cat_title: string | null;
@@ -20,7 +20,7 @@ export async function loadExportLists(listId?: number): Promise<ExportList[]> {
   const db = getDb();
   const one = listId !== undefined;
   const lists = await db.getAllAsync<ListRow>(
-    `SELECT id, title, color, planned_date FROM lists WHERE archived_at IS NULL${one ? ' AND id = ?' : ''} ORDER BY sort, id`,
+    `SELECT id, title, color, planned_date, budget FROM lists WHERE archived_at IS NULL${one ? ' AND id = ?' : ''} ORDER BY sort, id`,
     ...(one ? [listId] : []),
   );
   const items = await db.getAllAsync<ItemRow>(
@@ -39,7 +39,7 @@ export async function loadExportLists(listId?: number): Promise<ExportList[]> {
     if (arr) arr.push(entry);
     else byList.set(r.list_id, [entry]);
   }
-  return lists.map((l) => ({ title: l.title, color: l.color, plannedDate: l.planned_date, items: byList.get(l.id) ?? [] }));
+  return lists.map((l) => ({ title: l.title, color: l.color, plannedDate: l.planned_date, budget: l.budget, items: byList.get(l.id) ?? [] }));
 }
 
 export async function loadExportHistory(): Promise<ExportHistory[]> {
@@ -92,8 +92,8 @@ export async function importExchange(file: ExchangeFile): Promise<{ lists: numbe
     const now = new Date().toISOString();
     for (const list of file.lists) {
       const res = await write(
-        'INSERT INTO lists (title, color, sort, planned_date, remind, created_at) VALUES (?, ?, (SELECT COALESCE(MAX(sort), 0) + 1 FROM lists), ?, 0, ?)',
-        list.title, list.color, list.plannedDate, now,
+        'INSERT INTO lists (title, color, sort, planned_date, remind, budget, created_at) VALUES (?, ?, (SELECT COALESCE(MAX(sort), 0) + 1 FROM lists), ?, 0, ?, ?)',
+        list.title, list.color, list.plannedDate, list.budget, now,
       );
       const listId = res.lastInsertRowId;
       for (const part of chunks(list.items.map((item, i) => ({ item, sort: i + 1 })), 60)) {

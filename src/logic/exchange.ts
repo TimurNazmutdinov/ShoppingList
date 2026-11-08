@@ -1,8 +1,9 @@
 // Обмен списками: файл приложения (один список или резервная копия), текст для мессенджеров, .txt и HTML для PDF.
 // Чистая логика: разбор и проверка файла, форматирование. Чтение и запись БД — в db/exchange.ts.
-import { DEFAULT_LIST_COLOR, isListColorKey } from '@/theme';
+import { DEFAULT_LIST_COLOR, SchemeKey, isListColorKey } from '@/theme';
 import { UNITS, formatQty } from './history';
 import { formatMoney } from './money';
+import { isPickFor } from './schemes';
 
 export const APP_ID = 'ShoppingList';
 export const FORMAT = 1; // версия формата файла
@@ -27,12 +28,15 @@ export type ExportItem = {
   plannedDate: string | null;
   bought: boolean;
 };
-export type ExportList = { title: string; color: string; plannedDate: string | null; items: ExportItem[] };
+export type ExportList = { title: string; color: string; plannedDate: string | null; budget: number | null; items: ExportItem[] };
 export type ExportHistory = { title: string; qty: number | null; unit: string | null; price: number | null; category: ExportCategory; usedCount: number };
 
 // Своё блюдо: название и продукты (стандартные блюда в файл не попадают — они есть в самом приложении).
 export type ExportDishProduct = { title: string; qty: number | null; unit: string | null; price: number | null };
 export type ExportDish = { title: string; products: ExportDishProduct[] };
+
+// Настройки в резервной копии: профили «Как в системе» для светлой и тёмной темы телефона.
+export type ExportSettings = { systemLight?: SchemeKey; systemDark?: SchemeKey };
 
 export type ExchangeFile = {
   app: typeof APP_ID;
@@ -42,10 +46,20 @@ export type ExchangeFile = {
   lists: ExportList[];
   history: ExportHistory[];
   dishes: ExportDish[];
+  settings?: ExportSettings; // только в резервной копии; в старых файлах нет
 };
 
-export function buildFile(kind: ExchangeFile['kind'], lists: ExportList[], history: ExportHistory[], now: Date, dishes: ExportDish[] = []): ExchangeFile {
-  return { app: APP_ID, format: FORMAT, kind, exportedAt: now.toISOString(), lists, history, dishes };
+export function buildFile(
+  kind: ExchangeFile['kind'],
+  lists: ExportList[],
+  history: ExportHistory[],
+  now: Date,
+  dishes: ExportDish[] = [],
+  settings: ExportSettings = {},
+): ExchangeFile {
+  const file: ExchangeFile = { app: APP_ID, format: FORMAT, kind, exportedAt: now.toISOString(), lists, history, dishes };
+  if (Object.keys(settings).length > 0) file.settings = settings;
+  return file;
 }
 
 export type ParseResult = { ok: true; file: ExchangeFile } | { ok: false; reason: 'invalid' | 'newer' | 'empty' };
@@ -92,8 +106,19 @@ function cleanList(v: unknown): ExportList | null {
     title,
     color: typeof o.color === 'string' && isListColorKey(o.color) ? o.color : DEFAULT_LIST_COLOR,
     plannedDate: typeof o.plannedDate === 'string' && DATE.test(o.plannedDate) ? o.plannedDate : null,
+    budget: num(o.budget, Number.MIN_VALUE),
     items,
   };
+}
+
+// Профили в файле: подходят только профили своего режима (светлый — для светлой темы); остальное отбрасываем.
+function cleanSettings(v: unknown): ExportSettings {
+  if (typeof v !== 'object' || v === null) return {};
+  const o = v as Record<string, unknown>;
+  const out: ExportSettings = {};
+  if (isPickFor('light', o.systemLight)) out.systemLight = o.systemLight;
+  if (isPickFor('dark', o.systemDark)) out.systemDark = o.systemDark;
+  return out;
 }
 
 function cleanHistory(v: unknown): ExportHistory | null {
@@ -149,18 +174,19 @@ export function parseFile(text: string): ParseResult {
   const history = (Array.isArray(o.history) ? o.history : []).slice(0, MAX_HISTORY).map(cleanHistory).filter((h): h is ExportHistory => h !== null);
   const dishes = (Array.isArray(o.dishes) ? o.dishes : []).slice(0, MAX_DISHES).map(cleanDish).filter((d): d is ExportDish => d !== null);
   if (lists.length === 0 && history.length === 0 && dishes.length === 0) return { ok: false, reason: 'empty' };
-  return {
-    ok: true,
-    file: {
-      app: APP_ID,
-      format: o.format,
-      kind: o.kind === 'backup' ? 'backup' : 'list',
-      exportedAt: typeof o.exportedAt === 'string' ? o.exportedAt : '',
-      lists,
-      history,
-      dishes,
-    },
+  const kind = o.kind === 'backup' ? 'backup' : 'list';
+  const settings = kind === 'backup' ? cleanSettings(o.settings) : {};
+  const file: ExchangeFile = {
+    app: APP_ID,
+    format: o.format,
+    kind,
+    exportedAt: typeof o.exportedAt === 'string' ? o.exportedAt : '',
+    lists,
+    history,
+    dishes,
   };
+  if (Object.keys(settings).length > 0) file.settings = settings;
+  return { ok: true, file };
 }
 
 export function countItems(file: ExchangeFile): number {

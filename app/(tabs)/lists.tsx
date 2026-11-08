@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ListColorKey, Palette, listColor, radius, useTheme } from '@/theme';
 import { t } from '@/i18n';
@@ -9,6 +9,7 @@ import { Item, ShoppingList, copyList, createList, deleteList, ensureSampleList,
 import { cardDateLabel } from '@/logic/schedule';
 import { daysLeft } from '@/logic/dates';
 import { currencySymbol, formatMoney } from '@/logic/money';
+import { budgetStatus } from '@/logic/budget';
 import { useSettings } from '@/AppSettings';
 import { ShareKind, shareList } from '@/logic/sharing';
 import { ShareSheet } from '@/components/ShareSheet';
@@ -24,6 +25,7 @@ export default function ListsScreen() {
   const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
   const { currency } = useSettings();
+  const { new: createNew } = useLocalSearchParams<{ new?: string }>(); // ярлык «Новый список»
   const [lists, setLists] = useState<ShoppingList[]>([]);
   const [menu, setMenu] = useState<ShoppingList | null>(null);
   const [edit, setEdit] = useState<{ open: boolean; list: ShoppingList | null }>({ open: false, list: null });
@@ -32,6 +34,15 @@ export default function ListsScreen() {
   const [shareFor, setShareFor] = useState<ShoppingList | null>(null);
 
   const reload = useCallback(async () => setLists(await loadLists()), []);
+
+  // Открыли через ярлык «Новый список»: сразу окно создания; параметр сбрасываем, чтобы окно не открывалось снова.
+  useFocusEffect(
+    useCallback(() => {
+      if (createNew !== '1') return;
+      setEdit({ open: true, list: null });
+      router.setParams({ new: undefined } as never);
+    }, [createNew, router]),
+  );
   useFocusEffect(
     useCallback(() => {
       ensureSampleList()
@@ -40,9 +51,9 @@ export default function ListsScreen() {
     }, [reload]),
   );
 
-  const save = (title: string, color: ListColorKey, plannedDate: string | null, remind: boolean) => {
+  const save = (title: string, color: ListColorKey, plannedDate: string | null, remind: boolean, budget: number | null) => {
     const list = edit.list;
-    (list ? updateList(list.id, title, color, plannedDate, remind) : createList(title, color, plannedDate, remind).then(() => undefined))
+    (list ? updateList(list.id, title, color, plannedDate, remind, budget) : createList(title, color, plannedDate, remind, budget).then(() => undefined))
       .then(reload)
       .catch((e) => console.warn(e));
     setEdit({ open: false, list: null });
@@ -80,13 +91,17 @@ export default function ListsScreen() {
     const color = listColor(l.color, colors.scheme);
     const progress = l.total === 0 ? 0 : (l.total - l.left) / l.total;
     const base = l.total === 0 ? t('lists.noItems') : l.left === 0 ? t('lists.allDone') : t('lists.left', { left: l.left, total: l.total });
-    const status = l.leftPrice > 0 ? `${base} · ${formatMoney(l.leftPrice, currencySymbol(currency))}` : base;
+    const symbol = currencySymbol(currency);
+    const bs = budgetStatus(l.totalPrice, l.budget);
+    const status = base;
+    const moneyRight = bs ? t('budget.cardLabel', { budget: formatMoney(bs.budget, symbol) }) : t('budget.none');
+    const money = bs || l.totalPrice > 0 ? `${formatMoney(l.totalPrice, symbol)}, ${moneyRight}` : '';
     return (
       <Pressable
         style={styles.card}
         onPress={() => open(l)}
         accessibilityRole="button"
-        accessibilityLabel={`${t('a11y.openList', { title: l.title })}. ${status}`}
+        accessibilityLabel={`${t('a11y.openList', { title: l.title })}. ${status}${money ? `. ${money}` : ''}`}
       >
         <View style={styles.cardTop}>
           <View style={[styles.dot, { backgroundColor: color }]} />
@@ -104,8 +119,21 @@ export default function ListsScreen() {
           </Pressable>
         </View>
         <Text style={styles.status}>{status}</Text>
+        {money ? (
+          <View style={styles.money}>
+            <Text style={styles.moneyText}>{formatMoney(l.totalPrice, symbol)}</Text>
+            <Text style={styles.moneyBudget}>{moneyRight}</Text>
+          </View>
+        ) : null}
         <View style={styles.track}>
-          <View style={[styles.fill, { width: `${Math.round(progress * 100)}%`, backgroundColor: color }]} />
+          <View
+            style={[
+              styles.fill,
+              bs
+                ? { width: `${Math.round(bs.ratio * 100)}%`, backgroundColor: bs.over > 0 ? colors.warn : colors.primaryStrong }
+                : { width: `${Math.round(progress * 100)}%`, backgroundColor: color },
+            ]}
+          />
         </View>
       </Pressable>
     );
@@ -227,6 +255,9 @@ const createStyles = (colors: Palette) =>
     dateText: { color: colors.textMuted, fontSize: 13 },
     menu: { width: 48, height: 40, alignItems: 'center', justifyContent: 'center' },
     status: { color: colors.textMuted, fontSize: 14, marginTop: 2, marginRight: 10 },
+    money: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 4, marginRight: 10 },
+    moneyText: { color: colors.text, fontSize: 15 },
+    moneyBudget: { color: colors.textMuted, fontSize: 13 },
     track: { height: 6, borderRadius: 3, backgroundColor: colors.track, marginTop: 10, marginRight: 10 },
     fill: { height: 6, borderRadius: 3 },
     fab: {

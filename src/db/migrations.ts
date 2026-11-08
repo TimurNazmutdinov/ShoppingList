@@ -90,6 +90,11 @@ export const MIGRATIONS: readonly string[] = [
   );
   CREATE INDEX IF NOT EXISTS idx_dish_items_dish ON dish_items(dish_id);
   `,
+  // v6: необязательный бюджет списка; индекс под «Купить снова» (история по частоте)
+  `
+  ALTER TABLE lists ADD COLUMN budget REAL;
+  CREATE INDEX IF NOT EXISTS idx_history_used ON history(used_count DESC, last_used_at DESC);
+  `,
 ];
 
 // Минимум, который нужен миграциям от БД (реализуют expo-sqlite и тест на sql.js).

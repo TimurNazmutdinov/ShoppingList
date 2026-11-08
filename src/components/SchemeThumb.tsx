@@ -4,10 +4,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { Palette, SchemeKey, schemeDefs, useTheme } from '@/theme';
 import { useSettings } from '@/AppSettings';
 
-type Props = { schemeKey: SchemeKey; selected: boolean; onPress: () => void };
+type Props = { schemeKey: SchemeKey; selected: boolean; onPress: () => void; badge?: string };
 
 // Миниатюра схемы: рисуется из её токенов (фон, две карточки, кружок акцента).
-export function SchemeThumb({ schemeKey, selected, onPress }: Props) {
+// badge — метка «день» / «ночь»: этот профиль включится при «Как в системе».
+export function SchemeThumb({ schemeKey, selected, onPress, badge }: Props) {
   const colors = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { language } = useSettings();
@@ -20,7 +21,7 @@ export function SchemeThumb({ schemeKey, selected, onPress }: Props) {
       onPress={onPress}
       accessibilityRole="radio"
       accessibilityState={{ selected }}
-      accessibilityLabel={name}
+      accessibilityLabel={badge ? `${name}, ${badge}` : name}
     >
       <View style={[styles.thumb, { backgroundColor: tk.bg, borderColor: tk.cardBorder }, selected && { borderColor: colors.primaryStrong, borderWidth: 3 }]}>
         <View style={[styles.bar, { backgroundColor: tk.card, borderColor: tk.cardBorder }]} />
@@ -29,6 +30,11 @@ export function SchemeThumb({ schemeKey, selected, onPress }: Props) {
         {selected ? (
           <View style={[styles.check, { backgroundColor: colors.primaryStrong }]}>
             <Ionicons name="checkmark" size={14} color={colors.bg} />
+          </View>
+        ) : null}
+        {badge ? (
+          <View style={[styles.badge, { backgroundColor: colors.primaryStrong }]}>
+            <Text style={[styles.badgeText, { color: colors.bg }]}>{badge}</Text>
           </View>
         ) : null}
       </View>
@@ -44,5 +50,7 @@ const createStyles = (colors: Palette) =>
     bar: { height: 12, borderRadius: 4, borderWidth: 1 },
     dot: { width: 14, height: 14, borderRadius: 7, alignSelf: 'center' },
     check: { position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+    badge: { position: 'absolute', bottom: -7, alignSelf: 'center', paddingHorizontal: 6, borderRadius: 8 },
+    badgeText: { fontSize: 11, fontWeight: '600' },
     name: { color: colors.text, fontSize: 11, textAlign: 'center', marginTop: 4 },
   });

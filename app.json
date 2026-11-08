@@ -2,7 +2,7 @@
   "expo": {
     "name": "ShoppingList",
     "slug": "shoppinglist",
-    "version": "0.7.3",
+    "version": "0.7.4",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "shoppinglist",
@@ -10,7 +10,7 @@
     "backgroundColor": "#2F2722",
     "android": {
       "package": "com.timurnazmutdinov.shoppinglist",
-      "versionCode": 7,
+      "versionCode": 8,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon-foreground.png",
         "backgroundColor": "#FFFFFF",

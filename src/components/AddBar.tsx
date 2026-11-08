@@ -7,6 +7,7 @@ import { BulkItem } from '@/logic/bulk';
 import { HistoryRow, QuickQty } from '@/logic/shopping';
 import { BulkPreview } from './BulkPreview';
 import { BulkTip } from './BulkTip';
+import { FrequentRow } from './FrequentRow';
 import { itemQtyLabel } from './ItemSheet';
 import { quickPriceLabel, quickQtyLabel } from './QtySheet';
 import { VoiceButton } from './VoiceButton';
@@ -16,6 +17,8 @@ type Props = {
   text: string;
   onChangeText: (text: string) => void;
   suggestions: HistoryRow[];
+  frequent: HistoryRow[]; // «Часто:» — частые покупки, пока строка пуста и в ней курсор
+  autoFocus?: boolean; // курсор в строке сразу (ярлык «Добавить товар»)
   quick: QuickQty;
   symbol: string; // символ валюты
   preview: BulkItem[]; // что добавится из набранного списка (пусто — обычный ввод)
@@ -26,13 +29,15 @@ type Props = {
 };
 
 // Нижняя строка: подсказки и предпросмотр, поле названия, голос, количество с ценой и «+».
-export function AddBar({ text, onChangeText, suggestions, quick, symbol, preview, bottomPad, onAdd, onQtyPress, onTipMore }: Props) {
+export function AddBar({ text, onChangeText, suggestions, frequent, autoFocus, quick, symbol, preview, bottomPad, onAdd, onQtyPress, onTipMore }: Props) {
   const colors = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const [listening, setListening] = useState(false);
+  const [focused, setFocused] = useState(false);
   const quickLines = [quickQtyLabel(quick), quickPriceLabel(quick, symbol)].filter(Boolean);
   const hasPreview = preview.length > 0;
-  const showTip = text.trim() === '' && !listening; // подсказка про список: всегда, пока строка пуста
+  const showFrequent = focused && text.trim() === '' && frequent.length > 0 && !listening && !hasPreview;
+  const showTip = text.trim() === '' && !listening && !showFrequent; // подсказка про список: пока строка пуста (кроме ряда «Часто:»)
   return (
     <View style={[styles.bar, { paddingBottom: 12 + bottomPad }]}>
       {suggestions.length > 0 && !hasPreview ? (
@@ -53,6 +58,7 @@ export function AddBar({ text, onChangeText, suggestions, quick, symbol, preview
           })}
         </View>
       ) : null}
+      {showFrequent ? <FrequentRow rows={frequent} onPick={(row) => onAdd(row.title, row)} /> : null}
       {hasPreview ? <BulkPreview items={preview} symbol={symbol} /> : null}
       {listening ? <VoicePanel /> : null}
       {showTip ? <BulkTip onMore={onTipMore} /> : null}
@@ -61,6 +67,9 @@ export function AddBar({ text, onChangeText, suggestions, quick, symbol, preview
           style={styles.input}
           value={text}
           onChangeText={onChangeText}
+          autoFocus={autoFocus}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
           placeholder={t('list.addPlaceholder')}
           placeholderTextColor={colors.textMuted}
           returnKeyType="done"

@@ -3,8 +3,8 @@ import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { ApplyScope, Palette, SchemeSetting, darkSchemeKeys, lightSchemeKeys, radius, useTheme } from '@/theme';
-import { iconChange } from '@/logic/schemes';
+import { ApplyScope, Palette, Scheme, SchemeKey, SchemeSetting, darkSchemeKeys, lightSchemeKeys, radius, schemeDefs, useTheme } from '@/theme';
+import { SystemPicks, iconChange } from '@/logic/schemes';
 import { CUSTOM_MAX, CurrencyKind } from '@/logic/money';
 import { TextField } from '@/components/FormField';
 import { backupAll } from '@/logic/sharing';
@@ -31,12 +31,13 @@ export default function SettingsScreen() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [clearOpen, setClearOpen] = useState(false);
   const [pendingIcon, setPendingIcon] = useState<string | null>(null);
+  const [pickMode, setPickMode] = useState<Scheme | null>(null); // окно выбора профиля для «Как в системе»
   const restoreFlow = useImportFlow(() => {});
 
   // После смены профиля или охвата: нужна ли смена иконки рабочего стола и спросить ли об этом.
-  const applyChoice = (setting: SchemeSetting, scope: ApplyScope) => {
+  const applyChoice = (setting: SchemeSetting, scope: ApplyScope, picks: SystemPicks = s.systemPicks) => {
     if (scope === 'screens' && s.iconDeclined) s.setIconDeclined(false);
-    const r = iconChange(scope, setting, s.launcherIcon, scope === 'screens' ? false : s.iconDeclined);
+    const r = iconChange(scope, setting, s.launcherIcon, scope === 'screens' ? false : s.iconDeclined, picks);
     if (r.ask) setPendingIcon(r.target);
     else if (r.target !== s.launcherIcon) s.setLauncherIcon(r.target);
   };
@@ -44,6 +45,15 @@ export default function SettingsScreen() {
     s.setSchemeSetting(setting);
     applyChoice(setting, s.applyScope);
   };
+  const pickSystemScheme = (mode: Scheme, key: SchemeKey) => {
+    s.setSystemPick(mode, key);
+    applyChoice(s.schemeSetting, s.applyScope, mode === 'light' ? { ...s.systemPicks, light: key } : { ...s.systemPicks, dark: key });
+    setPickMode(null);
+  };
+  const systemRows: { mode: Scheme; label: string }[] = [
+    { mode: 'light', label: t('theme.systemLight') },
+    { mode: 'dark', label: t('theme.systemDark') },
+  ];
   const { checkNow } = useUpdates();
   const [checkValue, setCheckValue] = useState<string | null>(null);
 
@@ -93,16 +103,47 @@ export default function SettingsScreen() {
             {s.schemeSetting === 'system' ? <Ionicons name="checkmark-circle" size={24} color={colors.primaryStrong} /> : null}
           </Pressable>
 
+          {s.schemeSetting === 'system'
+            ? systemRows.map(({ mode, label }) => {
+                const name = schemeDefs[mode === 'light' ? s.systemPicks.light : s.systemPicks.dark].name[s.language];
+                return (
+                  <Pressable
+                    key={mode}
+                    style={[styles.row, styles.divider]}
+                    onPress={() => setPickMode(mode)}
+                    accessibilityRole="button"
+                    accessibilityLabel={`${label}: ${name}`}
+                  >
+                    <Text style={styles.rowTitle}>{label}</Text>
+                    <Text style={styles.rowValue}>{name}</Text>
+                    <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+                  </Pressable>
+                );
+              })
+            : null}
+
           <Text style={styles.label}>{t('theme.light')}</Text>
           <View style={styles.grid}>
             {lightSchemeKeys.map((k) => (
-              <SchemeThumb key={k} schemeKey={k} selected={s.schemeSetting === k} onPress={() => pickScheme(k)} />
+              <SchemeThumb
+                key={k}
+                schemeKey={k}
+                selected={s.schemeSetting === k}
+                onPress={() => pickScheme(k)}
+                badge={s.schemeSetting === 'system' && s.systemPicks.light === k ? t('theme.badgeDay') : undefined}
+              />
             ))}
           </View>
           <Text style={styles.label}>{t('theme.dark')}</Text>
           <View style={styles.grid}>
             {darkSchemeKeys.map((k) => (
-              <SchemeThumb key={k} schemeKey={k} selected={s.schemeSetting === k} onPress={() => pickScheme(k)} />
+              <SchemeThumb
+                key={k}
+                schemeKey={k}
+                selected={s.schemeSetting === k}
+                onPress={() => pickScheme(k)}
+                badge={s.schemeSetting === 'system' && s.systemPicks.dark === k ? t('theme.badgeNight') : undefined}
+              />
             ))}
           </View>
 
@@ -282,6 +323,19 @@ export default function SettingsScreen() {
           setClearOpen(false);
         }}
       />
+      <BottomSheet visible={pickMode !== null} onClose={() => setPickMode(null)}>
+        <Text style={styles.sheetTitle}>{pickMode === 'dark' ? t('theme.systemDark') : t('theme.systemLight')}</Text>
+        <View style={styles.sheetGrid}>
+          {(pickMode === 'dark' ? darkSchemeKeys : lightSchemeKeys).map((k) => (
+            <SchemeThumb
+              key={k}
+              schemeKey={k}
+              selected={(pickMode === 'dark' ? s.systemPicks.dark : s.systemPicks.light) === k}
+              onPress={() => pickSystemScheme(pickMode === 'dark' ? 'dark' : 'light', k)}
+            />
+          ))}
+        </View>
+      </BottomSheet>
       <BottomSheet visible={sheetOpen} onClose={() => setSheetOpen(false)}>
         <Text style={styles.sheetTitle}>Язык / Тіл / Language</Text>
         {langOptions.map((o, i) => {
@@ -345,6 +399,7 @@ const createStyles = (colors: Palette) =>
     rowValue: { color: colors.textMuted, fontSize: 16, flexShrink: 1, textAlign: 'right' },
     version: { color: colors.textMuted, fontSize: 14, padding: 14 },
     sheetTitle: { color: colors.text, fontSize: 20, fontWeight: '600', marginBottom: 8 },
+    sheetGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingTop: 8 },
     option: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 56, paddingVertical: 10 },
     optionDivider: { borderTopWidth: 1, borderTopColor: colors.border },
     optionTitle: { color: colors.text, fontSize: 17 },

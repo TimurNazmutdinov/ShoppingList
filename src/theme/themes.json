@@ -218,9 +218,9 @@
     "track": "#3C3489",
     "text": "#FFFFFF",
     "textMuted": "#AFA9EC",
-    "primary": "#5DCAA5",
-    "onPrimary": "#04342C",
-    "primaryStrong": "#5DCAA5",
+    "primary": "#1EC8F2",
+    "onPrimary": "#04253A",
+    "primaryStrong": "#1EC8F2",
     "warn": "#F0997B",
     "outline": "#AFA9EC"
    },

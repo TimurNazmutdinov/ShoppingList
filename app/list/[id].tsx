@@ -8,19 +8,24 @@ import { t } from '@/i18n';
 import { useSettings } from '@/AppSettings';
 import { useKeyboardOverlap } from '@/useKeyboard';
 import {
-  Category, HistoryRow, Item, ItemPatch, NO_QTY, QuickQty, ShoppingList, addFromText, addMany, createCategory, isFlagSet, loadCategories, loadItems,
-  loadList, removeItem, restoreItem, saveItem, setFlag, setItemQtyPrice, suggestAll, toggleBought,
+  Category, HistoryRow, Item, ItemPatch, NO_QTY, QuickQty, ShoppingList, addFromText, addMany, createCategory, isFlagSet, loadBuyAgain, loadCategories, loadItems,
+  loadList, rememberLastList, removeItem, restoreItem, saveItem, setFlag, setItemQtyPrice, suggestAll, toggleBought,
 } from '@/logic/shopping';
 import { bulkPreview, priceMarkers } from '@/logic/bulk';
 import { categoryName, groupByCategory } from '@/logic/categories';
 import { currencySymbol, formatMoney, listTotals } from '@/logic/money';
+import { budgetStatus } from '@/logic/budget';
+import { BUY_AGAIN_EMPTY, BUY_AGAIN_ROW } from '@/logic/buyAgain';
 import { AddBar } from '@/components/AddBar';
+import { BuyAgainBlock } from '@/components/BuyAgainBlock';
 import { DishButton } from '@/components/DishButton';
 import { DishSheet } from '@/components/DishSheet';
 import { ItemRow } from '@/components/ItemRow';
 import { ItemSheet } from '@/components/ItemSheet';
 import { QtySheet } from '@/components/QtySheet';
 import { QuickHelpSheet } from '@/components/QuickHelpSheet';
+import { ShopButton } from '@/components/ShopButton';
+import { ShopMode } from '@/components/ShopMode';
 import { Toast } from '@/components/Toast';
 
 const TOAST_MS = 6000;
@@ -36,7 +41,7 @@ export default function ListScreen() {
   const insets = useSafeAreaInsets();
   const keyboard = useKeyboardOverlap();
   const { rememberItems, currency } = useSettings();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, focus } = useLocalSearchParams<{ id: string; focus?: string }>(); // focus=1 — пришли с ярлыка «Добавить товар»
   const listId = Number(id);
 
   const [list, setList] = useState<ShoppingList | null>(null);
@@ -46,7 +51,9 @@ export default function ListScreen() {
   const [quick, setQuick] = useState<QuickQty>(NO_QTY);
   const [qtyOpen, setQtyOpen] = useState(false);
   const [dishOpen, setDishOpen] = useState(false);
+  const [shop, setShop] = useState(false); // режим «В магазине»: не запоминается, при открытии списка всегда выключен
   const [suggestions, setSuggestions] = useState<HistoryRow[]>([]);
+  const [again, setAgain] = useState<HistoryRow[]>([]); // «Купить снова» / «Часто:»
   const [editing, setEditing] = useState<Item | null>(null);
   const [showBought, setShowBought] = useState(false);
   const [toast, setToast] = useState<ToastState | null>(null);
@@ -65,8 +72,9 @@ export default function ListScreen() {
   useFocusEffect(
     useCallback(() => {
       reload().catch((e) => console.warn(e));
+      rememberLastList(listId).catch(() => {});
       isFlagSet(HINT_FLAG).then(setHintDone).catch(() => {});
-    }, [reload]),
+    }, [reload, listId]),
   );
 
   useEffect(() => {
@@ -79,6 +87,16 @@ export default function ListScreen() {
       cancelled = true;
     };
   }, [text, rememberItems]);
+
+  useEffect(() => {
+    let cancelled = false;
+    loadBuyAgain(items, rememberItems, BUY_AGAIN_ROW)
+      .then((rows) => !cancelled && setAgain(rows))
+      .catch((e) => console.warn(e));
+    return () => {
+      cancelled = true;
+    };
+  }, [items, rememberItems]);
 
   useEffect(() => () => {
     if (toastTimer.current) clearTimeout(toastTimer.current);
@@ -149,14 +167,21 @@ export default function ListScreen() {
   );
 
   const totals = listTotals(items);
+  const bs = budgetStatus(totals.total, list?.budget);
   const header = (
     <View>
-      {totals.priced ? (
+      {totals.priced && !bs ? (
         <Text style={styles.totals}>
           {t('list.totals', { bought: formatMoney(totals.bought, sym), left: formatMoney(totals.left, sym), total: formatMoney(totals.total, sym) })}
         </Text>
       ) : null}
-      {items.length === 0 ? <Text style={styles.empty}>{t('list.empty')}</Text> : null}
+      {items.length === 0 ? (
+        again.length > 0 ? (
+          <BuyAgainBlock rows={again.slice(0, BUY_AGAIN_EMPTY)} onPick={(row) => add(row.title, row).catch((e) => console.warn(e))} />
+        ) : (
+          <Text style={styles.empty}>{t('list.empty')}</Text>
+        )
+      ) : null}
       {!hintDone && toBuy.length > 0 ? (
         <View style={styles.hint} accessible accessibilityLabel={`${t('swipe.hintLeft')} / ${t('swipe.hintRight')}`}>
           <Ionicons name="arrow-back" size={14} color={colors.textMuted} />
@@ -213,15 +238,41 @@ export default function ListScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         />
+        {keyboard === 0 && items.length > 0 ? <ShopButton onPress={() => setShop(true)} /> : null}
         {keyboard === 0 ? <DishButton onPress={() => setDishOpen(true)} /> : null}
       </View>
 
       {toast ? <Toast text={toast.text} actionLabel={t('list.undo')} onAction={toast.action} /> : null}
 
+      {bs && keyboard === 0 ? (
+        <View
+          style={[styles.budget, bs.over > 0 && styles.budgetOver]}
+          accessible
+          accessibilityLabel={`${t('budget.totalLabel')} ${formatMoney(bs.total, sym)}, ${t('budget.of', { budget: formatMoney(bs.budget, sym) })}. ${
+            bs.over > 0 ? t('budget.over', { over: formatMoney(bs.over, sym) }) : t('budget.leftIn', { left: formatMoney(bs.left, sym) })
+          }`}
+        >
+          <View style={styles.budgetRow}>
+            <Text style={styles.budgetText}>
+              {t('budget.totalLabel')} <Text style={styles.budgetStrong}>{formatMoney(bs.total, sym)}</Text>
+            </Text>
+            <Text style={styles.budgetMuted}>{t('budget.of', { budget: formatMoney(bs.budget, sym) })}</Text>
+          </View>
+          <View style={styles.budgetTrack}>
+            <View style={[styles.budgetFill, { width: `${Math.round(bs.ratio * 100)}%`, backgroundColor: bs.over > 0 ? colors.warn : colors.primaryStrong }]} />
+          </View>
+          <Text style={[styles.budgetNote, bs.over > 0 && styles.budgetNoteOver]}>
+            {bs.over > 0 ? t('budget.over', { over: formatMoney(bs.over, sym) }) : t('budget.leftIn', { left: formatMoney(bs.left, sym) })}
+          </Text>
+        </View>
+      ) : null}
+
       <AddBar
         text={text}
         onChangeText={setText}
         suggestions={shownSuggestions}
+        frequent={again}
+        autoFocus={focus === '1'}
         quick={quick}
         symbol={sym}
         preview={preview}
@@ -284,6 +335,27 @@ export default function ListScreen() {
         }}
         onDelete={(item) => remove(item).catch((e) => console.warn(e))}
       />
+
+      {shop ? (
+        <ShopMode
+          title={list?.title ?? ''}
+          items={items}
+          categories={categories}
+          symbol={sym}
+          bottomPad={bottomPad}
+          onToggle={(item) => {
+            toggleBought(item, rememberItems)
+              .then(reload)
+              .catch((e) => console.warn(e));
+          }}
+          onAdd={(title) => {
+            addFromText(listId, title, { remember: rememberItems, currency: sym })
+              .then(reload)
+              .catch((e) => console.warn(e));
+          }}
+          onClose={() => setShop(false)}
+        />
+      ) : null}
     </SafeAreaView>
   );
 }
@@ -298,6 +370,16 @@ const createStyles = (colors: Palette) =>
     listArea: { flex: 1 },
     scroll: { flex: 1, paddingHorizontal: 16 },
     totals: { color: colors.textMuted, fontSize: 13, marginBottom: 8 },
+    budget: { marginHorizontal: 12, marginBottom: 8, paddingVertical: 10, paddingHorizontal: 14, borderRadius: 14, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
+    budgetOver: { borderColor: colors.warn },
+    budgetRow: { flexDirection: 'row', justifyContent: 'space-between' },
+    budgetText: { color: colors.text, fontSize: 15 },
+    budgetStrong: { fontWeight: '700' },
+    budgetMuted: { color: colors.textMuted, fontSize: 15 },
+    budgetTrack: { height: 8, borderRadius: 4, backgroundColor: colors.track, marginTop: 8, overflow: 'hidden' },
+    budgetFill: { height: 8, borderRadius: 4 },
+    budgetNote: { color: colors.textMuted, fontSize: 13, marginTop: 6 },
+    budgetNoteOver: { color: colors.warn, fontWeight: '700' },
     empty: { color: colors.textMuted, fontSize: 15, marginTop: 24 },
     hint: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 10, paddingHorizontal: 12, minHeight: 32, borderRadius: 16, backgroundColor: colors.cardStrong },
     hintText: { color: colors.text, fontSize: 13, fontWeight: '600' },

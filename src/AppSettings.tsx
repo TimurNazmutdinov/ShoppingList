@@ -3,12 +3,13 @@ import { AppState, useColorScheme } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useLocales } from 'expo-localization';
 import * as SystemUI from 'expo-system-ui';
-import { Lang, LanguageSetting, resolveLanguage, setLanguage } from '@/i18n';
-import { ApplyScope, SchemeKey, SchemeSetting, ThemeProvider, buildPalette, schemeDefs, themeDefaults } from '@/theme';
+import { Lang, LanguageSetting, StringKey, resolveLanguage, setLanguage, t } from '@/i18n';
+import { ApplyScope, Scheme, SchemeKey, SchemeSetting, ThemeProvider, buildPalette, schemeDefs, themeDefaults } from '@/theme';
 import { CurrencySetting } from '@/logic/money';
-import { Appearance, saveApplyScope, saveCurrency, saveIconDeclined, saveLanguage, saveLauncherIcon, saveRememberItems, saveScheme } from '@/db/appearance';
-import { DEFAULT_ICON, activeSchemeKey } from '@/logic/schemes';
-import { setLauncherIcon as applyLauncherIcon } from '@/alarms';
+import { Appearance, saveApplyScope, saveCurrency, saveIconDeclined, saveLanguage, saveLauncherIcon, saveRememberItems, saveScheme, saveSystemPick } from '@/db/appearance';
+import { DEFAULT_ICON, SystemPicks, activeSchemeKey } from '@/logic/schemes';
+import { setLauncherIcon as applyLauncherIcon, setShortcuts } from '@/alarms';
+import { SHORTCUT_ACTIONS, shortcutUri } from '@/logic/shortcuts';
 
 // Все ключи иконок рабочего стола: основная и по одной на профиль (кроме фирменного «Янтаря»).
 const ICON_KEYS = [DEFAULT_ICON, ...Object.keys(schemeDefs).filter((k) => k !== themeDefaults.lightScheme)];
@@ -16,6 +17,8 @@ const ICON_KEYS = [DEFAULT_ICON, ...Object.keys(schemeDefs).filter((k) => k !== 
 type Settings = {
   schemeSetting: SchemeSetting;
   schemeKey: SchemeKey; // активный профиль
+  systemPicks: SystemPicks; // профили «Как в системе» для светлой и тёмной темы телефона
+  setSystemPick: (mode: Scheme, key: SchemeKey) => void;
   applyScope: ApplyScope;
   setApplyScope: (scope: ApplyScope) => void;
   currency: CurrencySetting;
@@ -45,6 +48,7 @@ type Props = { initial: Appearance; children: ReactNode };
 // Профиль и язык: читаются при запуске до показа экранов, переключаются сразу.
 export function AppSettingsProvider({ initial, children }: Props) {
   const [schemeSetting, setSchemeSettingState] = useState(initial.scheme);
+  const [systemPicks, setSystemPicksState] = useState(initial.systemPicks);
   const [applyScope, setApplyScopeState] = useState(initial.applyScope);
   const [currency, setCurrencyState] = useState(initial.currency);
   const [launcherIcon, setLauncherIconState] = useState(initial.launcherIcon);
@@ -54,7 +58,7 @@ export function AppSettingsProvider({ initial, children }: Props) {
   const system = useColorScheme();
   const deviceCode = useLocales()[0]?.languageCode;
 
-  const schemeKey = activeSchemeKey(schemeSetting, system);
+  const schemeKey = activeSchemeKey(schemeSetting, system, systemPicks);
   const language = resolveLanguage(languageSetting, deviceCode);
   // Словарь переключается до отрисовки детей, иначе t() вернёт старый язык.
   setLanguage(language);
@@ -69,6 +73,10 @@ export function AppSettingsProvider({ initial, children }: Props) {
   const setSchemeSetting = useCallback((setting: SchemeSetting) => {
     setSchemeSettingState(setting);
     saveScheme(setting).catch((e) => console.warn(e));
+  }, []);
+  const setSystemPick = useCallback((mode: Scheme, key: SchemeKey) => {
+    setSystemPicksState((p) => (mode === 'light' ? { ...p, light: key } : { ...p, dark: key }));
+    saveSystemPick(mode, key).catch((e) => console.warn(e));
   }, []);
   const setApplyScope = useCallback((scope: ApplyScope) => {
     setApplyScopeState(scope);
@@ -87,13 +95,25 @@ export function AppSettingsProvider({ initial, children }: Props) {
     saveIconDeclined(declined).catch((e) => console.warn(e));
   }, []);
 
+  // Ярлыки на иконке: подписи на языке приложения; ставятся при запуске и при смене языка.
+  const registerShortcuts = useCallback(() => {
+    setShortcuts(SHORTCUT_ACTIONS.map((a) => ({ id: a, label: t(`shortcut.${a}` as StringKey), uri: shortcutUri(a) })));
+  }, []);
+  useEffect(() => {
+    registerShortcuts();
+  }, [language, registerShortcuts]);
+
   // Иконка рабочего стола меняется, когда приложение уходит в фон (не посреди работы).
+  // Ярлыки привязаны к активной иконке, поэтому после её смены ставим их заново.
   useEffect(() => {
     const sub = AppState.addEventListener('change', (state) => {
-      if (state === 'background') applyLauncherIcon(launcherIcon, ICON_KEYS);
+      if (state === 'background') {
+        applyLauncherIcon(launcherIcon, ICON_KEYS);
+        registerShortcuts();
+      }
     });
     return () => sub.remove();
-  }, [launcherIcon]);
+  }, [launcherIcon, registerShortcuts]);
 
   const setRememberItems = useCallback((value: boolean) => {
     setRememberItemsState(value);
@@ -105,8 +125,8 @@ export function AppSettingsProvider({ initial, children }: Props) {
   }, []);
 
   const value = useMemo(
-    () => ({ schemeSetting, schemeKey, applyScope, setApplyScope, currency, setCurrency, launcherIcon, iconDeclined, setLauncherIcon, setIconDeclined, languageSetting, language, rememberItems, setSchemeSetting, setRememberItems, setLanguageSetting }),
-    [schemeSetting, schemeKey, applyScope, setApplyScope, currency, setCurrency, launcherIcon, iconDeclined, setLauncherIcon, setIconDeclined, languageSetting, language, rememberItems, setSchemeSetting, setRememberItems, setLanguageSetting],
+    () => ({ schemeSetting, schemeKey, systemPicks, setSystemPick, applyScope, setApplyScope, currency, setCurrency, launcherIcon, iconDeclined, setLauncherIcon, setIconDeclined, languageSetting, language, rememberItems, setSchemeSetting, setRememberItems, setLanguageSetting }),
+    [schemeSetting, schemeKey, systemPicks, setSystemPick, applyScope, setApplyScope, currency, setCurrency, launcherIcon, iconDeclined, setLauncherIcon, setIconDeclined, languageSetting, language, rememberItems, setSchemeSetting, setRememberItems, setLanguageSetting],
   );
 
   return (

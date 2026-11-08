@@ -6,11 +6,15 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.content.pm.PackageManager
+import android.content.pm.ShortcutInfo
+import android.content.pm.ShortcutManager
+import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
+import org.json.JSONArray
 
 // Состояние и системные настройки, нужные для точных напоминаний (без сети и данных).
 class ShoppingListAlarmsModule : Module() {
@@ -39,6 +43,11 @@ class ShoppingListAlarmsModule : Module() {
       setLauncherIcon(key, all)
     }
 
+    // Ярлыки по долгому нажатию на иконку: json — массив {id, label, uri}.
+    Function("setShortcuts") { json: String ->
+      setShortcuts(json)
+    }
+
     Function("openExactAlarmSettings") {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         launch(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:${context.packageName}")))
@@ -62,6 +71,35 @@ class ShoppingListAlarmsModule : Module() {
       if (k != key) {
         pm.setComponentEnabledSetting(alias(k), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
       }
+    }
+  }
+
+  // Подписи приходят на языке приложения. Значок ярлыка — ресурс ic_shortcut_<id> (если есть).
+  // Ярлык привязан к активной иконке рабочего стола (она может быть одной из alias), поэтому вызывается заново после смены иконки.
+  private fun setShortcuts(json: String) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N_MR1) return
+    try {
+      val manager = context.getSystemService(ShortcutManager::class.java) ?: return
+      val activity = context.packageManager.getLaunchIntentForPackage(context.packageName)?.component
+      val array = JSONArray(json)
+      val shortcuts = (0 until array.length()).map { i ->
+        val item = array.getJSONObject(i)
+        val id = item.getString("id")
+        val label = item.getString("label")
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.getString("uri"))).setPackage(context.packageName)
+        val builder = ShortcutInfo.Builder(context, id)
+          .setShortLabel(label)
+          .setLongLabel(label)
+          .setIntent(intent)
+          .setRank(i)
+        val icon = context.resources.getIdentifier("ic_shortcut_$id", "drawable", context.packageName)
+        if (icon != 0) builder.setIcon(Icon.createWithResource(context, icon))
+        if (activity != null) builder.setActivity(activity)
+        builder.build()
+      }
+      manager.setDynamicShortcuts(shortcuts)
+    } catch (e: Exception) {
+      // ярлыки — удобство: ошибка не должна ронять приложение
     }
   }
 

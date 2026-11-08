@@ -4,10 +4,12 @@ import { Item, ItemPatch, addItem, deleteItem, loadItems, restoreItem, setBought
 import { createCategory, loadCategories } from '@/db/categories';
 import { ScheduledItem, loadDue, loadScheduledRange } from '@/db/schedule';
 import { ShoppingList, copyList, createList, deleteList, loadList, loadLists, resetBought, updateList } from '@/db/lists';
-import { clearHistory, findHistory, remember, suggest } from '@/db/history';
+import { clearHistory, findHistory, remember, suggest, topHistory } from '@/db/history';
 import { HistoryRow } from './history';
+import { buyAgainCandidates } from './buyAgain';
 import { catalogRow, findCatalog, matchCatalog } from './catalog';
 import { isStructured, parseBulk, priceMarkers } from './bulk';
+import { ShortcutAction, ShortcutTarget, shortcutTarget } from './shortcuts';
 import { getLanguage, t } from '@/i18n';
 
 export type { Item, ItemPatch, ScheduledItem, ShoppingList, HistoryRow };
@@ -35,6 +37,13 @@ export async function suggestAll(query: string, withHistory: boolean, limit = 5)
   const categories = await loadCategories();
   const fromCatalog = matchCatalog(query, getLanguage(), categories, new Set(history.map((h) => h.titleNorm)), limit - history.length);
   return [...history, ...fromCatalog];
+}
+
+// «Купить снова»: частые покупки из истории без того, что уже в списке. Выключено «Запоминать параметры товаров» — ничего.
+export async function loadBuyAgain(items: readonly { title: string; boughtAt: string | null }[], rememberOn: boolean, limit: number): Promise<HistoryRow[]> {
+  if (!rememberOn) return [];
+  const rows = await topHistory(limit + items.length); // запас на то, что уже в списке
+  return buyAgainCandidates(rows, items, limit);
 }
 
 // Добавление: количество и цена из быстрого ввода главнее; иначе подсказка или точное совпадение в истории; иначе только название.
@@ -128,6 +137,15 @@ export async function toggleBought(item: Item, rememberOn: boolean): Promise<boo
 }
 
 export const removeItem = (item: Item) => deleteItem(item.id);
+
+// Последний открытый список: на него ведёт ярлык «Добавить товар».
+export const rememberLastList = (listId: number) => setSetting('lastListId', listId);
+
+export async function resolveShortcut(action: ShortcutAction): Promise<ShortcutTarget> {
+  const last = await getSetting<unknown>('lastListId');
+  const ids = (await loadLists()).map((l) => l.id);
+  return shortcutTarget(action, typeof last === 'number' ? last : null, ids);
+}
 
 // Одноразовые подсказки в интерфейсе.
 export async function isFlagSet(key: string): Promise<boolean> {

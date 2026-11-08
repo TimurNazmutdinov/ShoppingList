@@ -59,7 +59,7 @@ export function SplashScreen({ appearance, onShown, onFinished }: Props) {
     return <View style={[styles.root, { backgroundColor: def.tokens.bg }]} />;
   }
   // «Только к экранам» — фирменная заставка («Янтарь») по теме телефона; «Ко всему» — в цвет профиля.
-  const def = schemeDefs[splashSchemeKey(appearance.applyScope, appearance.scheme, system)];
+  const def = schemeDefs[splashSchemeKey(appearance.applyScope, appearance.scheme, system, appearance.systemPicks)];
   return <LiveSplash def={def} onShown={onShown} onFinished={onFinished} />;
 }
 
