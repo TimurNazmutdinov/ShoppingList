@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8">
+<title>ShoppingList 0.7.5 — чек-лист тестировщика</title>
+<style>
+@page { size: A4; margin: 14mm 12mm; }
+* { box-sizing: border-box; }
+body { font-family: "Segoe UI", Arial, sans-serif; color: #222; font-size: 11.5px; line-height: 1.35; }
+h1 { font-size: 22px; margin: 0 0 2px; }
+.sub { color: #666; margin-bottom: 10px; }
+h2 { font-size: 14px; margin: 16px 0 5px; padding: 4px 8px; background: #FFE9A8; border-radius: 4px; break-after: avoid; }
+.box { border: 1px solid #bbb; border-radius: 6px; padding: 8px 10px; margin: 8px 0; }
+.box b { color: #8a4b00; }
+table { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
+th { text-align: left; font-size: 10.5px; color: #555; border-bottom: 2px solid #999; padding: 3px 4px; }
+td { border-bottom: 1px solid #ddd; padding: 4px; vertical-align: top; }
+tr { break-inside: avoid; }
+td.n { width: 24px; color: #888; }
+td.r { width: 96px; white-space: nowrap; }
+.cb { display: inline-block; width: 11px; height: 11px; border: 1.5px solid #444; border-radius: 2px; margin-right: 3px; vertical-align: -1px; }
+td.note { width: 120px; }
+.fill { border-bottom: 1px solid #888; display: inline-block; min-width: 130px; height: 14px; }
+.small { color: #666; font-size: 10.5px; }
+</style></head><body>
+
+<h1>ShoppingList 0.7.5 — чек-лист тестировщика</h1>
+<div class="sub">Версия 0.7.5 (сборка 9). Проходите пункты по порядку, отмечайте ☐ «Ок» или ☐ «Не ок» и пишите заметку, что именно не так. Чек-лист только по новому в этой версии.</div>
+
+<div class="box">
+<b>Кто тестирует:</b> <span class="fill"></span> &nbsp; <b>Телефон / Android:</b> <span class="fill"></span> &nbsp; <b>Язык приложения:</b> <span class="fill" style="min-width:70px"></span> &nbsp; <b>Дата:</b> <span class="fill" style="min-width:70px"></span>
+</div>
+<div class="box small">
+<b>Перед началом.</b> 1) Если на телефоне стоит предыдущая версия, это нормально — проверяйте обновление поверх. 2) Для голосового ввода нужен интернет. 3) Для «Купить снова» в истории должны быть покупки: сначала поработайте с обычными списками и отметьте товары купленными. 4) Для проверки ярлыков приложение нужно открыть хотя бы один раз после обновления. 5) Если что-то работает странно, сфотографируйте экран и напишите, что нажимали перед этим.
+</div>
+
+<h2>1. Обновление и первый запуск</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">1</td><td>Поставьте 0.7.5 поверх 0.7.4 («Настройки» → «Проверить сейчас» или файлом APK).</td><td>Списки, товары, цены и настройки на месте. Цвета приложения стали нейтральными: серый фон, цвет только на мелочах.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">2</td><td>Откройте приложение после обновления.</td><td>Сначала окно «Язык · Тіл · Language», затем «Прежде чем начать» (соглашение и политика: два пункта открывают текст, без галочки «Начать» не нажимается). После «Начать» открывается приложение.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">3</td><td>Закройте и откройте приложение.</td><td>Выбор языка и соглашение больше не показываются.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>2. Тема и цвет</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">4</td><td>«Настройки» → «Оформление».</td><td>Группа раскрывается: «Тема» — три кнопки (Светлая, Тёмная, Как в системе), «Цвет» — 8 кружков с галочкой у выбранного, подпись под ними (у «Янтаря» — «фирменный цвет ShoppingList»), «Цвета применять».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">5</td><td>Выберите тему «Светлая», затем «Тёмная».</td><td>Фон меняется сразу: светло-серый и почти чёрный; текст читается.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">6</td><td>Выберите «Как в системе» и переключите тему телефона.</td><td>Приложение следует теме телефона, цвет остаётся.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">7</td><td>Выберите по очереди несколько цветов (особенно «Синий» в светлой теме).</td><td>Меняется цвет «+», флажков, переключателей, полос. Синий в светлой теме светлый. Всё читается в обеих темах.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">8</td><td>Если раньше был выбран цветной профиль, посмотрите, что стало после обновления.</td><td>Профиль перешёл в подходящие тему и цвет (например, «Пудра» — светлая и розовый, «Ночь» — тёмная и синий).</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>3. Кнопки</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">9</td><td>Откройте список, окна «Сохранить», «Готово», кнопки «Блюда» и «В магазин».</td><td>Большие кнопки мягкие: светлая подложка и цветной текст, не сплошная яркая заливка. «+» и флажок — сплошным цветом.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">10</td><td>Откройте окна «Количество» и карточку товара, нажмите единицы и чипы.</td><td>Выбранные чипы мягкие, текст читается.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>4. Заставка и иконка «Ко всему»</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">11</td><td>Перезапустите приложение и посмотрите заставку.</td><td>Знак и продукты чуть крупнее прежнего, анимация та же, слоган прежний, фон по теме.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">12</td><td>«Настройки» → «Оформление» → «Цвета применять» → «Ко всему», выберите цвет не «Янтарь» и согласитесь сменить иконку; закройте приложение.</td><td>Заставка и иконка на рабочем столе в цвет выбранного цвета; значок не пропал. Долгое нажатие на иконку по-прежнему показывает три ярлыка.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">13</td><td>Верните «Только к экранам».</td><td>Иконка и заставка снова фирменные («Янтарь»).</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>5. Настройки: группы и заставка</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">14</td><td>Откройте «Настройки».</td><td>Группы свёрнуты: Оформление, Заставка, Валюта и язык, Подсказки, Обновления, Резервная копия, О приложении.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">15</td><td>Раскройте каждую группу.</td><td>Раскрывается со всеми пунктами; работает как раньше (валюта, язык, напоминания, обновления, копия).</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">16</td><td>Группа «Заставка» → выключите «Показывать заставку»; закройте и откройте приложение.</td><td>Приложение открывается сразу, без заставки. Включите обратно — заставка возвращается.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>6. Категория нового товара</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">17</td><td>Добавьте товар, которого нет в подсказках (например, «Лавровый лист»).</td><td>Он добавляется, а под строкой ввода предлагается выбрать категорию кнопками и «Позже».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">18</td><td>Нажмите категорию.</td><td>Товар переходит в эту категорию; когда добавите его снова, он встанет в неё сам.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">19</td><td>Добавьте товар из подсказок (например, «молоко»).</td><td>Категория подставляется сама, вопроса нет.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>7. Резервная копия</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">20</td><td>«Настройки» → «Резервная копия» → «Сохранить копию», сохраните файл. Затем «Восстановить из файла» → этот файл.</td><td>Списки добавляются как копии; при ошибке сообщение понятное («не файл ShoppingList», «не удалось прочитать файл» или «не удалось добавить списки»), а не только «повреждён». Если снова «повреждён» — напишите, откуда брали файл.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок <span class="cb"></span>Не вышло</td><td class="note"></td></tr>
+<tr><td class="n">21</td><td>Выберите тему и цвет, сохраните копию, смените тему и цвет, восстановите копию.</td><td>Тема и цвет вернулись такими, как были в копии.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr></table>
+
+<h2>8. Обновление и казахский</h2>
+<table><tr><th>№</th><th>Что сделать</th><th>Как должно быть</th><th>Результат</th><th>Заметка</th></tr>
+<tr><td class="n">22</td><td>Переключите язык на казахский, откройте каталог товаров (введите «жөр»).</td><td>В подсказках «Жөргек» вместо «Памперс».</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок</td><td class="note"></td></tr>
+<tr><td class="n">23</td><td>Когда выйдет следующая версия: посмотрите экран обновления.</td><td>Есть кнопка «Позже» (до трёх дней) и подсказка с датой; при сбое скачивания приложение пробует ещё.</td><td class="r"><span class="cb"></span>Ок <span class="cb"></span>Не ок <span class="cb"></span>Нет новой версии</td><td class="note"></td></tr>
+<tr><td class="n">24</td><td>Общее впечатление: что понравилось, что неудобно?</td><td class="small">Напишите свободно в заметках ниже.</td><td class="r"></td><td class="note"></td></tr></table>
+
+<div class="box" style="min-height:110px"><b>Заметки и пожелания:</b></div>
+<div class="small">Если что-то сломалось, напишите: на каком экране, что нажимали, что ожидали и что получилось (по возможности со снимком экрана). Спасибо за помощь!</div>
+</body></html>

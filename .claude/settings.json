@@ -4,7 +4,13 @@
       "Read(./node_modules/**)",
       "Read(./package-lock.json)",
       "Read(./.expo/**)",
-      "Read(./assets/**)"
+      "Read(./assets/**)",
+      "Read(./android/**)",
+      "Read(./release/**)",
+      "Read(./**/*.pdf)",
+      "Read(./docs/review-data.json)",
+      "Read(./docs/kazakh-words-*.html)",
+      "Read(./docs/tester-checklist-*)"
     ]
   }
 }
