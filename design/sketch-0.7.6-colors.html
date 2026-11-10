@@ -1,0 +1,165 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ShoppingList 0.7.6 — цветовые профили (эскиз)</title><style>
+body{margin:0;padding:16px;background:#E7E7EA;font-family:system-ui,"Segoe UI",Roboto,sans-serif;color:#222;line-height:1.4}
+h1{font-size:20px;margin:0 0 4px}h2{font-size:17px;margin:28px 0 4px}p.lead{margin:0 0 8px;color:#555;font-size:14px;max-width:820px}
+.row{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;margin-top:10px}
+.cap{font-weight:700;font-size:13.5px;margin:0 0 6px;max-width:250px}.cap em{font-style:normal;font-weight:400;color:#666}.rec{color:#1b7a43}
+ul.notes{margin:8px 0 0;padding-left:18px;font-size:13px;color:#555;max-width:820px}
+.ms{width:250px;border-radius:20px;border:1px solid #c9c9cf;padding:10px 12px 0;overflow:hidden;box-sizing:border-box;font-size:14px}
+.mh{display:flex;align-items:center;gap:8px;margin:2px 0 10px}.mh b{flex:1;font-size:18px}.ar{font-size:18px}
+.mi{display:flex;align-items:center;gap:10px;min-height:42px;padding:0 10px;border:1px solid;border-radius:12px;margin-bottom:6px}
+.mi .nm{flex:1;font-size:15px}.qt{font-size:13px}
+.cb{width:20px;height:20px;border:2px solid;border-radius:6px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.tg{width:38px;height:22px;border-radius:11px;position:relative}.tg i{position:absolute;right:3px;top:3px;width:16px;height:16px;border-radius:50%}
+.mb{margin:10px 0;min-height:44px;border-radius:22px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+.mbar{margin:0 -12px;padding:8px 12px 10px;border-top:1px solid;display:flex;gap:8px;align-items:center}
+.mip{flex:1;min-height:38px;border:1px solid;border-radius:19px;display:flex;align-items:center;padding:0 12px;font-size:13px}
+.mpl{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px}
+.ml{font-size:11px;text-align:center;padding:0 0 6px}
+.pair{display:flex;gap:8px}.acc{background:#fff;border-radius:16px;padding:10px;}
+.acc h3{margin:0 0 8px;font-size:15px;display:flex;align-items:center;gap:8px}.acc h3 i{width:16px;height:16px;border-radius:50%;display:inline-block}
+table.g{border-collapse:collapse;font-size:13.5px;background:#fff;border-radius:12px;overflow:hidden;max-width:820px}
+table.g th,table.g td{padding:6px 12px;border-bottom:1px solid #e3e3e8;text-align:left}table.g th{background:#f2f2f4}
+.sw{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;border:1px solid rgba(0,0,0,.15);margin-right:4px}
+.samsung{display:flex;flex-wrap:wrap;gap:10px;max-width:820px}.sc{background:#fff;border-radius:12px;padding:8px 12px;font-size:13px;min-width:170px}
+.sc b{display:block;font-size:12px;color:#666;font-weight:600}
+.set{width:330px;background:#F2F2F4;border-radius:20px;border:1px solid #c9c9cf;padding:14px;box-sizing:border-box;color:#1C1C1E}
+.st{font-size:12px;font-weight:700;letter-spacing:.4px;color:#0060C0;margin:4px 4px 8px}
+.blk{background:#fff;border-radius:16px;padding:6px 14px 12px;margin-bottom:12px}
+.seg{display:flex;background:#EBEBEF;border-radius:12px;padding:3px;margin:8px 0 4px}.seg span{flex:1;text-align:center;padding:9px 0;border-radius:10px;font-size:14px;color:#444}
+.seg span.on{background:#fff;color:#1C1C1E;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.lb{font-size:13px;color:#66666E;margin:10px 0 8px}.dots{display:flex;flex-wrap:wrap;gap:12px}
+.dots i{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-style:normal;font-size:15px;font-weight:700}
+.dots i.on{box-shadow:0 0 0 3px #fff,0 0 0 5px #0381FE}
+.hn{font-size:12px;color:#66666E;margin-top:4px}
+.rw{display:flex;align-items:center;min-height:48px;border-top:1px solid #ECECF0;font-size:15px}.rw span{flex:1}.rw small{color:#66666E}
+</style></head><body>
+<h1>ShoppingList 0.7.6 — возвращаем цветовые профили 0.7.4, светлые — бледнее</h1><p class="lead">Возвращаем 14 профилей и «Как в системе» со своими дневным и ночным профилем, как было в 0.7.4. Меняются только светлые профили: фон чуть бледнее, большие кнопки мягкие (светлая подложка + тёмный текст того же цвета). В «Белой» — бледно-синие кнопки, как тестировали. Тёмные профили — без изменений. Заставка и значок приложения — всегда Янтарь.</p>
+<h2>Светлые профили: было (0.7.4) → станет</h2><div class="row">
+<div class="acc"><h3><i style="background:#3E91FF"></i>Белая — бледно-синие кнопки, как тестировали</h3><div class="pair"><div class="ms" style="background:#FFFFFF;color:#16142B">
+  <div class="mh"><span class="ar" style="color:#5C5977">←</span><b>Продукты</b><svg viewBox="0 0 120 120" width="26" height="26"><defs><linearGradient id="m21" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1EC8F2"/><stop offset="1" stop-color="#2433F5"/></linearGradient></defs><path d="M45 48 C45 13 75 13 75 48" fill="none" stroke="url(#m21)" stroke-width="8" stroke-linecap="round"/><path d="M27 41 H93 Q95 41 95.5 44 L90.5 95 Q90 102 83 102 H37 Q30 102 29.5 95 L24.5 44 Q25 41 27 41 Z" fill="url(#m21)"/><path d="M44 72 L55.5 83.5 L77 59" fill="none" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="mi" style="background:#F6F6F9;border-color:#E6E6EE"><span class="cb" style="border-color:#5C5977"></span><span class="nm">Молоко</span><span class="qt" style="color:#5C5977">1 л</span></div>
+  <div class="mi" style="background:#F6F6F9;border-color:#E6E6EE"><span class="cb on" style="background:#3D5AFE;border-color:#3D5AFE;color:#FFFFFF">✓</span><span class="nm" style="color:#5C5977;text-decoration:line-through">Хлеб</span><span class="qt" style="color:#5C5977">1 шт</span></div>
+  <div class="mi" style="background:#F6F6F9;border-color:#E6E6EE"><span class="nm">Напомнить</span><span class="tg" style="background:#3D5AFE"><i style="background:#FFFFFF"></i></span></div>
+  <div class="mb" style="background:#3D5AFE;color:#FFFFFF">Готово</div>
+  <div class="mbar" style="background:#F6F6F9;border-color:#E6E6EE"><span class="mip" style="border-color:#5C5977;color:#5C5977;background:#FFFFFF">Добавить…</span><span class="mpl" style="background:#3D5AFE;color:#FFFFFF">+</span></div>
+  <div class="ml" style="color:#5C5977">было</div>
+</div><div class="ms" style="background:#FFFFFF;color:#16142B">
+  <div class="mh"><span class="ar" style="color:#5C5977">←</span><b>Продукты</b><svg viewBox="0 0 120 120" width="26" height="26"><defs><linearGradient id="m22" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1EC8F2"/><stop offset="1" stop-color="#2433F5"/></linearGradient></defs><path d="M45 48 C45 13 75 13 75 48" fill="none" stroke="url(#m22)" stroke-width="8" stroke-linecap="round"/><path d="M27 41 H93 Q95 41 95.5 44 L90.5 95 Q90 102 83 102 H37 Q30 102 29.5 95 L24.5 44 Q25 41 27 41 Z" fill="url(#m22)"/><path d="M44 72 L55.5 83.5 L77 59" fill="none" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="mi" style="background:#F6F6F9;border-color:#E6E6EE"><span class="cb" style="border-color:#5C5977"></span><span class="nm">Молоко</span><span class="qt" style="color:#5C5977">1 л</span></div>
+  <div class="mi" style="background:#F6F6F9;border-color:#E6E6EE"><span class="cb on" style="background:#3E91FF;border-color:#3E91FF;color:#FFFFFF">✓</span><span class="nm" style="color:#5C5977;text-decoration:line-through">Хлеб</span><span class="qt" style="color:#5C5977">1 шт</span></div>
+  <div class="mi" style="background:#F6F6F9;border-color:#E6E6EE"><span class="nm">Напомнить</span><span class="tg" style="background:#3E91FF"><i style="background:#FFFFFF"></i></span></div>
+  <div class="mb" style="background:#EAF3FF;color:#1D69C9">Готово</div>
+  <div class="mbar" style="background:#F6F6F9;border-color:#E6E6EE"><span class="mip" style="border-color:#5C5977;color:#5C5977;background:#FFFFFF">Добавить…</span><span class="mpl" style="background:#3E91FF;color:#FFFFFF">+</span></div>
+  <div class="ml" style="color:#5C5977">станет</div>
+</div></div></div>
+<div class="acc"><h3><i style="background:#EE9AB5"></i>Пудра</h3><div class="pair"><div class="ms" style="background:#FBF1F4;color:#3A1E2B">
+  <div class="mh"><span class="ar" style="color:#85596B">←</span><b>Продукты</b><svg viewBox="0 0 120 120" width="26" height="26"><defs><linearGradient id="m23" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF8A7A"/><stop offset="1" stop-color="#D8306E"/></linearGradient></defs><path d="M45 48 C45 13 75 13 75 48" fill="none" stroke="url(#m23)" stroke-width="8" stroke-linecap="round"/><path d="M27 41 H93 Q95 41 95.5 44 L90.5 95 Q90 102 83 102 H37 Q30 102 29.5 95 L24.5 44 Q25 41 27 41 Z" fill="url(#m23)"/><path d="M44 72 L55.5 83.5 L77 59" fill="none" stroke="#FBF1F4" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#F2DCE3"><span class="cb" style="border-color:#85596B"></span><span class="nm">Молоко</span><span class="qt" style="color:#85596B">1 л</span></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#F2DCE3"><span class="cb on" style="background:#EE9AB5;border-color:#EE9AB5;color:#4A1426">✓</span><span class="nm" style="color:#85596B;text-decoration:line-through">Хлеб</span><span class="qt" style="color:#85596B">1 шт</span></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#F2DCE3"><span class="nm">Напомнить</span><span class="tg" style="background:#EE9AB5"><i style="background:#4A1426"></i></span></div>
+  <div class="mb" style="background:#EE9AB5;color:#4A1426">Готово</div>
+  <div class="mbar" style="background:#FFFFFF;border-color:#F2DCE3"><span class="mip" style="border-color:#85596B;color:#85596B;background:#FBF1F4">Добавить…</span><span class="mpl" style="background:#EE9AB5;color:#4A1426">+</span></div>
+  <div class="ml" style="color:#85596B">было</div>
+</div><div class="ms" style="background:#FCF6F8;color:#3A1E2B">
+  <div class="mh"><span class="ar" style="color:#85596B">←</span><b>Продукты</b><svg viewBox="0 0 120 120" width="26" height="26"><defs><linearGradient id="m24" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF8A7A"/><stop offset="1" stop-color="#D8306E"/></linearGradient></defs><path d="M45 48 C45 13 75 13 75 48" fill="none" stroke="url(#m24)" stroke-width="8" stroke-linecap="round"/><path d="M27 41 H93 Q95 41 95.5 44 L90.5 95 Q90 102 83 102 H37 Q30 102 29.5 95 L24.5 44 Q25 41 27 41 Z" fill="url(#m24)"/><path d="M44 72 L55.5 83.5 L77 59" fill="none" stroke="#FCF6F8" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#F2DCE3"><span class="cb" style="border-color:#85596B"></span><span class="nm">Молоко</span><span class="qt" style="color:#85596B">1 л</span></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#F2DCE3"><span class="cb on" style="background:#EE9AB5;border-color:#EE9AB5;color:#4A1426">✓</span><span class="nm" style="color:#85596B;text-decoration:line-through">Хлеб</span><span class="qt" style="color:#85596B">1 шт</span></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#F2DCE3"><span class="nm">Напомнить</span><span class="tg" style="background:#EE9AB5"><i style="background:#4A1426"></i></span></div>
+  <div class="mb" style="background:#FBE6EE;color:#A3406A">Готово</div>
+  <div class="mbar" style="background:#FFFFFF;border-color:#F2DCE3"><span class="mip" style="border-color:#85596B;color:#85596B;background:#FCF6F8">Добавить…</span><span class="mpl" style="background:#EE9AB5;color:#4A1426">+</span></div>
+  <div class="ml" style="color:#85596B">станет</div>
+</div></div></div>
+<div class="acc"><h3><i style="background:#D9B48C"></i>Беж</h3><div class="pair"><div class="ms" style="background:#F6F0E7;color:#3A2E22">
+  <div class="mh"><span class="ar" style="color:#76634F">←</span><b>Продукты</b><svg viewBox="0 0 120 120" width="26" height="26"><defs><linearGradient id="m25" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E2BB8E"/><stop offset="1" stop-color="#A86F3E"/></linearGradient></defs><path d="M45 48 C45 13 75 13 75 48" fill="none" stroke="url(#m25)" stroke-width="8" stroke-linecap="round"/><path d="M27 41 H93 Q95 41 95.5 44 L90.5 95 Q90 102 83 102 H37 Q30 102 29.5 95 L24.5 44 Q25 41 27 41 Z" fill="url(#m25)"/><path d="M44 72 L55.5 83.5 L77 59" fill="none" stroke="#F6F0E7" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="mi" style="background:#FFFDF9;border-color:#E8DCCB"><span class="cb" style="border-color:#76634F"></span><span class="nm">Молоко</span><span class="qt" style="color:#76634F">1 л</span></div>
+  <div class="mi" style="background:#FFFDF9;border-color:#E8DCCB"><span class="cb on" style="background:#D9B48C;border-color:#D9B48C;color:#3A2512">✓</span><span class="nm" style="color:#76634F;text-decoration:line-through">Хлеб</span><span class="qt" style="color:#76634F">1 шт</span></div>
+  <div class="mi" style="background:#FFFDF9;border-color:#E8DCCB"><span class="nm">Напомнить</span><span class="tg" style="background:#D9B48C"><i style="background:#3A2512"></i></span></div>
+  <div class="mb" style="background:#D9B48C;color:#3A2512">Готово</div>
+  <div class="mbar" style="background:#FFFDF9;border-color:#E8DCCB"><span class="mip" style="border-color:#76634F;color:#76634F;background:#F6F0E7">Добавить…</span><span class="mpl" style="background:#D9B48C;color:#3A2512">+</span></div>
+  <div class="ml" style="color:#76634F">было</div>
+</div><div class="ms" style="background:#F9F5EF;color:#3A2E22">
+  <div class="mh"><span class="ar" style="color:#76634F">←</span><b>Продукты</b><svg viewBox="0 0 120 120" width="26" height="26"><defs><linearGradient id="m26" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E2BB8E"/><stop offset="1" stop-color="#A86F3E"/></linearGradient></defs><path d="M45 48 C45 13 75 13 75 48" fill="none" stroke="url(#m26)" stroke-width="8" stroke-linecap="round"/><path d="M27 41 H93 Q95 41 95.5 44 L90.5 95 Q90 102 83 102 H37 Q30 102 29.5 95 L24.5 44 Q25 41 27 41 Z" fill="url(#m26)"/><path d="M44 72 L55.5 83.5 L77 59" fill="none" stroke="#F9F5EF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="mi" style="background:#FFFDF9;border-color:#E8DCCB"><span class="cb" style="border-color:#76634F"></span><span class="nm">Молоко</span><span class="qt" style="color:#76634F">1 л</span></div>
+  <div class="mi" style="background:#FFFDF9;border-color:#E8DCCB"><span class="cb on" style="background:#D9B48C;border-color:#D9B48C;color:#3A2512">✓</span><span class="nm" style="color:#76634F;text-decoration:line-through">Хлеб</span><span class="qt" style="color:#76634F">1 шт</span></div>
+  <div class="mi" style="background:#FFFDF9;border-color:#E8DCCB"><span class="nm">Напомнить</span><span class="tg" style="background:#D9B48C"><i style="background:#3A2512"></i></span></div>
+  <div class="mb" style="background:#F3E9DC;color:#7A522E">Готово</div>
+  <div class="mbar" style="background:#FFFDF9;border-color:#E8DCCB"><span class="mip" style="border-color:#76634F;color:#76634F;background:#F9F5EF">Добавить…</span><span class="mpl" style="background:#D9B48C;color:#3A2512">+</span></div>
+  <div class="ml" style="color:#76634F">станет</div>
+</div></div></div>
+<div class="acc"><h3><i style="background:#F4C95A"></i>Янтарь</h3><div class="pair"><div class="ms" style="background:#FFF8E6;color:#3B3216">
+  <div class="mh"><span class="ar" style="color:#776839">←</span><b>Продукты</b><svg viewBox="0 0 120 120" width="26" height="26"><defs><linearGradient id="m27" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFC83D"/><stop offset="1" stop-color="#F0702A"/></linearGradient></defs><path d="M45 48 C45 13 75 13 75 48" fill="none" stroke="url(#m27)" stroke-width="8" stroke-linecap="round"/><path d="M27 41 H93 Q95 41 95.5 44 L90.5 95 Q90 102 83 102 H37 Q30 102 29.5 95 L24.5 44 Q25 41 27 41 Z" fill="url(#m27)"/><path d="M44 72 L55.5 83.5 L77 59" fill="none" stroke="#FFF8E6" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#F2E4BC"><span class="cb" style="border-color:#776839"></span><span class="nm">Молоко</span><span class="qt" style="color:#776839">1 л</span></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#F2E4BC"><span class="cb on" style="background:#F4C95A;border-color:#F4C95A;color:#3E2D00">✓</span><span class="nm" style="color:#776839;text-decoration:line-through">Хлеб</span><span class="qt" style="color:#776839">1 шт</span></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#F2E4BC"><span class="nm">Напомнить</span><span class="tg" style="background:#F4C95A"><i style="background:#3E2D00"></i></span></div>
+  <div class="mb" style="background:#F4C95A;color:#3E2D00">Готово</div>
+  <div class="mbar" style="background:#FFFFFF;border-color:#F2E4BC"><span class="mip" style="border-color:#776839;color:#776839;background:#FFF8E6">Добавить…</span><span class="mpl" style="background:#F4C95A;color:#3E2D00">+</span></div>
+  <div class="ml" style="color:#776839">было</div>
+</div><div class="ms" style="background:#FFFBF0;color:#3B3216">
+  <div class="mh"><span class="ar" style="color:#776839">←</span><b>Продукты</b><svg viewBox="0 0 120 120" width="26" height="26"><defs><linearGradient id="m28" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFC83D"/><stop offset="1" stop-color="#F0702A"/></linearGradient></defs><path d="M45 48 C45 13 75 13 75 48" fill="none" stroke="url(#m28)" stroke-width="8" stroke-linecap="round"/><path d="M27 41 H93 Q95 41 95.5 44 L90.5 95 Q90 102 83 102 H37 Q30 102 29.5 95 L24.5 44 Q25 41 27 41 Z" fill="url(#m28)"/><path d="M44 72 L55.5 83.5 L77 59" fill="none" stroke="#FFFBF0" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#F2E4BC"><span class="cb" style="border-color:#776839"></span><span class="nm">Молоко</span><span class="qt" style="color:#776839">1 л</span></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#F2E4BC"><span class="cb on" style="background:#F4C95A;border-color:#F4C95A;color:#3E2D00">✓</span><span class="nm" style="color:#776839;text-decoration:line-through">Хлеб</span><span class="qt" style="color:#776839">1 шт</span></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#F2E4BC"><span class="nm">Напомнить</span><span class="tg" style="background:#F4C95A"><i style="background:#3E2D00"></i></span></div>
+  <div class="mb" style="background:#FCF0D2;color:#755600">Готово</div>
+  <div class="mbar" style="background:#FFFFFF;border-color:#F2E4BC"><span class="mip" style="border-color:#776839;color:#776839;background:#FFFBF0">Добавить…</span><span class="mpl" style="background:#F4C95A;color:#3E2D00">+</span></div>
+  <div class="ml" style="color:#776839">станет</div>
+</div></div></div>
+<div class="acc"><h3><i style="background:#F8AB85"></i>Персик</h3><div class="pair"><div class="ms" style="background:#FFF3EC;color:#3D2219">
+  <div class="mh"><span class="ar" style="color:#80574A">←</span><b>Продукты</b><svg viewBox="0 0 120 120" width="26" height="26"><defs><linearGradient id="m29" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA24C"/><stop offset="1" stop-color="#E8403A"/></linearGradient></defs><path d="M45 48 C45 13 75 13 75 48" fill="none" stroke="url(#m29)" stroke-width="8" stroke-linecap="round"/><path d="M27 41 H93 Q95 41 95.5 44 L90.5 95 Q90 102 83 102 H37 Q30 102 29.5 95 L24.5 44 Q25 41 27 41 Z" fill="url(#m29)"/><path d="M44 72 L55.5 83.5 L77 59" fill="none" stroke="#FFF3EC" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#F5DECF"><span class="cb" style="border-color:#80574A"></span><span class="nm">Молоко</span><span class="qt" style="color:#80574A">1 л</span></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#F5DECF"><span class="cb on" style="background:#F8AB85;border-color:#F8AB85;color:#4A1E0C">✓</span><span class="nm" style="color:#80574A;text-decoration:line-through">Хлеб</span><span class="qt" style="color:#80574A">1 шт</span></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#F5DECF"><span class="nm">Напомнить</span><span class="tg" style="background:#F8AB85"><i style="background:#4A1E0C"></i></span></div>
+  <div class="mb" style="background:#F8AB85;color:#4A1E0C">Готово</div>
+  <div class="mbar" style="background:#FFFFFF;border-color:#F5DECF"><span class="mip" style="border-color:#80574A;color:#80574A;background:#FFF3EC">Добавить…</span><span class="mpl" style="background:#F8AB85;color:#4A1E0C">+</span></div>
+  <div class="ml" style="color:#80574A">было</div>
+</div><div class="ms" style="background:#FFF8F3;color:#3D2219">
+  <div class="mh"><span class="ar" style="color:#80574A">←</span><b>Продукты</b><svg viewBox="0 0 120 120" width="26" height="26"><defs><linearGradient id="m30" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA24C"/><stop offset="1" stop-color="#E8403A"/></linearGradient></defs><path d="M45 48 C45 13 75 13 75 48" fill="none" stroke="url(#m30)" stroke-width="8" stroke-linecap="round"/><path d="M27 41 H93 Q95 41 95.5 44 L90.5 95 Q90 102 83 102 H37 Q30 102 29.5 95 L24.5 44 Q25 41 27 41 Z" fill="url(#m30)"/><path d="M44 72 L55.5 83.5 L77 59" fill="none" stroke="#FFF8F3" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#F5DECF"><span class="cb" style="border-color:#80574A"></span><span class="nm">Молоко</span><span class="qt" style="color:#80574A">1 л</span></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#F5DECF"><span class="cb on" style="background:#F8AB85;border-color:#F8AB85;color:#4A1E0C">✓</span><span class="nm" style="color:#80574A;text-decoration:line-through">Хлеб</span><span class="qt" style="color:#80574A">1 шт</span></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#F5DECF"><span class="nm">Напомнить</span><span class="tg" style="background:#F8AB85"><i style="background:#4A1E0C"></i></span></div>
+  <div class="mb" style="background:#FDE9DE;color:#A0431D">Готово</div>
+  <div class="mbar" style="background:#FFFFFF;border-color:#F5DECF"><span class="mip" style="border-color:#80574A;color:#80574A;background:#FFF8F3">Добавить…</span><span class="mpl" style="background:#F8AB85;color:#4A1E0C">+</span></div>
+  <div class="ml" style="color:#80574A">станет</div>
+</div></div></div>
+<div class="acc"><h3><i style="background:#6BD3B0"></i>Мята</h3><div class="pair"><div class="ms" style="background:#EDF8F3;color:#12352B">
+  <div class="mh"><span class="ar" style="color:#4A7466">←</span><b>Продукты</b><svg viewBox="0 0 120 120" width="26" height="26"><defs><linearGradient id="m31" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3DD6A6"/><stop offset="1" stop-color="#0B7F7A"/></linearGradient></defs><path d="M45 48 C45 13 75 13 75 48" fill="none" stroke="url(#m31)" stroke-width="8" stroke-linecap="round"/><path d="M27 41 H93 Q95 41 95.5 44 L90.5 95 Q90 102 83 102 H37 Q30 102 29.5 95 L24.5 44 Q25 41 27 41 Z" fill="url(#m31)"/><path d="M44 72 L55.5 83.5 L77 59" fill="none" stroke="#EDF8F3" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#D2ECE2"><span class="cb" style="border-color:#4A7466"></span><span class="nm">Молоко</span><span class="qt" style="color:#4A7466">1 л</span></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#D2ECE2"><span class="cb on" style="background:#6BD3B0;border-color:#6BD3B0;color:#04342C">✓</span><span class="nm" style="color:#4A7466;text-decoration:line-through">Хлеб</span><span class="qt" style="color:#4A7466">1 шт</span></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#D2ECE2"><span class="nm">Напомнить</span><span class="tg" style="background:#6BD3B0"><i style="background:#04342C"></i></span></div>
+  <div class="mb" style="background:#6BD3B0;color:#04342C">Готово</div>
+  <div class="mbar" style="background:#FFFFFF;border-color:#D2ECE2"><span class="mip" style="border-color:#4A7466;color:#4A7466;background:#EDF8F3">Добавить…</span><span class="mpl" style="background:#6BD3B0;color:#04342C">+</span></div>
+  <div class="ml" style="color:#4A7466">было</div>
+</div><div class="ms" style="background:#F3FAF7;color:#12352B">
+  <div class="mh"><span class="ar" style="color:#4A7466">←</span><b>Продукты</b><svg viewBox="0 0 120 120" width="26" height="26"><defs><linearGradient id="m32" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3DD6A6"/><stop offset="1" stop-color="#0B7F7A"/></linearGradient></defs><path d="M45 48 C45 13 75 13 75 48" fill="none" stroke="url(#m32)" stroke-width="8" stroke-linecap="round"/><path d="M27 41 H93 Q95 41 95.5 44 L90.5 95 Q90 102 83 102 H37 Q30 102 29.5 95 L24.5 44 Q25 41 27 41 Z" fill="url(#m32)"/><path d="M44 72 L55.5 83.5 L77 59" fill="none" stroke="#F3FAF7" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#D2ECE2"><span class="cb" style="border-color:#4A7466"></span><span class="nm">Молоко</span><span class="qt" style="color:#4A7466">1 л</span></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#D2ECE2"><span class="cb on" style="background:#6BD3B0;border-color:#6BD3B0;color:#04342C">✓</span><span class="nm" style="color:#4A7466;text-decoration:line-through">Хлеб</span><span class="qt" style="color:#4A7466">1 шт</span></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#D2ECE2"><span class="nm">Напомнить</span><span class="tg" style="background:#6BD3B0"><i style="background:#04342C"></i></span></div>
+  <div class="mb" style="background:#DDF3EA;color:#11734F">Готово</div>
+  <div class="mbar" style="background:#FFFFFF;border-color:#D2ECE2"><span class="mip" style="border-color:#4A7466;color:#4A7466;background:#F3FAF7">Добавить…</span><span class="mpl" style="background:#6BD3B0;color:#04342C">+</span></div>
+  <div class="ml" style="color:#4A7466">станет</div>
+</div></div></div>
+<div class="acc"><h3><i style="background:#86B8F5"></i>Небо</h3><div class="pair"><div class="ms" style="background:#EEF5FC;color:#13283F">
+  <div class="mh"><span class="ar" style="color:#4B6785">←</span><b>Продукты</b><svg viewBox="0 0 120 120" width="26" height="26"><defs><linearGradient id="m33" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8CC2F7"/><stop offset="1" stop-color="#2F6FCB"/></linearGradient></defs><path d="M45 48 C45 13 75 13 75 48" fill="none" stroke="url(#m33)" stroke-width="8" stroke-linecap="round"/><path d="M27 41 H93 Q95 41 95.5 44 L90.5 95 Q90 102 83 102 H37 Q30 102 29.5 95 L24.5 44 Q25 41 27 41 Z" fill="url(#m33)"/><path d="M44 72 L55.5 83.5 L77 59" fill="none" stroke="#EEF5FC" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#D5E5F6"><span class="cb" style="border-color:#4B6785"></span><span class="nm">Молоко</span><span class="qt" style="color:#4B6785">1 л</span></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#D5E5F6"><span class="cb on" style="background:#86B8F5;border-color:#86B8F5;color:#0C2A52">✓</span><span class="nm" style="color:#4B6785;text-decoration:line-through">Хлеб</span><span class="qt" style="color:#4B6785">1 шт</span></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#D5E5F6"><span class="nm">Напомнить</span><span class="tg" style="background:#86B8F5"><i style="background:#0C2A52"></i></span></div>
+  <div class="mb" style="background:#86B8F5;color:#0C2A52">Готово</div>
+  <div class="mbar" style="background:#FFFFFF;border-color:#D5E5F6"><span class="mip" style="border-color:#4B6785;color:#4B6785;background:#EEF5FC">Добавить…</span><span class="mpl" style="background:#86B8F5;color:#0C2A52">+</span></div>
+  <div class="ml" style="color:#4B6785">было</div>
+</div><div class="ms" style="background:#F3F8FD;color:#13283F">
+  <div class="mh"><span class="ar" style="color:#4B6785">←</span><b>Продукты</b><svg viewBox="0 0 120 120" width="26" height="26"><defs><linearGradient id="m34" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8CC2F7"/><stop offset="1" stop-color="#2F6FCB"/></linearGradient></defs><path d="M45 48 C45 13 75 13 75 48" fill="none" stroke="url(#m34)" stroke-width="8" stroke-linecap="round"/><path d="M27 41 H93 Q95 41 95.5 44 L90.5 95 Q90 102 83 102 H37 Q30 102 29.5 95 L24.5 44 Q25 41 27 41 Z" fill="url(#m34)"/><path d="M44 72 L55.5 83.5 L77 59" fill="none" stroke="#F3F8FD" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#D5E5F6"><span class="cb" style="border-color:#4B6785"></span><span class="nm">Молоко</span><span class="qt" style="color:#4B6785">1 л</span></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#D5E5F6"><span class="cb on" style="background:#86B8F5;border-color:#86B8F5;color:#0C2A52">✓</span><span class="nm" style="color:#4B6785;text-decoration:line-through">Хлеб</span><span class="qt" style="color:#4B6785">1 шт</span></div>
+  <div class="mi" style="background:#FFFFFF;border-color:#D5E5F6"><span class="nm">Напомнить</span><span class="tg" style="background:#86B8F5"><i style="background:#0C2A52"></i></span></div>
+  <div class="mb" style="background:#E2EEFC;color:#265DB0">Готово</div>
+  <div class="mbar" style="background:#FFFFFF;border-color:#D5E5F6"><span class="mip" style="border-color:#4B6785;color:#4B6785;background:#F3F8FD">Добавить…</span><span class="mpl" style="background:#86B8F5;color:#0C2A52">+</span></div>
+  <div class="ml" style="color:#4B6785">станет</div>
+</div></div></div>
+</div><ul class="notes"><li>Знак в правом верхнем углу экранов — как в 0.7.4 (цвет профиля); на заставке и значке приложения — всегда Янтарь.</li><li>«+», флажок и переключатель — прежний цвет профиля (в «Белой» — #3E91FF). «Готово», «Сохранить», «Блюда», «В магазин» — мягкие.</li><li>Контраст проверен: текст на мягких кнопках от 4,8:1, обычный текст и подписи — от 5:1.</li></ul>
+<h2>Настройки</h2><div class="row"><div><div class="set" style="background:#FFFFFF">
+<div class="st" style="color:#1D69C9">ЦВЕТОВОЙ ПРОФИЛЬ</div><div class="blk" style="background:#F6F6F9">
+<div class="rw" style="border-top:0"><span>● Как в системе<br><small>меняется вместе с темой телефона</small></span></div>
+<div class="rw"><span>Светлая тема телефона</span><small>Янтарь ›</small></div>
+<div class="rw"><span>Тёмная тема телефона</span><small>Какао ›</small></div>
+<div class="lb">Светлые · Тёмные — миниатюры профилей, как в 0.7.4</div></div>
+<div class="hn" style="padding:0 6px">Строка «Цвета применять: только к экранам / ко всему» убрана: заставка и значок всегда фирменные (Янтарь).</div></div></div></div>
+</body></html>

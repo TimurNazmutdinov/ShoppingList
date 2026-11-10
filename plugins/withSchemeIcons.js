@@ -1,21 +1,16 @@
 const fs = require('fs');
 const path = require('path');
 const { withAndroidManifest, withDangerousMod } = require('expo/config-plugins');
-const themes = require('../src/theme/themes.json');
+const aliases = require('../src/theme/iconAliases.json');
 
-// Иконки рабочего стола по цветам («Ко всему»): основная «Default» (фирменный Янтарь) и по одному activity-alias
-// на остальные 7 цветов. Включает нужный alias нативный модуль (modules/shoppinglist-alarms → setLauncherIcon).
-// До 0.7.5 иконок было по профилям (13). Их alias ОСТАЮТСЯ в манифесте (выключенными), но показывают иконки новых цветов:
-// если у человека была включена старая иконка, а новую приложение ещё не включило, значок на рабочем столе не пропадает.
-// Всё генерируется при prebuild.
+// Значок на рабочем столе всегда фирменный («Янтарь», основной alias «Default»). Остальные alias — цвета 0.7.5 и профили 0.7.4 —
+// остаются в манифесте выключенными: у кого был включён другой значок, приложение переключит его на основной, а ярлык не пропадёт.
+// Включает нужный alias нативный модуль (modules/shoppinglist-alarms → setLauncherIcon). Всё генерируется при prebuild.
 const SRC = path.join(__dirname, '..', 'assets', 'icons', 'schemes');
-const brand = themes.brandAccent;
-const accentKeys = Object.keys(themes.accents).filter((k) => k !== brand);
-const migration = themes.migration;
-// старые ключи профилей → цвет (по таблице миграции); vanilla (Янтарь) старой иконки не имел
-const legacy = Object.keys(migration)
-  .filter((k) => k !== 'note' && k !== 'system' && k !== 'vanilla' && !accentKeys.includes(k))
-  .map((k) => ({ key: k, accent: migration[k][1] }));
+const brand = aliases.brandAccent;
+const accentKeys = aliases.accents;
+// старые ключи профилей → цвет значка (Янтарь = основной значок)
+const legacy = Object.entries(aliases.legacy).map(([key, accent]) => ({ key, accent }));
 const cap = (k) => k[0].toUpperCase() + k.slice(1);
 
 function withIconResources(config) {

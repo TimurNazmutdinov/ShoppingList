@@ -1,9 +1,9 @@
 // Обмен списками: файл приложения (один список или резервная копия), текст для мессенджеров, .txt и HTML для PDF.
 // Чистая логика: разбор и проверка файла, форматирование. Чтение и запись БД — в db/exchange.ts.
-import { AccentKey, DEFAULT_LIST_COLOR, ThemeMode, isAccentKey, isListColorKey, isThemeMode } from '@/theme';
+import { DEFAULT_LIST_COLOR, SchemeKey, SchemeSetting, isListColorKey } from '@/theme';
 import { UNITS, formatQty } from './history';
 import { formatMoney } from './money';
-import { legacyAccent } from './schemes';
+import { isPickFor, schemeFrom075 } from './schemes';
 
 export const APP_ID = 'ShoppingList';
 export const FORMAT = 1; // версия формата файла
@@ -35,8 +35,9 @@ export type ExportHistory = { title: string; qty: number | null; unit: string | 
 export type ExportDishProduct = { title: string; qty: number | null; unit: string | null; price: number | null };
 export type ExportDish = { title: string; products: ExportDishProduct[] };
 
-// Настройки в резервной копии: тема и цвет.
-export type ExportSettings = { themeMode?: ThemeMode; accent?: AccentKey };
+// Настройки в резервной копии: профили «Как в системе» для светлой и тёмной темы телефона.
+// scheme бывает только при чтении копии 0.7.5 (тема + цвет): записывается копия в формате 0.7.4.
+export type ExportSettings = { systemLight?: SchemeKey; systemDark?: SchemeKey; scheme?: SchemeSetting };
 
 export type ExchangeFile = {
   app: typeof APP_ID;
@@ -111,15 +112,20 @@ function cleanList(v: unknown): ExportList | null {
   };
 }
 
-// Тема и цвет из файла; остальное отбрасываем. Копии 0.7.4 хранили профили «Как в системе»:
-// цвет берём от светлого профиля по таблице миграции, тему не трогаем.
+// Профили в файле: подходят только профили своего режима (светлый — для светлой темы); остальное отбрасываем.
+// Копия 0.7.5 хранила тему и цвет: переводим по таблице в профили и выбор.
 function cleanSettings(v: unknown): ExportSettings {
   if (typeof v !== 'object' || v === null) return {};
   const o = v as Record<string, unknown>;
   const out: ExportSettings = {};
-  if (isThemeMode(o.themeMode)) out.themeMode = o.themeMode;
-  const accent = isAccentKey(o.accent) ? o.accent : legacyAccent(o.systemLight);
-  if (accent) out.accent = accent;
+  if (isPickFor('light', o.systemLight)) out.systemLight = o.systemLight;
+  if (isPickFor('dark', o.systemDark)) out.systemDark = o.systemDark;
+  const from075 = out.systemLight || out.systemDark ? null : schemeFrom075(o.themeMode, o.accent);
+  if (from075) {
+    out.scheme = from075.setting;
+    if (o.themeMode !== 'dark') out.systemLight = from075.picks.light;
+    if (o.themeMode !== 'light') out.systemDark = from075.picks.dark;
+  }
   return out;
 }
 

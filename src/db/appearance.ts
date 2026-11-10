@@ -1,15 +1,12 @@
 import { getSetting, setSetting } from './index';
 import { LanguageSetting, isLanguageSetting } from '@/i18n';
 import { CurrencySetting, DEFAULT_CURRENCY, isCurrencySetting } from '@/logic/money';
-import { AccentKey, ApplyScope, ThemeMode, isApplyScope, themeDefaults } from '@/theme';
-import { ThemeChoice, migrateIconKey, themeChoiceFromSettings } from '@/logic/schemes';
+import { Scheme, SchemeSetting } from '@/theme';
+import { SystemPicks, cleanPicks, schemeChoiceFromSettings } from '@/logic/schemes';
 
 export type Appearance = {
-  themeMode: ThemeMode; // тема: светлая, тёмная или «Как в системе»
-  accent: AccentKey; // цвет
-  applyScope: ApplyScope; // куда применять цвет: только экраны или и логотип с заставкой и иконкой
-  launcherIcon: string; // подтверждённая иконка рабочего стола: 'default' или ключ акцента
-  iconDeclined: boolean; // пользователь отказался менять иконку
+  scheme: SchemeSetting; // цветовой профиль: «Как в системе» или конкретная схема
+  systemPicks: SystemPicks; // профили «Как в системе»: при светлой и при тёмной теме телефона
   currency: CurrencySetting; // валюта цен
   language: LanguageSetting;
   rememberItems: boolean; // запоминать параметры товаров (мини-самообучение)
@@ -18,39 +15,32 @@ export type Appearance = {
   termsAccepted: boolean; // приняты соглашение и политика конфиденциальности
 };
 
-// Тема и цвет. Если их ещё нет, а лежит старый профиль (до 0.7.5) — переводим по таблице и сохраняем.
-export async function loadThemeChoice(): Promise<ThemeChoice> {
-  const result = themeChoiceFromSettings({
-    themeMode: await getSetting<unknown>('themeMode'),
-    accent: await getSetting<unknown>('accent'),
+// Профиль и профили «Как в системе». Значения 0.7.4 лежат в настройках и после 0.7.5; если их нет, а есть выбор 0.7.5 (тема + цвет) — переводим по таблице и сохраняем.
+export async function loadSchemeChoice(): Promise<{ scheme: SchemeSetting; systemPicks: SystemPicks }> {
+  const result = schemeChoiceFromSettings({
     scheme: await getSetting<unknown>('scheme'),
     systemLight: await getSetting<unknown>('systemLight'),
+    systemDark: await getSetting<unknown>('systemDark'),
+    themeMode: await getSetting<unknown>('themeMode'),
+    accent: await getSetting<unknown>('accent'),
   });
   if (result.migrated) {
-    await saveThemeMode(result.themeMode);
-    await saveAccent(result.accent);
+    await saveScheme(result.setting);
+    await saveSystemPick('light', result.picks.light);
+    await saveSystemPick('dark', result.picks.dark);
   }
-  return { themeMode: result.themeMode, accent: result.accent };
+  return { scheme: result.setting, systemPicks: result.picks };
 }
 
 // Неизвестное или отсутствующее значение → значение по умолчанию.
 export async function loadAppearance(): Promise<Appearance> {
-  const choice = await loadThemeChoice();
-  const scope = await getSetting<unknown>('applyScope');
-  const icon = await getSetting<unknown>('launcherIcon');
-  const declined = await getSetting<unknown>('iconDeclined');
+  const choice = await loadSchemeChoice();
   const currency = await getSetting<unknown>('currency');
   const language = await getSetting<unknown>('language');
   const remember = await getSetting<unknown>('rememberItems');
-  // Иконка старого профиля → иконка нового цвета (записи старых иконок остаются в манифесте, ярлык не пропадает).
-  const launcherIcon = migrateIconKey(icon);
-  if (icon !== null && icon !== launcherIcon) await saveLauncherIcon(launcherIcon);
   return {
-    themeMode: choice.themeMode,
-    accent: choice.accent,
-    applyScope: isApplyScope(scope) ? scope : themeDefaults.applyScope,
-    launcherIcon,
-    iconDeclined: declined === true,
+    scheme: choice.scheme,
+    systemPicks: choice.systemPicks,
     currency: isCurrencySetting(currency) ? currency : DEFAULT_CURRENCY,
     language: isLanguageSetting(language) ? language : 'system',
     rememberItems: remember !== false,
@@ -60,11 +50,12 @@ export async function loadAppearance(): Promise<Appearance> {
   };
 }
 
-export const saveThemeMode = (mode: ThemeMode) => setSetting('themeMode', mode);
-export const saveAccent = (accent: AccentKey) => setSetting('accent', accent);
-export const saveApplyScope = (scope: ApplyScope) => setSetting('applyScope', scope);
-export const saveLauncherIcon = (key: string) => setSetting('launcherIcon', key);
-export const saveIconDeclined = (declined: boolean) => setSetting('iconDeclined', declined);
+export const saveScheme = (scheme: SchemeSetting) => setSetting('scheme', scheme);
+export const saveSystemPick = (mode: Scheme, key: string) => setSetting(mode === 'light' ? 'systemLight' : 'systemDark', key);
+export async function loadSystemPicks(): Promise<SystemPicks> {
+  return cleanPicks(await getSetting<unknown>('systemLight'), await getSetting<unknown>('systemDark'));
+}
+
 export const saveCurrency = (currency: CurrencySetting) => setSetting('currency', currency);
 export const saveLanguage = (language: LanguageSetting) => setSetting('language', language);
 export const saveShowSplash = (value: boolean) => setSetting('showSplash', value);

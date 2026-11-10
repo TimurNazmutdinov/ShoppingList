@@ -9,7 +9,7 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 // Импорт файла приложения: выбор файла → проверка → «Добавить N списков?» → добавление.
 export function useImportFlow(onDone: () => void): { start: () => void; dialog: ReactNode } {
   const [pending, setPending] = useState<ExchangeFile | null>(null);
-  const { setThemeMode, setAccent } = useSettings();
+  const { setSystemPick, setSchemeSetting } = useSettings();
 
   const start = async () => {
     const result = await pickExchangeFile();
@@ -26,9 +26,10 @@ export function useImportFlow(onDone: () => void): { start: () => void; dialog: 
     setPending(null);
     if (!file) return;
     const done = await importExchangeFile(file);
-    // резервная копия возвращает и тему с цветом
-    if (file.settings?.themeMode) setThemeMode(file.settings.themeMode);
-    if (file.settings?.accent) setAccent(file.settings.accent);
+    // резервная копия возвращает и профили «Как в системе» (из копии 0.7.5 — ещё и выбор профиля)
+    if (file.settings?.systemLight) setSystemPick('light', file.settings.systemLight);
+    if (file.settings?.systemDark) setSystemPick('dark', file.settings.systemDark);
+    if (file.settings?.scheme) setSchemeSetting(file.settings.scheme);
     onDone();
     Alert.alert(t('import.done', { lists: done.lists }));
   };

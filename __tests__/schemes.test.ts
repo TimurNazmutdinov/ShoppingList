@@ -1,224 +1,121 @@
 import { contrastRatio } from '@/logic/color';
 import {
-  ACCENT_ICON_KEYS,
   ALL_ICON_KEYS,
   DEFAULT_ICON,
-  LEGACY_ICON_KEYS,
-  LEGACY_SCHEME_KEYS,
-  iconChange,
-  launcherIconKey,
-  legacyAccent,
-  logoAccent,
-  migrateIconKey,
-  migrateScheme,
-  resolveMode,
-  splashAccent,
-  themeChoiceFromSettings,
+  DEFAULT_PICKS,
+  activeSchemeKey,
+  cleanPicks,
+  logoSchemeKey,
+  schemeChoiceFromSettings,
+  schemeFrom075,
+  splashSchemeKey,
 } from '@/logic/schemes';
-import { Scheme, accentColors, accentKeys, accentNames, brandAccent, buildPalette, isAccentKey, isThemeMode, listColorDefs, modeTokens, nativeSplashColors, themeDefaults } from '@/theme';
+import { SchemeKey, buildPalette, darkSchemeKeys, lightSchemeKeys, listColorDefs, nativeSplashColors, schemeDefs, themeDefaults } from '@/theme';
 
-const MODES: Scheme[] = ['light', 'dark'];
+const KEYS = Object.keys(schemeDefs) as SchemeKey[];
 
-describe('темы и цвета: состав', () => {
-  it('8 цветов, 2 режима; по умолчанию «Как в системе» и фирменный «Янтарь», цвет — только к экранам', () => {
-    expect(accentKeys).toEqual(['blue', 'amber', 'green', 'teal', 'coral', 'lilac', 'pink', 'graphite']);
-    expect(themeDefaults).toEqual({ themeMode: 'system', accent: 'amber', applyScope: 'screens' });
-    expect(brandAccent).toBe('amber');
+describe('цветовые профили', () => {
+  it('14 профилей: 7 светлых и 7 тёмных; по умолчанию «Как в системе», «Янтарь» и «Какао»', () => {
+    expect(lightSchemeKeys).toHaveLength(7);
+    expect(darkSchemeKeys).toHaveLength(7);
+    expect(themeDefaults).toEqual({ schemeSetting: 'system', lightScheme: 'vanilla', darkScheme: 'cocoa' });
   });
 
-  it('названия цветов на трёх языках; у «Янтаря» — «Кәріптас» по-казахски', () => {
-    for (const k of accentKeys) {
-      for (const lang of ['ru', 'kk', 'en'] as const) expect(accentNames[k][lang].length).toBeGreaterThan(0);
+  it('«Белая»: бледно-синие большие кнопки, синий «+»; у тёмных большие кнопки = primary', () => {
+    const p = buildPalette('white');
+    expect(p).toMatchObject({ bg: '#FFFFFF', primary: '#3E91FF', tonal: '#EAF3FF', onTonal: '#1D69C9' });
+    for (const k of darkSchemeKeys) {
+      const d = buildPalette(k);
+      expect([d.tonal, d.onTonal]).toEqual([d.primary, d.onPrimary]);
     }
-    expect(accentNames.amber).toEqual({ ru: 'Янтарь', kk: 'Кәріптас', en: 'Amber' });
-  });
-
-  it('проверки значений', () => {
-    expect(isThemeMode('system') && isThemeMode('light') && isThemeMode('dark')).toBe(true);
-    expect(isThemeMode('auto')).toBe(false);
-    expect(isAccentKey('pink')).toBe(true);
-    expect(isAccentKey('powder')).toBe(false);
-    expect(isAccentKey('constructor')).toBe(false);
-    expect(isAccentKey(5)).toBe(false);
-  });
-
-  it('палитра: прежние имена токенов + tonal / onTonal; соответствие как в tokenMapping', () => {
-    const p = buildPalette('light', 'blue');
-    const a = accentColors('blue', 'light');
-    expect(p).toMatchObject({ scheme: 'light', accent: 'blue', primary: a.accent, onPrimary: a.onAccent, primaryStrong: a.onTonal, tonal: a.tonal, onTonal: a.onTonal });
-    expect(p.bg).toBe(modeTokens('light').bg);
-    expect(buildPalette('dark', 'blue').bg).toBe(modeTokens('dark').bg);
-  });
-
-  it('у светлой и тёмной палитр одинаковый набор токенов; синий в светлой теме — светлый #3E91FF', () => {
-    expect(Object.keys(buildPalette('light', 'amber')).sort()).toEqual(Object.keys(buildPalette('dark', 'amber')).sort());
-    expect(accentColors('blue', 'light').accent).toBe('#3E91FF');
   });
 });
 
-describe('контраст: 16 сочетаний режима и цвета', () => {
-  const combos = MODES.flatMap((m) => accentKeys.map((k) => [m, k] as const));
-
-  it.each(combos)('%s / %s: текст на фоне и карточке ≥ 4,5', (mode, accent) => {
-    const p = buildPalette(mode, accent);
-    for (const fg of [p.text, p.textMuted, p.onTonal]) {
-      expect(contrastRatio(fg, p.bg)).toBeGreaterThanOrEqual(4.5);
+describe('контраст 14 профилей', () => {
+  it.each(KEYS)('%s: текст на фоне ≥ 4,9; onTonal на tonal, bg и card ≥ 4,5; значок на primary ≥ 3', (key) => {
+    const p = buildPalette(key);
+    for (const fg of [p.text, p.textMuted]) {
+      expect(contrastRatio(fg, p.bg)).toBeGreaterThanOrEqual(4.9);
       expect(contrastRatio(fg, p.card)).toBeGreaterThanOrEqual(4.5);
     }
-  });
-
-  it.each(combos)('%s / %s: onTonal на tonal ≥ 4,5; onAccent на accent ≥ 3; outline на фоне ≥ 3', (mode, accent) => {
-    const p = buildPalette(mode, accent);
-    expect(contrastRatio(p.onTonal, p.tonal)).toBeGreaterThanOrEqual(4.5);
+    // у светлых onTonal — ещё и акцентный текст на фоне и карточках; у тёмных tonal = primary, onTonal — только текст на нём
+    for (const bg of p.scheme === 'light' ? [p.tonal, p.bg, p.card] : [p.tonal]) expect(contrastRatio(p.onTonal, bg)).toBeGreaterThanOrEqual(4.5);
     expect(contrastRatio(p.onPrimary, p.primary)).toBeGreaterThanOrEqual(3);
-    expect(contrastRatio(p.outline, p.bg)).toBeGreaterThanOrEqual(3);
   });
 
-  it.each(combos)('%s / %s: переключатель — дорожка и бегунок ≥ 3:1', (mode, accent) => {
-    const p = buildPalette(mode, accent);
+  it.each(KEYS)('%s: primaryStrong, предупреждение и цвета списков ≥ 3 на фоне и карточках; переключатель читается', (key) => {
+    const p = buildPalette(key);
+    for (const bg of [p.card, p.cardStrong, p.bg]) {
+      expect(contrastRatio(p.primaryStrong, bg)).toBeGreaterThanOrEqual(3);
+      expect(contrastRatio(p.warn, bg)).toBeGreaterThanOrEqual(3);
+      for (const c of listColorDefs) expect(contrastRatio(p.scheme === 'light' ? c.light : c.dark, bg)).toBeGreaterThanOrEqual(3);
+    }
     expect(contrastRatio(p.switchOn, p.card)).toBeGreaterThanOrEqual(3);
     expect(contrastRatio(p.switchOn, p.switchOnThumb)).toBeGreaterThanOrEqual(3);
-    expect(contrastRatio(p.outline, p.card)).toBeGreaterThanOrEqual(3);
-    expect(contrastRatio(p.switchOffThumb, p.card)).toBeGreaterThanOrEqual(3);
-  });
-
-  it.each(MODES)('%s: цвет предупреждения читается на фоне и карточках; цвета списков различимы на них', (mode) => {
-    const t = modeTokens(mode);
-    for (const bg of [t.bg, t.card, t.cardStrong]) {
-      expect(contrastRatio(t.warn, bg)).toBeGreaterThanOrEqual(3);
-      for (const c of listColorDefs) expect(contrastRatio(mode === 'light' ? c.light : c.dark, bg)).toBeGreaterThanOrEqual(3);
-    }
+    expect(contrastRatio(p.outline, p.bg)).toBeGreaterThanOrEqual(3);
   });
 });
 
-describe('режим: «Как в системе»', () => {
-  it('выбранный вручную главнее темы телефона', () => {
-    expect(resolveMode('light', 'dark')).toBe('light');
-    expect(resolveMode('dark', 'light')).toBe('dark');
+describe('«Как в системе»', () => {
+  it('выбранный вручную главнее; иначе по теме телефона (нет данных → тёмная) и своим профилям', () => {
+    expect(activeSchemeKey('night', 'light')).toBe('night');
+    expect(activeSchemeKey('system', 'light')).toBe('vanilla');
+    expect(activeSchemeKey('system', null)).toBe('cocoa');
+    expect(activeSchemeKey('system', 'light', { light: 'mint', dark: 'sea' })).toBe('mint');
+    expect(activeSchemeKey('system', 'dark', { light: 'mint', dark: 'sea' })).toBe('sea');
   });
 
-  it('«Как в системе» идёт по теме телефона; нет данных → тёмная', () => {
-    expect(resolveMode('system', 'light')).toBe('light');
-    expect(resolveMode('system', 'dark')).toBe('dark');
-    expect(resolveMode('system', null)).toBe('dark');
-    expect(resolveMode('system', undefined)).toBe('dark');
-  });
-});
-
-describe('миграция старых профилей (14 цветных фонов + «Как в системе»)', () => {
-  // Таблица из задания 0.7.5: старое значение → [тема, цвет].
-  const expected: Record<string, [string, string]> = {
-    system: ['system', 'amber'],
-    white: ['light', 'blue'],
-    powder: ['light', 'pink'],
-    beige: ['light', 'amber'],
-    vanilla: ['light', 'amber'],
-    peach: ['light', 'coral'],
-    mint: ['light', 'teal'],
-    sky: ['light', 'blue'],
-    night: ['dark', 'blue'],
-    dusk: ['dark', 'lilac'],
-    graphite: ['dark', 'graphite'],
-    sea: ['dark', 'teal'],
-    emerald: ['dark', 'green'],
-    berry: ['dark', 'pink'],
-    cocoa: ['dark', 'amber'],
-  };
-
-  it.each(Object.entries(expected))('%s → тема и цвет по таблице', (old, [themeMode, accent]) => {
-    expect(migrateScheme(old)).toEqual({ themeMode, accent });
-  });
-
-  it('все 15 значений покрыты; каждый цвет существует', () => {
-    expect(Object.keys(expected)).toHaveLength(15);
-    expect([...LEGACY_SCHEME_KEYS].sort()).toEqual(Object.keys(expected).filter((k) => k !== 'system').sort());
-    for (const [, [, accent]] of Object.entries(expected)) expect(isAccentKey(accent)).toBe(true);
-  });
-
-  it('«Как в системе» из 0.7.4 со своим светлым профилем берёт цвет от него', () => {
-    expect(migrateScheme('system', 'powder')).toEqual({ themeMode: 'system', accent: 'pink' });
-    expect(migrateScheme('system', 'vanilla')).toEqual({ themeMode: 'system', accent: 'amber' });
-    expect(migrateScheme('system', 'нет такого')).toEqual({ themeMode: 'system', accent: 'amber' });
-    expect(migrateScheme('system')).toEqual({ themeMode: 'system', accent: 'amber' });
-  });
-
-  it('мусор и служебные ключи не принимаются', () => {
-    for (const bad of [undefined, null, 5, '', 'note', 'constructor', '__proto__', 'neon']) expect(migrateScheme(bad)).toBeNull();
-    expect(legacyAccent('system')).toBeNull();
-    expect(legacyAccent('note')).toBeNull();
-    expect(legacyAccent('powder')).toBe('pink');
-  });
-
-  it('что хранится → выбор: новые значения главнее, старый профиль переводится и помечается, иначе умолчания', () => {
-    expect(themeChoiceFromSettings({ themeMode: 'dark', accent: 'teal', scheme: 'powder' })).toEqual({ themeMode: 'dark', accent: 'teal', migrated: false });
-    expect(themeChoiceFromSettings({ scheme: 'night' })).toEqual({ themeMode: 'dark', accent: 'blue', migrated: true });
-    expect(themeChoiceFromSettings({ scheme: 'system', systemLight: 'peach' })).toEqual({ themeMode: 'system', accent: 'coral', migrated: true });
-    expect(themeChoiceFromSettings({})).toEqual({ themeMode: 'system', accent: 'amber', migrated: false });
-    expect(themeChoiceFromSettings({ themeMode: 'light', scheme: 'cocoa' })).toEqual({ themeMode: 'light', accent: 'amber', migrated: true });
+  it('профиль подходит только своей теме; мусор → профиль по умолчанию', () => {
+    expect(cleanPicks('mint', 'sea')).toEqual({ light: 'mint', dark: 'sea' });
+    expect(cleanPicks('sea', 'mint')).toEqual(DEFAULT_PICKS);
+    expect(cleanPicks('нет', null)).toEqual(DEFAULT_PICKS);
   });
 });
 
-describe('логотип, заставка, иконка', () => {
-  it('«Только к экранам» — фирменный знак; «Ко всему» — цвет акцента', () => {
-    expect(logoAccent('screens', 'pink')).toBe('amber');
-    expect(logoAccent('all', 'pink')).toBe('pink');
-    expect(splashAccent('screens', 'blue')).toBe('amber');
-    expect(splashAccent('all', 'blue')).toBe('blue');
+describe('миграция 0.7.5 → 0.7.6: 3 режима × 8 цветов', () => {
+  const light = { blue: 'white', amber: 'vanilla', green: 'mint', teal: 'mint', coral: 'peach', lilac: 'sky', pink: 'powder', graphite: 'white' };
+  const dark = { blue: 'night', amber: 'cocoa', green: 'emerald', teal: 'sea', coral: 'berry', lilac: 'dusk', pink: 'berry', graphite: 'graphite' };
+  const cases = (['light', 'dark', 'system'] as const).flatMap((m) => Object.keys(light).map((c) => [m, c] as const));
+
+  it.each(cases)('%s / %s → профиль по таблице', (mode, accent) => {
+    const l = light[accent as keyof typeof light];
+    const d = dark[accent as keyof typeof dark];
+    const r = schemeChoiceFromSettings({ themeMode: mode, accent });
+    expect(r.migrated).toBe(true);
+    if (mode === 'light') expect(r.setting).toBe(l);
+    else if (mode === 'dark') expect(r.setting).toBe(d);
+    else expect(r).toMatchObject({ setting: 'system', picks: { light: l, dark: d } });
   });
 
-  it('иконка: «Только к экранам» и «Янтарь» — основная; остальным акцентам — своя', () => {
-    expect(launcherIconKey('screens', 'blue')).toBe(DEFAULT_ICON);
-    expect(launcherIconKey('all', 'amber')).toBe(DEFAULT_ICON);
-    expect(launcherIconKey('all', 'blue')).toBe('blue');
+  it('значения 0.7.4 главнее; без них и без 0.7.5 — по умолчанию; мусор не принимается', () => {
+    expect(schemeChoiceFromSettings({ scheme: 'powder', systemLight: 'mint', themeMode: 'dark', accent: 'blue' })).toEqual({ setting: 'powder', picks: { light: 'mint', dark: 'cocoa' }, migrated: false });
+    expect(schemeChoiceFromSettings({})).toEqual({ setting: 'system', picks: DEFAULT_PICKS, migrated: false });
+    expect(schemeFrom075('light', 'constructor')).toBeNull();
+    expect(schemeFrom075('auto', 'blue')).toBeNull();
+  });
+});
+
+describe('заставка и значок не зависят от профиля', () => {
+  it('заставка: «Янтарь» при светлой теме телефона, «Какао» при тёмной (нет данных → «Какао»)', () => {
+    expect(splashSchemeKey('light')).toBe('vanilla');
+    expect(splashSchemeKey('dark')).toBe('cocoa');
+    expect(splashSchemeKey(null)).toBe('cocoa');
   });
 
-  it('смена иконки: новая — вопрос, возврат к основной и отказ — без вопроса', () => {
-    expect(iconChange('all', 'pink', DEFAULT_ICON, false)).toEqual({ target: 'pink', ask: true });
-    expect(iconChange('all', 'pink', 'pink', false)).toEqual({ target: 'pink', ask: false });
-    expect(iconChange('screens', 'pink', 'pink', false)).toEqual({ target: DEFAULT_ICON, ask: false });
-    expect(iconChange('all', 'pink', DEFAULT_ICON, true)).toEqual({ target: DEFAULT_ICON, ask: false });
+  it('знак: любой светлый профиль → «Янтарь», любой тёмный → «Какао»', () => {
+    for (const k of lightSchemeKeys) expect(logoSchemeKey(k)).toBe('vanilla');
+    for (const k of darkSchemeKeys) expect(logoSchemeKey(k)).toBe('cocoa');
   });
 
-  it('набор иконок: основная + 7 по цветам + 12 старых; без повторов', () => {
-    expect(ACCENT_ICON_KEYS).toEqual(['blue', 'green', 'teal', 'coral', 'lilac', 'pink', 'graphite']);
-    expect(LEGACY_ICON_KEYS).toHaveLength(12);
-    expect(ALL_ICON_KEYS).toHaveLength(20);
-    expect(new Set(ALL_ICON_KEYS).size).toBe(ALL_ICON_KEYS.length);
+  it('значок: основной и все алиасы без повторов; нативная заставка совпадает с фоном «Янтаря» и «Какао»', () => {
     expect(ALL_ICON_KEYS[0]).toBe(DEFAULT_ICON);
-  });
-
-  it('сохранённая иконка до 0.7.5 переводится в иконку цвета — значок на рабочем столе не пропадает', () => {
-    expect(migrateIconKey('powder')).toBe('pink');
-    expect(migrateIconKey('white')).toBe('blue');
-    expect(migrateIconKey('night')).toBe('blue');
-    expect(migrateIconKey('sea')).toBe('teal');
-    expect(migrateIconKey('graphite')).toBe('graphite');
-    expect(migrateIconKey('beige')).toBe(DEFAULT_ICON);
-    expect(migrateIconKey('cocoa')).toBe(DEFAULT_ICON);
-    expect(migrateIconKey(DEFAULT_ICON)).toBe(DEFAULT_ICON);
-    expect(migrateIconKey('lilac')).toBe('lilac');
-    expect(migrateIconKey('amber')).toBe(DEFAULT_ICON);
-    expect(migrateIconKey(null)).toBe(DEFAULT_ICON);
-    expect(migrateIconKey('что-то')).toBe(DEFAULT_ICON);
-    // результат всегда есть среди ключей, которые знает модуль иконок
-    for (const old of LEGACY_SCHEME_KEYS) expect(ALL_ICON_KEYS).toContain(migrateIconKey(old));
-  });
-
-  it('у каждого цвета (кроме «Янтаря») есть файлы иконки', () => {
-    const fsx = jest.requireActual('fs') as typeof import('fs');
-    for (const k of ACCENT_ICON_KEYS) {
-      expect(fsx.existsSync('assets/icons/schemes/ic_accent_' + k + '_fg.png')).toBe(true);
-      expect(fsx.existsSync('assets/icons/schemes/ic_accent_' + k + '_legacy.png')).toBe(true);
-    }
-  });
-
-  it('нативная заставка в app.json совпадает с фоном тем', () => {
+    expect(new Set(ALL_ICON_KEYS).size).toBe(ALL_ICON_KEYS.length);
     const fsx = jest.requireActual('fs') as typeof import('fs');
     const app = JSON.parse(fsx.readFileSync('app.json', 'utf8')).expo;
     const splash = app.plugins.find((p: unknown) => Array.isArray(p) && p[0] === 'expo-splash-screen')[1];
     expect(splash.backgroundColor).toBe(nativeSplashColors.light);
     expect(splash.dark.backgroundColor).toBe(nativeSplashColors.dark);
-    expect(nativeSplashColors.light).toBe(modeTokens('light').bg);
-    expect(nativeSplashColors.dark).toBe(modeTokens('dark').bg);
+    expect(nativeSplashColors.light).toBe(schemeDefs.vanilla.tokens.bg);
+    expect(nativeSplashColors.dark).toBe(schemeDefs.cocoa.tokens.bg);
   });
 });

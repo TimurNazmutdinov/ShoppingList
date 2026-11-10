@@ -1,0 +1,27 @@
+{
+ "note": "Алиасы значка в манифесте (все выключены, кроме основного «default»: значок всегда фирменный). Ключи 0.7.5 (accents) и 0.7.4 (legacy: ключ профиля → цвет значка).",
+ "accents": [
+  "blue",
+  "green",
+  "teal",
+  "coral",
+  "lilac",
+  "pink",
+  "graphite"
+ ],
+ "legacy": {
+  "white": "blue",
+  "powder": "pink",
+  "beige": "amber",
+  "peach": "coral",
+  "mint": "teal",
+  "sky": "blue",
+  "night": "blue",
+  "dusk": "lilac",
+  "sea": "teal",
+  "emerald": "green",
+  "berry": "pink",
+  "cocoa": "amber"
+ },
+ "brandAccent": "amber"
+}

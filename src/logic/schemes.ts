@@ -1,82 +1,59 @@
 import themes from '@/theme/themes.json';
-import { AccentKey, ApplyScope, Scheme, ThemeMode, accentKeys, brandAccent, isAccentKey, isThemeMode, themeDefaults } from '@/theme';
+import aliases from '@/theme/iconAliases.json';
+import { Scheme, SchemeKey, SchemeSetting, brandSchemes, isSchemeKey, isSchemeSetting, schemeDefs, themeDefaults } from '@/theme';
 
-// Режим, в котором рисуется приложение: выбранный вручную или, при «Как в системе», по теме телефона (нет данных → тёмный).
-export function resolveMode(mode: ThemeMode, system: string | null | undefined): Scheme {
-  if (mode !== 'system') return mode;
-  return system === 'light' ? 'light' : 'dark';
+// Профили для «Как в системе»: какой включается при светлой и какой при тёмной теме телефона.
+export type SystemPicks = { light: SchemeKey; dark: SchemeKey };
+export const DEFAULT_PICKS: SystemPicks = { light: themeDefaults.lightScheme, dark: themeDefaults.darkScheme };
+
+// Профиль подходит для темы телефона, только если его режим совпадает (светлый — для светлой).
+export function isPickFor(mode: Scheme, key: unknown): key is SchemeKey {
+  return isSchemeKey(key) && schemeDefs[key].mode === mode;
 }
 
-// ---- Миграция со старых профилей (до 0.7.5: 14 цветных фонов + «Как в системе») ----
-// Таблица — themes.json → migration: старый ключ → [тема, цвет].
-const MIGRATION = themes.migration as unknown as Record<string, unknown>;
-const hasOwn = (o: object, key: string) => Object.prototype.hasOwnProperty.call(o, key);
-const isOldKey = (v: unknown): v is string => typeof v === 'string' && v !== 'note' && hasOwn(MIGRATION, v);
-
-// Ключи старых профилей (без «system»).
-export const LEGACY_SCHEME_KEYS: readonly string[] = Object.keys(MIGRATION).filter((k) => k !== 'note' && k !== 'system');
-
-const pairOf = (key: string) => MIGRATION[key] as readonly [ThemeMode, AccentKey];
-
-// Цвет, в который перешёл старый профиль (null — не старый ключ).
-export function legacyAccent(key: unknown): AccentKey | null {
-  return isOldKey(key) && key !== 'system' ? pairOf(key)[1] : null;
+// Неизвестное или не того режима значение → профиль по умолчанию.
+export function cleanPicks(light: unknown, dark: unknown): SystemPicks {
+  return { light: isPickFor('light', light) ? light : DEFAULT_PICKS.light, dark: isPickFor('dark', dark) ? dark : DEFAULT_PICKS.dark };
 }
 
-// Старый выбор профиля → тема и цвет. «Как в системе» из 0.7.4 со своим светлым профилем берёт цвет от него.
-export function migrateScheme(old: unknown, systemLight?: unknown): { themeMode: ThemeMode; accent: AccentKey } | null {
-  if (!isOldKey(old)) return null;
-  const [themeMode, accent] = pairOf(old);
-  if (old === 'system') return { themeMode, accent: legacyAccent(systemLight) ?? accent };
-  return { themeMode, accent };
+// Активный профиль: выбранный вручную или, при «Как в системе», по теме телефона (нет данных → тёмная).
+export function activeSchemeKey(setting: SchemeSetting, system: string | null | undefined, picks: SystemPicks = DEFAULT_PICKS): SchemeKey {
+  if (setting !== 'system') return setting;
+  return system === 'light' ? picks.light : picks.dark;
 }
 
-export type ThemeChoice = { themeMode: ThemeMode; accent: AccentKey };
+// Профиль логотипа и заставки — всегда фирменный: «Янтарь» (светлый) или «Какао» (тёмный). Не зависит от выбранного профиля.
+export const logoSchemeKey = (active: SchemeKey): SchemeKey => (schemeDefs[active].mode === 'dark' ? brandSchemes.darkScheme : brandSchemes.lightScheme);
+export const splashSchemeKey = (system: string | null | undefined): SchemeKey => (system === 'light' ? brandSchemes.lightScheme : brandSchemes.darkScheme);
 
-// Что лежит в настройках → выбор темы и цвета. Новые ключи главнее; иначе переводим старый профиль (migrated: надо сохранить); иначе умолчания.
-export function themeChoiceFromSettings(raw: { themeMode?: unknown; accent?: unknown; scheme?: unknown; systemLight?: unknown }): ThemeChoice & { migrated: boolean } {
-  const old = migrateScheme(raw.scheme, raw.systemLight);
-  const hasNew = isThemeMode(raw.themeMode) && isAccentKey(raw.accent);
-  return {
-    themeMode: isThemeMode(raw.themeMode) ? raw.themeMode : (old?.themeMode ?? themeDefaults.themeMode),
-    accent: isAccentKey(raw.accent) ? raw.accent : (old?.accent ?? themeDefaults.accent),
-    migrated: !hasNew && old !== null,
-  };
+// ---- Значок на рабочем столе: всегда основной (фирменный «Янтарь») ----
+export const DEFAULT_ICON = 'default';
+// Алиасы манифеста: основной + цвета 0.7.5 + профили 0.7.4. Все, кроме основного, выключены — ярлык не пропадает.
+export const ALL_ICON_KEYS: readonly string[] = [DEFAULT_ICON, ...aliases.accents, ...Object.keys(aliases.legacy)];
+
+// ---- Переход с 0.7.5 («Тема» + «Цвет») ----
+type Table = { light: Record<string, string>; dark: Record<string, string> };
+const TABLE = themes.migrationFrom075 as unknown as Table;
+const hasOwn = (o: object, k: string) => Object.prototype.hasOwnProperty.call(o, k);
+
+export type SchemeChoice = { setting: SchemeSetting; picks: SystemPicks };
+
+// Тема 0.7.5 (светлая / тёмная / как в системе) и цвет → профиль или «Как в системе» со своими дневным и ночным профилем. Неизвестное → null.
+export function schemeFrom075(themeMode: unknown, accent: unknown): SchemeChoice | null {
+  if (typeof accent !== 'string' || !hasOwn(TABLE.light, accent)) return null;
+  const light = TABLE.light[accent] as SchemeKey;
+  const dark = TABLE.dark[accent] as SchemeKey;
+  if (themeMode === 'light') return { setting: light, picks: { light, dark: DEFAULT_PICKS.dark } };
+  if (themeMode === 'dark') return { setting: dark, picks: { light: DEFAULT_PICKS.light, dark } };
+  if (themeMode === 'system') return { setting: 'system', picks: { light, dark } };
+  return null;
 }
 
-// ---- Логотип, заставка, иконка ----
-// «Только к экранам» — фирменный знак (Янтарь); «Ко всему» — знак цветом акцента.
-export const logoAccent = (scope: ApplyScope, accent: AccentKey): AccentKey => (scope === 'all' ? accent : brandAccent);
-export const splashAccent = logoAccent;
-
-export const DEFAULT_ICON = 'default'; // основная иконка (фирменный «Янтарь»)
-
-// Иконки «Ко всему»: основная + по одной на остальные акценты.
-export const ACCENT_ICON_KEYS: readonly string[] = accentKeys.filter((k) => k !== brandAccent);
-// Иконки до 0.7.5: их записи остаются в манифесте (выключенными), иначе у тех, у кого была включена такая иконка, пропал бы ярлык.
-export const LEGACY_ICON_KEYS: readonly string[] = LEGACY_SCHEME_KEYS.filter((k) => k !== 'vanilla' && !ACCENT_ICON_KEYS.includes(k));
-export const ALL_ICON_KEYS: readonly string[] = [DEFAULT_ICON, ...ACCENT_ICON_KEYS, ...LEGACY_ICON_KEYS];
-
-// Сохранённый ключ иконки → ключ новой иконки: «default» и акценты остаются, старые ключи переводятся по таблице, неизвестное → «default».
-export function migrateIconKey(key: unknown): string {
-  if (key === DEFAULT_ICON) return DEFAULT_ICON;
-  const accent = isAccentKey(key) ? key : legacyAccent(key);
-  if (!accent || accent === brandAccent) return DEFAULT_ICON;
-  return accent;
-}
-
-// Иконка рабочего стола: «Ко всему» → иконка акцента (фирменный «Янтарь» = основная); «Только к экранам» → основная.
-export function launcherIconKey(scope: ApplyScope, accent: AccentKey): string {
-  if (scope !== 'all') return DEFAULT_ICON;
-  return accent === brandAccent ? DEFAULT_ICON : accent;
-}
-
-// Что делать с иконкой после смены настроек: target — какая должна стоять, ask — нужен ли диалог.
-// Возврат к основной иконке и отказ от смены — без вопросов.
-export function iconChange(scope: ApplyScope, accent: AccentKey, confirmed: string, declined: boolean): { target: string; ask: boolean } {
-  const desired = launcherIconKey(scope, accent);
-  if (desired === confirmed) return { target: desired, ask: false };
-  if (desired === DEFAULT_ICON) return { target: DEFAULT_ICON, ask: false };
-  if (declined) return { target: confirmed, ask: false };
-  return { target: desired, ask: true };
+// Что лежит в настройках → выбор профиля. Значения 0.7.4 (scheme, systemLight, systemDark) 0.7.5 не стирала: если они есть — берём их;
+// иначе, если есть выбор 0.7.5 (themeMode + accent), переводим по таблице; иначе — по умолчанию.
+export function schemeChoiceFromSettings(raw: { scheme?: unknown; systemLight?: unknown; systemDark?: unknown; themeMode?: unknown; accent?: unknown }): SchemeChoice & { migrated: boolean } {
+  if (isSchemeSetting(raw.scheme)) return { setting: raw.scheme, picks: cleanPicks(raw.systemLight, raw.systemDark), migrated: false };
+  const from075 = schemeFrom075(raw.themeMode, raw.accent);
+  if (from075) return { ...from075, migrated: true };
+  return { setting: themeDefaults.schemeSetting, picks: DEFAULT_PICKS, migrated: false };
 }

@@ -2,15 +2,15 @@
   "expo": {
     "name": "ShoppingList",
     "slug": "shoppinglist",
-    "version": "0.7.5",
+    "version": "0.7.6",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "shoppinglist",
     "userInterfaceStyle": "automatic",
-    "backgroundColor": "#121214",
+    "backgroundColor": "#2F2722",
     "android": {
       "package": "com.timurnazmutdinov.shoppinglist",
-      "versionCode": 9,
+      "versionCode": 10,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon-foreground.png",
         "backgroundColor": "#FFFFFF",
@@ -30,10 +30,10 @@
           "image": "./assets/images/splash-blank.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#F2F2F4",
+          "backgroundColor": "#FFFBF0",
           "dark": {
             "image": "./assets/images/splash-blank.png",
-            "backgroundColor": "#121214"
+            "backgroundColor": "#2F2722"
           }
         }
       ],

@@ -12,9 +12,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import Svg, { ClipPath, Circle, Defs, Ellipse, G, LinearGradient, Path, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { t } from '@/i18n';
-import { AccentKey, MarkColors, Scheme, accentMark, modeTokens, themeDefaults } from '@/theme';
+import { SchemeDef, schemeDefs, themeDefaults } from '@/theme';
 import { Appearance } from '@/db/appearance';
-import { resolveMode, splashAccent } from '@/logic/schemes';
+import { activeSchemeKey, splashSchemeKey } from '@/logic/schemes';
 import {
   BAG_ORIGIN,
   GLOW,
@@ -55,22 +55,15 @@ type Props = {
 export function SplashScreen({ appearance, onShown, onFinished }: Props) {
   const system = useColorScheme();
   if (!appearance) {
-    return <View style={[styles.root, { backgroundColor: modeTokens(resolveMode(themeDefaults.themeMode, system)).bg }]} />;
+    const def = schemeDefs[activeSchemeKey(themeDefaults.schemeSetting, system)];
+    return <View style={[styles.root, { backgroundColor: def.tokens.bg }]} />;
   }
-  // Фон и текст — по теме; знак: «Только к экранам» — фирменный («Янтарь»), «Ко всему» — цвет акцента.
-  const mode = resolveMode(appearance.themeMode, system);
-  const def = splashColors(mode, splashAccent(appearance.applyScope, appearance.accent));
+  // Заставка всегда фирменная: «Янтарь» при светлой теме телефона, «Какао» при тёмной — какой бы профиль ни был выбран.
+  const def = schemeDefs[splashSchemeKey(system)];
   return <LiveSplash def={def} onShown={onShown} onFinished={onFinished} />;
 }
 
-// Цвета заставки: фон и текст — темы, градиент знака — акцента.
-type SplashColors = { tokens: { bg: string; text: string; textMuted: string }; mark: MarkColors };
-const splashColors = (mode: Scheme, accent: AccentKey): SplashColors => ({
-  tokens: { bg: modeTokens(mode).bg, text: modeTokens(mode).text, textMuted: modeTokens(mode).textMuted },
-  mark: accentMark(accent, mode),
-});
-
-type LiveProps = { def: SplashColors; onShown: () => void; onFinished: () => void };
+type LiveProps = { def: SchemeDef; onShown: () => void; onFinished: () => void };
 
 function LiveSplash({ def, onShown, onFinished }: LiveProps) {
   const { width, height } = useWindowDimensions();
@@ -163,7 +156,7 @@ function LiveSplash({ def, onShown, onFinished }: LiveProps) {
 }
 
 // Слой под пакетом: свечение и тень (шире знака, поэтому свой холст).
-function BackLayer({ def, time, cx, cy }: { def: SplashColors; time: SharedValue<number>; cx: number; cy: number }) {
+function BackLayer({ def, time, cx, cy }: { def: SchemeDef; time: SharedValue<number>; cx: number; cy: number }) {
   const extent = (BACK_R * 2) / K; // сторона холста в единицах сетки
   const min = MARK_UNITS / 2 - extent / 2;
   const glowCx = GLOW.center[0];
@@ -212,7 +205,7 @@ function Bag({ box, time, children }: { box: object; time: SharedValue<number>; 
 }
 
 // Корпус: градиент профиля, блик сверху, галочка линией цвета фона (выглядит как вырез логотипа) — рисуется слева направо.
-function BagBody({ def, time }: { def: SplashColors; time: SharedValue<number> }) {
+function BagBody({ def, time }: { def: SchemeDef; time: SharedValue<number> }) {
   const shine = PATHS.shine.rect;
   const checkProps = useAnimatedProps(() => ({ strokeDashoffset: checkDashOffset(time.value) }));
   return (
