@@ -4,21 +4,19 @@ import { StatusBar } from 'expo-status-bar';
 import { useLocales } from 'expo-localization';
 import * as SystemUI from 'expo-system-ui';
 import { Lang, LanguageSetting, StringKey, resolveLanguage, setLanguage, t } from '@/i18n';
-import { ApplyScope, Scheme, SchemeKey, SchemeSetting, ThemeProvider, buildPalette, schemeDefs, themeDefaults } from '@/theme';
+import { AccentKey, ApplyScope, Scheme, ThemeMode, ThemeProvider, buildPalette } from '@/theme';
 import { CurrencySetting } from '@/logic/money';
-import { Appearance, saveApplyScope, saveCurrency, saveIconDeclined, saveLanguage, saveLauncherIcon, saveRememberItems, saveScheme, saveSystemPick } from '@/db/appearance';
-import { DEFAULT_ICON, SystemPicks, activeSchemeKey } from '@/logic/schemes';
+import { Appearance, saveAccent, saveApplyScope, saveCurrency, saveIconDeclined, saveLanguage, saveLauncherIcon, saveRememberItems, saveShowSplash, saveThemeMode } from '@/db/appearance';
+import { ALL_ICON_KEYS, resolveMode } from '@/logic/schemes';
 import { setLauncherIcon as applyLauncherIcon, setShortcuts } from '@/alarms';
 import { SHORTCUT_ACTIONS, shortcutUri } from '@/logic/shortcuts';
 
-// Все ключи иконок рабочего стола: основная и по одной на профиль (кроме фирменного «Янтаря»).
-const ICON_KEYS = [DEFAULT_ICON, ...Object.keys(schemeDefs).filter((k) => k !== themeDefaults.lightScheme)];
-
 type Settings = {
-  schemeSetting: SchemeSetting;
-  schemeKey: SchemeKey; // активный профиль
-  systemPicks: SystemPicks; // профили «Как в системе» для светлой и тёмной темы телефона
-  setSystemPick: (mode: Scheme, key: SchemeKey) => void;
+  themeMode: ThemeMode; // выбор: светлая, тёмная или «Как в системе»
+  mode: Scheme; // тема, в которой сейчас рисуется приложение
+  accent: AccentKey;
+  setThemeMode: (mode: ThemeMode) => void;
+  setAccent: (accent: AccentKey) => void;
   applyScope: ApplyScope;
   setApplyScope: (scope: ApplyScope) => void;
   currency: CurrencySetting;
@@ -30,8 +28,9 @@ type Settings = {
   languageSetting: LanguageSetting;
   language: Lang;
   rememberItems: boolean;
-  setSchemeSetting: (setting: SchemeSetting) => void;
   setRememberItems: (value: boolean) => void;
+  showSplash: boolean;
+  setShowSplash: (value: boolean) => void;
   setLanguageSetting: (setting: LanguageSetting) => void;
 };
 
@@ -45,38 +44,39 @@ export function useSettings(): Settings {
 
 type Props = { initial: Appearance; children: ReactNode };
 
-// Профиль и язык: читаются при запуске до показа экранов, переключаются сразу.
+// Тема, цвет и язык: читаются при запуске до показа экранов, переключаются сразу.
 export function AppSettingsProvider({ initial, children }: Props) {
-  const [schemeSetting, setSchemeSettingState] = useState(initial.scheme);
-  const [systemPicks, setSystemPicksState] = useState(initial.systemPicks);
+  const [themeMode, setThemeModeState] = useState(initial.themeMode);
+  const [accent, setAccentState] = useState(initial.accent);
   const [applyScope, setApplyScopeState] = useState(initial.applyScope);
   const [currency, setCurrencyState] = useState(initial.currency);
   const [launcherIcon, setLauncherIconState] = useState(initial.launcherIcon);
   const [iconDeclined, setIconDeclinedState] = useState(initial.iconDeclined);
   const [languageSetting, setLanguageSettingState] = useState(initial.language);
   const [rememberItems, setRememberItemsState] = useState(initial.rememberItems);
+  const [showSplash, setShowSplashState] = useState(initial.showSplash);
   const system = useColorScheme();
   const deviceCode = useLocales()[0]?.languageCode;
 
-  const schemeKey = activeSchemeKey(schemeSetting, system, systemPicks);
+  const mode = resolveMode(themeMode, system);
   const language = resolveLanguage(languageSetting, deviceCode);
   // Словарь переключается до отрисовки детей, иначе t() вернёт старый язык.
   setLanguage(language);
 
   // Новый объект при смене языка: так перерисовываются все, кто читает useTheme().
-  const palette = useMemo(() => buildPalette(schemeKey), [schemeKey, language]); // eslint-disable-line react-hooks/exhaustive-deps
+  const palette = useMemo(() => buildPalette(mode, accent), [mode, accent, language]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     SystemUI.setBackgroundColorAsync(palette.bg).catch(() => {});
   }, [palette.bg]);
 
-  const setSchemeSetting = useCallback((setting: SchemeSetting) => {
-    setSchemeSettingState(setting);
-    saveScheme(setting).catch((e) => console.warn(e));
+  const setThemeMode = useCallback((next: ThemeMode) => {
+    setThemeModeState(next);
+    saveThemeMode(next).catch((e) => console.warn(e));
   }, []);
-  const setSystemPick = useCallback((mode: Scheme, key: SchemeKey) => {
-    setSystemPicksState((p) => (mode === 'light' ? { ...p, light: key } : { ...p, dark: key }));
-    saveSystemPick(mode, key).catch((e) => console.warn(e));
+  const setAccent = useCallback((next: AccentKey) => {
+    setAccentState(next);
+    saveAccent(next).catch((e) => console.warn(e));
   }, []);
   const setApplyScope = useCallback((scope: ApplyScope) => {
     setApplyScopeState(scope);
@@ -108,7 +108,7 @@ export function AppSettingsProvider({ initial, children }: Props) {
   useEffect(() => {
     const sub = AppState.addEventListener('change', (state) => {
       if (state === 'background') {
-        applyLauncherIcon(launcherIcon, ICON_KEYS);
+        applyLauncherIcon(launcherIcon, [...ALL_ICON_KEYS]);
         registerShortcuts();
       }
     });
@@ -119,20 +119,24 @@ export function AppSettingsProvider({ initial, children }: Props) {
     setRememberItemsState(value);
     saveRememberItems(value).catch((e) => console.warn(e));
   }, []);
+  const setShowSplash = useCallback((value: boolean) => {
+    setShowSplashState(value);
+    saveShowSplash(value).catch((e) => console.warn(e));
+  }, []);
   const setLanguageSetting = useCallback((setting: LanguageSetting) => {
     setLanguageSettingState(setting);
     saveLanguage(setting).catch((e) => console.warn(e));
   }, []);
 
   const value = useMemo(
-    () => ({ schemeSetting, schemeKey, systemPicks, setSystemPick, applyScope, setApplyScope, currency, setCurrency, launcherIcon, iconDeclined, setLauncherIcon, setIconDeclined, languageSetting, language, rememberItems, setSchemeSetting, setRememberItems, setLanguageSetting }),
-    [schemeSetting, schemeKey, systemPicks, setSystemPick, applyScope, setApplyScope, currency, setCurrency, launcherIcon, iconDeclined, setLauncherIcon, setIconDeclined, languageSetting, language, rememberItems, setSchemeSetting, setRememberItems, setLanguageSetting],
+    () => ({ themeMode, mode, accent, setThemeMode, setAccent, applyScope, setApplyScope, currency, setCurrency, launcherIcon, iconDeclined, setLauncherIcon, setIconDeclined, languageSetting, language, rememberItems, setRememberItems, showSplash, setShowSplash, setLanguageSetting }),
+    [themeMode, mode, accent, setThemeMode, setAccent, applyScope, setApplyScope, currency, setCurrency, launcherIcon, iconDeclined, setLauncherIcon, setIconDeclined, languageSetting, language, rememberItems, setRememberItems, showSplash, setShowSplash, setLanguageSetting],
   );
 
   return (
     <SettingsContext.Provider value={value}>
       <ThemeProvider value={palette}>
-        <StatusBar style={schemeDefs[schemeKey].mode === 'dark' ? 'light' : 'dark'} />
+        <StatusBar style={mode === 'dark' ? 'light' : 'dark'} />
         {children}
       </ThemeProvider>
     </SettingsContext.Provider>

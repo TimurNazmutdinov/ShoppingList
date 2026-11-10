@@ -25,13 +25,11 @@ const createStyles = (colors: Palette) =>
   btn: {
     height: 52,
     borderRadius: radius.button,
-    backgroundColor: colors.primary,
-    borderWidth: 1,
-    borderColor: colors.outline,
+    backgroundColor: colors.tonal,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 8,
   },
   btnOff: { opacity: 0.45 },
-  text: { color: colors.onPrimary, fontSize: 17, fontWeight: '600' },
+  text: { color: colors.onTonal, fontSize: 17, fontWeight: '600' },
 });

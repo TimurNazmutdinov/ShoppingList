@@ -27,7 +27,7 @@ export function ItemRow({ item, onToggle, onRemove, onOpen, onEditQty, onSwiped 
   const qty = [itemQtyLabel(item), item.price === null ? '' : formatMoney(item.price, currencySymbol(currency))].filter(Boolean).join(' · ');
   return (
     <SwipeRow
-      right={{ label: done ? t('list.swipeBack') : t('list.swipeBought'), icon: done ? 'arrow-undo' : 'checkmark', bg: colors.primaryStrong, fg: colors.bg }}
+      right={{ label: done ? t('list.swipeBack') : t('list.swipeBought'), icon: done ? 'arrow-undo' : 'checkmark', bg: colors.primary, fg: colors.onPrimary }}
       left={{ label: t('list.swipeDelete'), icon: 'trash-outline', bg: colors.warn, fg: colors.onWarn }}
       onSwipeRight={() => {
         onSwiped();
@@ -46,7 +46,7 @@ export function ItemRow({ item, onToggle, onRemove, onOpen, onEditQty, onSwiped 
           accessibilityState={{ checked: done }}
           accessibilityLabel={done ? t('a11y.uncheckItem') : t('a11y.checkItem')}
         >
-          <View style={[styles.check, done && styles.checkDone]}>{done ? <Ionicons name="checkmark" size={16} color={colors.bg} /> : null}</View>
+          <View style={[styles.check, done && styles.checkDone]}>{done ? <Ionicons name="checkmark" size={16} color={colors.onPrimary} /> : null}</View>
         </Pressable>
         <View style={styles.body}>
           <Text style={[styles.title, done && styles.done]} numberOfLines={2}>{item.title}</Text>
@@ -79,7 +79,7 @@ const createStyles = (colors: Palette) =>
     },
     checkHit: { width: 52, height: 56, alignItems: 'center', justifyContent: 'center' },
     check: { width: 26, height: 26, borderRadius: 8, borderWidth: 2, borderColor: colors.outline, alignItems: 'center', justifyContent: 'center' },
-    checkDone: { backgroundColor: colors.primaryStrong, borderColor: colors.primaryStrong },
+    checkDone: { backgroundColor: colors.primary, borderColor: colors.primary },
     body: { flex: 1, paddingVertical: 8 },
     title: { color: colors.text, fontSize: 17 },
     done: { color: colors.textMuted, textDecorationLine: 'line-through' },

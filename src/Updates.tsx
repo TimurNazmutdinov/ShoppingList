@@ -1,13 +1,18 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 import { UPDATE_TIMEOUT_MS, UPDATE_URL } from '@/config';
+import { loadUpdateSeen, saveUpdateSeen } from '@/db/updateSeen';
 import { CheckResult, UpdateInfo, evaluate } from '@/logic/updates';
+import { canDefer, deadlineLabel, registerSeen, shouldShowUpdate } from '@/logic/updateDefer';
 import { appVersion, appVersionCode } from '@/version';
 
 type UpdatesValue = {
-  // Есть новая версия: приложение закрыто панелью, пока пользователь не обновится.
+  // Есть новая версия: приложение закрыто панелью, пока пользователь не обновится (или не нажмёт «Позже» — не дольше 3 суток).
   required: UpdateInfo | null;
-  checkNow: () => Promise<CheckResult>;
+  canDefer: boolean; // «Позже» ещё можно
+  deadline: string; // последний день отсрочки: «11 ноября»
+  postpone: () => void; // «Позже»
+  checkNow: () => Promise<CheckResult>; // ручная проверка: экран обновления показывается всегда
 };
 
 const UpdatesContext = createContext<UpdatesValue | null>(null);
@@ -36,19 +41,39 @@ async function fetchCheck(): Promise<CheckResult> {
 // Проверка при запуске и при возврате в приложение. Ошибки и отсутствие сети молчат.
 export function UpdatesProvider({ children }: { children: ReactNode }) {
   const [required, setRequired] = useState<UpdateInfo | null>(null);
+  const [defer, setDefer] = useState({ can: false, deadline: '' });
+  const postponed = useRef(false); // нажали «Позже»: автопроверки не показывают экран, пока отсрочка действует
   const busy = useRef(false);
 
-  const checkNow = useCallback(async (): Promise<CheckResult> => {
+  const check = useCallback(async (manual: boolean): Promise<CheckResult> => {
     const result = await fetchCheck();
-    if (result.status === 'update') setRequired(result.info);
+    if (result.status === 'update') {
+      const now = Date.now();
+      const prev = await loadUpdateSeen().catch(() => null);
+      const seen = registerSeen(prev, result.info.versionCode, now);
+      if (seen !== prev) saveUpdateSeen(seen).catch((e) => console.warn(e));
+      const deferrable = canDefer(seen, now);
+      setDefer({ can: deferrable, deadline: deadlineLabel(seen) });
+      if (shouldShowUpdate({ manual, postponed: postponed.current, deferrable })) {
+        postponed.current = false;
+        setRequired(result.info);
+      }
+    }
     return result;
+  }, []);
+
+  const checkNow = useCallback(() => check(true), [check]);
+
+  const postpone = useCallback(() => {
+    postponed.current = true;
+    setRequired(null);
   }, []);
 
   useEffect(() => {
     const run = () => {
       if (busy.current) return;
       busy.current = true;
-      checkNow().finally(() => {
+      check(false).finally(() => {
         busy.current = false;
       });
     };
@@ -57,8 +82,11 @@ export function UpdatesProvider({ children }: { children: ReactNode }) {
       if (state === 'active') run();
     });
     return () => sub.remove();
-  }, [checkNow]);
+  }, [check]);
 
-  const value = useMemo(() => ({ required, checkNow }), [required, checkNow]);
+  const value = useMemo(
+    () => ({ required, canDefer: defer.can, deadline: defer.deadline, postpone, checkNow }),
+    [required, defer, postpone, checkNow],
+  );
   return <UpdatesContext.Provider value={value}>{children}</UpdatesContext.Provider>;
 }

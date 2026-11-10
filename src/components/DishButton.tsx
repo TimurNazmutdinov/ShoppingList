@@ -10,7 +10,7 @@ export function DishButton({ onPress }: { onPress: () => void }) {
   const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <Pressable style={styles.button} onPress={onPress} accessibilityRole="button" accessibilityLabel={t('dish.button')}>
-      <Ionicons name="restaurant-outline" size={22} color={colors.textMuted} />
+      <Ionicons name="restaurant-outline" size={22} color={colors.onTonal} />
       <Text style={styles.text}>{t('dish.button')}</Text>
     </Pressable>
   );
@@ -29,10 +29,8 @@ const createStyles = (colors: Palette) =>
       paddingLeft: 14,
       paddingRight: 18,
       borderRadius: 24,
-      borderWidth: 1,
-      borderColor: colors.outline,
-      backgroundColor: colors.card,
+      backgroundColor: colors.tonal,
       elevation: 3,
     },
-    text: { color: colors.text, fontSize: 15, fontWeight: '600' },
+    text: { color: colors.onTonal, fontSize: 15, fontWeight: '600' },
   });

@@ -130,7 +130,7 @@ export default function ListsScreen() {
             style={[
               styles.fill,
               bs
-                ? { width: `${Math.round(bs.ratio * 100)}%`, backgroundColor: bs.over > 0 ? colors.warn : colors.primaryStrong }
+                ? { width: `${Math.round(bs.ratio * 100)}%`, backgroundColor: bs.over > 0 ? colors.warn : colors.primary }
                 : { width: `${Math.round(progress * 100)}%`, backgroundColor: color },
             ]}
           />
@@ -159,7 +159,7 @@ export default function ListsScreen() {
       />
 
       <Pressable style={styles.fab} onPress={() => setEdit({ open: true, list: null })} accessibilityRole="button" accessibilityLabel={t('a11y.newList')}>
-        <Ionicons name="add" size={24} color={colors.onPrimary} />
+        <Ionicons name="add" size={24} color={colors.onTonal} />
         <Text style={styles.fabText}>{t('lists.new')}</Text>
       </Pressable>
 
@@ -270,11 +270,11 @@ const createStyles = (colors: Palette) =>
       minHeight: 52,
       paddingHorizontal: 18,
       borderRadius: 18,
-      backgroundColor: colors.primary,
+      backgroundColor: colors.tonal,
       borderWidth: 1,
       borderColor: colors.outline,
     },
-    fabText: { color: colors.onPrimary, fontSize: 16, fontWeight: '700' },
+    fabText: { color: colors.onTonal, fontSize: 16, fontWeight: '700' },
     headerBtn: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
     menuTitle: { color: colors.text, fontSize: 20, fontWeight: '600', marginBottom: 6 },
     menuRow: { flexDirection: 'row', alignItems: 'center', gap: 14, minHeight: 56 },

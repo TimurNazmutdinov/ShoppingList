@@ -32,7 +32,7 @@ const createStyles = (colors: Palette) =>
     paddingHorizontal: 12,
     paddingVertical: 5,
   },
-  filled: { backgroundColor: colors.primary, borderColor: colors.outline },
+  filled: { backgroundColor: colors.tonal, borderColor: colors.tonal },
   text: { color: colors.text, fontSize: 14 },
-  filledText: { color: colors.onPrimary, fontWeight: '600' },
+  filledText: { color: colors.onTonal, fontWeight: '600' },
 });

@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { AppState, Linking, StyleSheet, Text, View } from 'react-native';
+import { AppState, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { File } from 'expo-file-system';
-import { Palette, useTheme } from '@/theme';
+import { Palette, radius, useTheme } from '@/theme';
 import { t } from '@/i18n';
 import { UpdateInfo, megabytes } from '@/logic/updates';
 import { Download, installApk, openInstallSettings, startDownload } from '@/updater';
@@ -15,7 +15,7 @@ type Phase = 'idle' | 'downloading' | 'installing' | 'permission' | 'error';
 
 // Обязательное обновление: на весь экран, закрыть нельзя.
 // idle → скачивание с прогрессом → системный установщик; если вернулись из него, а приложение не заменилось, — экран разрешения.
-export function UpdateScreen({ info }: { info: UpdateInfo }) {
+export function UpdateScreen({ info, canDefer, deadline, onLater }: { info: UpdateInfo; canDefer: boolean; deadline: string; onLater: () => void }) {
   const colors = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const [phase, setPhase] = useState<Phase>('idle');
@@ -23,6 +23,7 @@ export function UpdateScreen({ info }: { info: UpdateInfo }) {
   const download = useRef<Download | null>(null);
   const file = useRef<File | null>(null);
   const wentToBackground = useRef(false);
+  const cancelled = useRef(false);
 
   useEffect(() => {
     const sub = AppState.addEventListener('change', (state) => {
@@ -56,9 +57,18 @@ export function UpdateScreen({ info }: { info: UpdateInfo }) {
     }
     setProgress({ done: 0, total: info.size ?? 0 });
     setPhase('downloading');
+    cancelled.current = false;
     try {
-      download.current = startDownload(info.apkUrl, info.size, (done, total) => setProgress({ done, total }));
-      file.current = await download.current.promise;
+      // до трёх попыток: у GitHub бывают сбои раздачи
+      for (let attempt = 0; ; attempt++) {
+        try {
+          download.current = startDownload(info.apkUrl, info.size, (done, total) => setProgress({ done, total }));
+          file.current = await download.current.promise;
+          break;
+        } catch (e) {
+          if (attempt >= 2 || cancelled.current) throw e;
+        }
+      }
       await install();
     } catch (e) {
       console.warn(e);
@@ -67,6 +77,7 @@ export function UpdateScreen({ info }: { info: UpdateInfo }) {
   };
 
   const cancel = () => {
+    cancelled.current = true;
     download.current?.cancel();
     setPhase('idle');
   };
@@ -126,8 +137,13 @@ export function UpdateScreen({ info }: { info: UpdateInfo }) {
       <View style={styles.button}>
         <PrimaryButton label={phase === 'error' ? t('update.retry') : t('update.button')} onPress={start} />
         {phase === 'error' && <PillButton label={t('update.manual')} onPress={openManual} />}
+        {canDefer && (
+          <Pressable style={styles.later} onPress={onLater} accessibilityRole="button">
+            <Text style={styles.laterText}>{t('update.later')}</Text>
+          </Pressable>
+        )}
       </View>
-      <Text style={styles.hint}>{t('update.keep')}{'\n'}{t('update.blocked')}</Text>
+      <Text style={styles.hint}>{t('update.keep')}{'\n'}{canDefer ? t('update.deferHint', { date: deadline }) : t('update.blocked')}</Text>
     </SafeAreaView>
   );
 }
@@ -155,7 +171,9 @@ const createStyles = (colors: Palette) =>
     versions: { color: colors.textMuted, fontSize: 14, textAlign: 'center', marginTop: 6 },
     text: { color: colors.text, fontSize: 15, textAlign: 'center', marginTop: 10 },
     track: { alignSelf: 'stretch', height: 10, borderRadius: 5, backgroundColor: colors.track, marginVertical: 16, overflow: 'hidden' },
-    fill: { height: 10, borderRadius: 5, backgroundColor: colors.primaryStrong },
+    fill: { height: 10, borderRadius: 5, backgroundColor: colors.primary },
     button: { alignSelf: 'stretch', marginTop: 16, gap: 4 },
+    later: { height: 52, borderRadius: radius.button, borderWidth: 1, borderColor: colors.outline, alignItems: 'center', justifyContent: 'center', marginTop: 8 },
+    laterText: { color: colors.text, fontSize: 17 },
     hint: { color: colors.textMuted, fontSize: 14, textAlign: 'center', marginTop: 12 },
   });

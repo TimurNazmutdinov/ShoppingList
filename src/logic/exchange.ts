@@ -1,9 +1,9 @@
 // Обмен списками: файл приложения (один список или резервная копия), текст для мессенджеров, .txt и HTML для PDF.
 // Чистая логика: разбор и проверка файла, форматирование. Чтение и запись БД — в db/exchange.ts.
-import { DEFAULT_LIST_COLOR, SchemeKey, isListColorKey } from '@/theme';
+import { AccentKey, DEFAULT_LIST_COLOR, ThemeMode, isAccentKey, isListColorKey, isThemeMode } from '@/theme';
 import { UNITS, formatQty } from './history';
 import { formatMoney } from './money';
-import { isPickFor } from './schemes';
+import { legacyAccent } from './schemes';
 
 export const APP_ID = 'ShoppingList';
 export const FORMAT = 1; // версия формата файла
@@ -35,8 +35,8 @@ export type ExportHistory = { title: string; qty: number | null; unit: string | 
 export type ExportDishProduct = { title: string; qty: number | null; unit: string | null; price: number | null };
 export type ExportDish = { title: string; products: ExportDishProduct[] };
 
-// Настройки в резервной копии: профили «Как в системе» для светлой и тёмной темы телефона.
-export type ExportSettings = { systemLight?: SchemeKey; systemDark?: SchemeKey };
+// Настройки в резервной копии: тема и цвет.
+export type ExportSettings = { themeMode?: ThemeMode; accent?: AccentKey };
 
 export type ExchangeFile = {
   app: typeof APP_ID;
@@ -111,13 +111,15 @@ function cleanList(v: unknown): ExportList | null {
   };
 }
 
-// Профили в файле: подходят только профили своего режима (светлый — для светлой темы); остальное отбрасываем.
+// Тема и цвет из файла; остальное отбрасываем. Копии 0.7.4 хранили профили «Как в системе»:
+// цвет берём от светлого профиля по таблице миграции, тему не трогаем.
 function cleanSettings(v: unknown): ExportSettings {
   if (typeof v !== 'object' || v === null) return {};
   const o = v as Record<string, unknown>;
   const out: ExportSettings = {};
-  if (isPickFor('light', o.systemLight)) out.systemLight = o.systemLight;
-  if (isPickFor('dark', o.systemDark)) out.systemDark = o.systemDark;
+  if (isThemeMode(o.themeMode)) out.themeMode = o.themeMode;
+  const accent = isAccentKey(o.accent) ? o.accent : legacyAccent(o.systemLight);
+  if (accent) out.accent = accent;
   return out;
 }
 
@@ -162,7 +164,7 @@ function cleanDish(v: unknown): ExportDish | null {
 export function parseFile(text: string): ParseResult {
   let raw: unknown;
   try {
-    raw = JSON.parse(text);
+    raw = JSON.parse(text.replace(/^﻿/, '')); // файл, прошедший через блокнот или облако, может начинаться с BOM
   } catch {
     return { ok: false, reason: 'invalid' };
   }

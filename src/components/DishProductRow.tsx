@@ -39,7 +39,7 @@ export function DishProductRow({ row, symbol, onPatch }: Props) {
         accessibilityState={{ checked: row.on }}
         accessibilityLabel={row.title || t('dish.namePlaceholder')}
       >
-        <View style={[styles.check, row.on && styles.checkOn]}>{row.on ? <Ionicons name="checkmark" size={16} color={colors.bg} /> : null}</View>
+        <View style={[styles.check, row.on && styles.checkOn]}>{row.on ? <Ionicons name="checkmark" size={16} color={colors.onPrimary} /> : null}</View>
       </Pressable>
       <View style={styles.name}>
         <TextField style={styles.field} value={row.title} onChangeText={(title) => onPatch({ title })} placeholder={t('dish.namePlaceholder')} maxLength={60} editable={row.on} />
@@ -71,7 +71,7 @@ const createStyles = (colors: Palette) =>
     row: { flexDirection: 'row', alignItems: 'center', gap: 4, minHeight: 56 },
     checkHit: { width: 44, height: 52, alignItems: 'center', justifyContent: 'center' },
     check: { width: 24, height: 24, borderRadius: 7, borderWidth: 2, borderColor: colors.outline, alignItems: 'center', justifyContent: 'center' },
-    checkOn: { backgroundColor: colors.primaryStrong, borderColor: colors.primaryStrong },
+    checkOn: { backgroundColor: colors.primary, borderColor: colors.primary },
     name: { flex: 1, minWidth: 80 },
     qty: { width: 56 },
     price: { width: 66 },

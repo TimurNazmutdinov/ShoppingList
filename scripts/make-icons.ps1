@@ -89,23 +89,26 @@ $icon.Save((Join-Path $out 'icon.png'), [System.Drawing.Imaging.ImageFormat]::Pn
 (Mark 96 0.82 'mono' 11).Save((Join-Path $out 'notification-icon.png'), [System.Drawing.Imaging.ImageFormat]::Png)
 Write-Host 'Icons ready: assets\images' -ForegroundColor Green
 
-# Icons per colour profile (launcher icon follows the profile when "apply to everything" is on).
-# Default profile (vanilla) uses the main icon; every other profile gets a foreground and a legacy icon.
+# Icons per accent colour (launcher icon follows the accent when "apply to everything" is on), 0.7.5.
+# The brand accent (amber) uses the main icon; every other accent gets a foreground (the adaptive icon background is white)
+# and a legacy icon with a white background; the mark gradient is accents.<key>.light.mark from src/theme/themes.json.
 $themes = Get-Content 'src/theme/themes.json' -Raw -Encoding UTF8 | ConvertFrom-Json
 $schemeDir = 'assets/icons/schemes'
 New-Item -ItemType Directory -Force $schemeDir | Out-Null
+# icons of the old colour profiles (before 0.7.5) are no longer used
+Get-ChildItem $schemeDir -Filter 'ic_scheme_*' -ErrorAction SilentlyContinue | Remove-Item -Force
 $png = [System.Drawing.Imaging.ImageFormat]::Png
-foreach ($p in $themes.schemes.PSObject.Properties) {
+foreach ($p in $themes.accents.PSObject.Properties) {
     $key = $p.Name
-    if ($key -eq 'vanilla') { continue }
-    $m = $p.Value.mark
-    (Mark 432 2.3 'color' 9 $m.from $m.to).Save((Join-Path $schemeDir "ic_scheme_$($key)_fg.png"), $png)
+    if ($key -eq $themes.brandAccent) { continue }
+    $m = $p.Value.light.mark
+    (Mark 432 2.3 'color' 9 $m.from $m.to).Save((Join-Path $schemeDir "ic_accent_$($key)_fg.png"), $png)
     $legacy = New-Object System.Drawing.Bitmap(192, 192, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
     $lg = [System.Drawing.Graphics]::FromImage($legacy)
-    $lg.Clear([System.Drawing.ColorTranslator]::FromHtml($p.Value.iconBackground))
+    $lg.Clear([System.Drawing.Color]::White)
     $lg.DrawImage((Mark 192 1.3 'color' 9 $m.from $m.to), 0, 0)
     $lg.Dispose()
-    $legacy.Save((Join-Path $schemeDir "ic_scheme_$($key)_legacy.png"), $png)
+    $legacy.Save((Join-Path $schemeDir "ic_accent_$($key)_legacy.png"), $png)
 }
 
 # Preview for visual check: design\icons-preview.png

@@ -106,8 +106,8 @@ const createStyles = (colors: Palette) =>
   StyleSheet.create({
     bar: { backgroundColor: colors.card, borderTopWidth: 1, borderTopColor: colors.cardBorder, paddingHorizontal: 12, paddingTop: 10 },
     chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 8 },
-    chip: { minHeight: 48, justifyContent: 'center', paddingHorizontal: 14, borderRadius: 24, backgroundColor: colors.primary },
-    chipText: { color: colors.onPrimary, fontSize: 15, fontWeight: '600' },
+    chip: { minHeight: 48, justifyContent: 'center', paddingHorizontal: 14, borderRadius: 24, backgroundColor: colors.tonal },
+    chipText: { color: colors.onTonal, fontSize: 15, fontWeight: '600' },
     inputRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
     input: {
       flex: 1,

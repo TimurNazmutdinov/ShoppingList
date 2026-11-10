@@ -9,7 +9,7 @@ import { useSettings } from '@/AppSettings';
 import { useKeyboardOverlap } from '@/useKeyboard';
 import {
   Category, HistoryRow, Item, ItemPatch, NO_QTY, QuickQty, ShoppingList, addFromText, addMany, createCategory, isFlagSet, loadBuyAgain, loadCategories, loadItems,
-  loadList, rememberLastList, removeItem, restoreItem, saveItem, setFlag, setItemQtyPrice, suggestAll, toggleBought,
+  loadList, rememberLastList, removeItem, restoreItem, saveItem, setItemCategory, setFlag, setItemQtyPrice, suggestAll, toggleBought,
 } from '@/logic/shopping';
 import { bulkPreview, priceMarkers } from '@/logic/bulk';
 import { categoryName, groupByCategory } from '@/logic/categories';
@@ -18,6 +18,7 @@ import { budgetStatus } from '@/logic/budget';
 import { BUY_AGAIN_EMPTY, BUY_AGAIN_ROW } from '@/logic/buyAgain';
 import { AddBar } from '@/components/AddBar';
 import { BuyAgainBlock } from '@/components/BuyAgainBlock';
+import { CategoryPrompt } from '@/components/CategoryPrompt';
 import { DishButton } from '@/components/DishButton';
 import { DishSheet } from '@/components/DishSheet';
 import { ItemRow } from '@/components/ItemRow';
@@ -51,6 +52,7 @@ export default function ListScreen() {
   const [quick, setQuick] = useState<QuickQty>(NO_QTY);
   const [qtyOpen, setQtyOpen] = useState(false);
   const [dishOpen, setDishOpen] = useState(false);
+  const [prompt, setPrompt] = useState<Item | null>(null); // новый товар без категории: предлагаем выбрать
   const [shop, setShop] = useState(false); // режим «В магазине»: не запоминается, при открытии списка всегда выключен
   const [suggestions, setSuggestions] = useState<HistoryRow[]>([]);
   const [again, setAgain] = useState<HistoryRow[]>([]); // «Купить снова» / «Часто:»
@@ -129,6 +131,10 @@ export default function ListScreen() {
     setText('');
     setQuick(NO_QTY);
     await reload();
+    // один новый товар без категории (не из каталога и не из истории) — предложить категорию
+    const known = new Set(items.map((i) => i.id));
+    const added = (await loadItems(listId)).filter((i) => !known.has(i.id) && i.categoryId === null);
+    setPrompt(added.length === 1 ? added[0] : null);
   };
 
   // Покупка и возврат: сообщение говорит, что произошло, и даёт отменить.
@@ -259,12 +265,27 @@ export default function ListScreen() {
             <Text style={styles.budgetMuted}>{t('budget.of', { budget: formatMoney(bs.budget, sym) })}</Text>
           </View>
           <View style={styles.budgetTrack}>
-            <View style={[styles.budgetFill, { width: `${Math.round(bs.ratio * 100)}%`, backgroundColor: bs.over > 0 ? colors.warn : colors.primaryStrong }]} />
+            <View style={[styles.budgetFill, { width: `${Math.round(bs.ratio * 100)}%`, backgroundColor: bs.over > 0 ? colors.warn : colors.primary }]} />
           </View>
           <Text style={[styles.budgetNote, bs.over > 0 && styles.budgetNoteOver]}>
             {bs.over > 0 ? t('budget.over', { over: formatMoney(bs.over, sym) }) : t('budget.leftIn', { left: formatMoney(bs.left, sym) })}
           </Text>
         </View>
+      ) : null}
+
+      {prompt ? (
+        <CategoryPrompt
+          title={prompt.title}
+          categories={categories}
+          onSkip={() => setPrompt(null)}
+          onPick={(categoryId) => {
+            const item = prompt;
+            setPrompt(null);
+            setItemCategory(item, categoryId, rememberItems)
+              .then(reload)
+              .catch((e) => console.warn(e));
+          }}
+        />
       ) : null}
 
       <AddBar

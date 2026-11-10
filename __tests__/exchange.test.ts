@@ -84,22 +84,30 @@ describe('файл приложения', () => {
     expect(ok.ok && ok.file.lists[0].budget).toBe(12500.5);
   });
 
-  it('резервная копия: профили «Как в системе» в файле; в старых файлах и в списке их нет', () => {
-    const withPicks = buildFile('backup', [list], [], new Date('2026-11-08T10:00:00.000Z'), [], { systemLight: 'powder', systemDark: 'berry' });
-    const r = parseFile(JSON.stringify(withPicks));
-    expect(r.ok && r.file.settings).toEqual({ systemLight: 'powder', systemDark: 'berry' });
+  it('резервная копия: тема и цвет в файле; в старых файлах и в списке их нет', () => {
+    const withTheme = buildFile('backup', [list], [], new Date('2026-11-08T10:00:00.000Z'), [], { themeMode: 'dark', accent: 'pink' });
+    const r = parseFile(JSON.stringify(withTheme));
+    expect(r.ok && r.file.settings).toEqual({ themeMode: 'dark', accent: 'pink' });
     expect(buildFile('backup', [list], [], new Date()).settings).toBeUndefined();
     const oldBackup = parseFile(JSON.stringify({ app: 'ShoppingList', format: 1, kind: 'backup', lists: [{ title: 'Список', items: [] }] }));
     expect(oldBackup.ok && oldBackup.file.settings).toBeUndefined();
-    const asList = parseFile(JSON.stringify({ ...withPicks, kind: 'list' }));
+    const asList = parseFile(JSON.stringify({ ...withTheme, kind: 'list' }));
     expect(asList.ok && asList.file.settings).toBeUndefined();
   });
 
-  it('профили в файле: чужого режима и несуществующие отбрасываются', () => {
+  it('копия из 0.7.4 (профили «Как в системе»): цвет берётся от светлого профиля по таблице, тема не трогается', () => {
     const base = { app: 'ShoppingList', format: 1, kind: 'backup', lists: [{ title: 'Список', items: [] }] };
-    const r = parseFile(JSON.stringify({ ...base, settings: { systemLight: 'berry', systemDark: 'cocoa' } }));
-    expect(r.ok && r.file.settings).toEqual({ systemDark: 'cocoa' });
-    const junk = parseFile(JSON.stringify({ ...base, settings: { systemLight: 'neon', systemDark: 5 } }));
+    const r = parseFile(JSON.stringify({ ...base, settings: { systemLight: 'powder', systemDark: 'berry' } }));
+    expect(r.ok && r.file.settings).toEqual({ accent: 'pink' });
+    const cocoa = parseFile(JSON.stringify({ ...base, settings: { systemLight: 'vanilla', systemDark: 'cocoa' } }));
+    expect(cocoa.ok && cocoa.file.settings).toEqual({ accent: 'amber' });
+  });
+
+  it('тема и цвет в файле: несуществующие значения отбрасываются', () => {
+    const base = { app: 'ShoppingList', format: 1, kind: 'backup', lists: [{ title: 'Список', items: [] }] };
+    const part = parseFile(JSON.stringify({ ...base, settings: { themeMode: 'light', accent: 'neon' } }));
+    expect(part.ok && part.file.settings).toEqual({ themeMode: 'light' });
+    const junk = parseFile(JSON.stringify({ ...base, settings: { themeMode: 5, accent: 'constructor', systemLight: 'neon' } }));
     expect(junk.ok && junk.file.settings).toBeUndefined();
   });
 

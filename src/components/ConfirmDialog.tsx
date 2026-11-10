@@ -28,7 +28,7 @@ export function ConfirmDialog({
 }: Props) {
   const colors = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
-  const accent = danger ? colors.warn : colors.primary;
+  const accent = danger ? colors.warn : colors.tonal;
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
       <View style={styles.backdrop}>
@@ -41,7 +41,7 @@ export function ConfirmDialog({
               <Text style={styles.cancelText}>{cancelLabel}</Text>
             </Pressable>
             <Pressable
-              style={[styles.btn, { backgroundColor: accent, borderWidth: 1, borderColor: danger ? colors.warn : colors.outline }]}
+              style={[styles.btn, { backgroundColor: accent, borderWidth: danger ? 1 : 0, borderColor: colors.warn }]}
               onPress={onConfirm}
               accessibilityRole="button"
             >
@@ -76,5 +76,5 @@ const createStyles = (colors: Palette) =>
   btn: { flex: 1, height: 48, borderRadius: radius.button, alignItems: 'center', justifyContent: 'center' },
   cancel: { borderWidth: 1.5, borderColor: colors.outline },
   cancelText: { color: colors.text, fontSize: 16 },
-  confirmText: { color: colors.onPrimary, fontSize: 16, fontWeight: '600' },
+  confirmText: { color: colors.onTonal, fontSize: 16, fontWeight: '600' },
 });

@@ -77,7 +77,7 @@ function CopyForm({ list, items, onCopy }: { list: ShoppingList; items: Item[]; 
           const on = selected.has(i.id);
           return (
             <Pressable key={i.id} style={styles.item} onPress={() => toggle(i.id)} accessibilityRole="checkbox" accessibilityState={{ checked: on }} accessibilityLabel={i.title}>
-              <View style={[styles.box, on && styles.boxOn]}>{on ? <Ionicons name="checkmark" size={16} color={colors.bg} /> : null}</View>
+              <View style={[styles.box, on && styles.boxOn]}>{on ? <Ionicons name="checkmark" size={16} color={colors.onPrimary} /> : null}</View>
               <Text style={[styles.itemText, i.boughtAt !== null && styles.itemBought]} numberOfLines={1}>{i.title}</Text>
             </Pressable>
           );
@@ -99,7 +99,7 @@ const createStyles = (colors: Palette) =>
     items: { marginBottom: 12 },
     item: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 48 },
     box: { width: 24, height: 24, borderRadius: 7, borderWidth: 2, borderColor: colors.outline, alignItems: 'center', justifyContent: 'center' },
-    boxOn: { backgroundColor: colors.primaryStrong, borderColor: colors.primaryStrong },
+    boxOn: { backgroundColor: colors.primary, borderColor: colors.primary },
     itemText: { flex: 1, color: colors.text, fontSize: 16 },
     itemBought: { color: colors.textMuted, textDecorationLine: 'line-through' },
   });

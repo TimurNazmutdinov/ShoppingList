@@ -1,404 +1,325 @@
 {
- "note": "Цветовые профили ShoppingList (14: 7 светлых, 7 тёмных) + «Как в системе» (defaults.lightScheme / darkScheme по теме телефона). applyScope: «screens» — цвета профиля только у экранов, логотип и заставка фирменные («Янтарь»: defaults.lightScheme / darkScheme); «all» — логотип и заставка в цвет профиля (schemes[*].mark). Контраст проверен тестами.",
+ "note": "Цветовые темы ShoppingList (эскиз design/palettes.html): «Тема» (светлая / тёмная / как в системе) даёт фон и текст (modes), «Цвет» (8 акцентов) даёт цвет (accents). applyScope: «screens» — цвет только у экранов, логотип и заставка фирменные (brandAccent); «all» — логотип, заставка и иконка в цвет акцента (accents[*].mark). Контраст проверен тестами: text, textMuted, onTonal на bg/card ≥ 4.5; onTonal на tonal ≥ 4.5; onAccent на accent ≥ 3; outline на bg ≥ 3.",
  "defaults": {
-  "schemeSetting": "system",
-  "applyScope": "screens",
-  "lightScheme": "vanilla",
-  "darkScheme": "cocoa"
+  "themeMode": "system",
+  "accent": "amber",
+  "applyScope": "screens"
  },
- "schemes": {
-  "white": {
-   "mode": "light",
-   "name": {
-    "ru": "Белая",
-    "en": "White",
-    "kk": "Ақ"
-   },
-   "tokens": {
-    "bg": "#FFFFFF",
-    "card": "#F6F6F9",
-    "cardBorder": "#E6E6EE",
-    "cardStrong": "#EEEEF4",
-    "track": "#E4E4EC",
-    "text": "#16142B",
-    "textMuted": "#5C5977",
-    "primary": "#3D5AFE",
-    "onPrimary": "#FFFFFF",
-    "primaryStrong": "#2A3FD0",
-    "warn": "#C2521F",
-    "outline": "#5C5977"
-   },
-   "mark": {
-    "from": "#1EC8F2",
-    "to": "#2433F5"
-   },
-   "launcherIcon": "default (фирменная иконка)",
-   "iconBackground": "#FFFFFF"
+ "brandAccent": "amber",
+ "modes": {
+  "light": {
+   "bg": "#F2F2F4",
+   "card": "#FFFFFF",
+   "cardBorder": "#E6E6EA",
+   "cardStrong": "#EBEBEF",
+   "track": "#E2E2E7",
+   "text": "#1C1C1E",
+   "textMuted": "#66666E",
+   "outline": "#7C7C85",
+   "warn": "#C2410C"
   },
-  "powder": {
-   "mode": "light",
+  "dark": {
+   "bg": "#121214",
+   "card": "#1F1F23",
+   "cardBorder": "#2A2A2F",
+   "cardStrong": "#2A2A2F",
+   "track": "#34343A",
+   "text": "#F2F2F5",
+   "textMuted": "#A1A1AA",
+   "outline": "#8E8E96",
+   "warn": "#FB923C"
+  }
+ },
+ "accents": {
+  "blue": {
    "name": {
-    "ru": "Пудра",
-    "en": "Powder",
-    "kk": "Ұнтақ"
+    "ru": "Синий",
+    "kk": "Көк",
+    "en": "Blue"
    },
-   "tokens": {
-    "bg": "#FBF1F4",
-    "card": "#FFFFFF",
-    "cardBorder": "#F2DCE3",
-    "cardStrong": "#F8E3EA",
-    "track": "#F1D9E1",
-    "text": "#3A1E2B",
-    "textMuted": "#85596B",
-    "primary": "#EE9AB5",
-    "onPrimary": "#4A1426",
-    "primaryStrong": "#C8507A",
-    "warn": "#C2521F",
-    "outline": "#85596B"
+   "light": {
+    "accent": "#3E91FF",
+    "onAccent": "#FFFFFF",
+    "tonal": "#EAF3FF",
+    "onTonal": "#1D69C9",
+    "mark": {
+     "from": "#7DB8FF",
+     "to": "#2F80F0"
+    }
    },
-   "mark": {
-    "from": "#FF8A7A",
-    "to": "#D8306E"
-   },
-   "launcherIcon": "ic_scheme_powder",
-   "iconBackground": "#FBF1F4"
+   "dark": {
+    "accent": "#3E91FF",
+    "onAccent": "#06203F",
+    "tonal": "#1B2B42",
+    "onTonal": "#A8CCFF",
+    "mark": {
+     "from": "#7DB8FF",
+     "to": "#2F7CF0"
+    }
+   }
   },
-  "beige": {
-   "mode": "light",
-   "name": {
-    "ru": "Беж",
-    "en": "Beige",
-    "kk": "Беж"
-   },
-   "tokens": {
-    "bg": "#F6F0E7",
-    "card": "#FFFDF9",
-    "cardBorder": "#E8DCCB",
-    "cardStrong": "#EFE4D3",
-    "track": "#E6D8C3",
-    "text": "#3A2E22",
-    "textMuted": "#76634F",
-    "primary": "#D9B48C",
-    "onPrimary": "#3A2512",
-    "primaryStrong": "#9C6B3C",
-    "warn": "#B9471B",
-    "outline": "#76634F"
-   },
-   "mark": {
-    "from": "#E2BB8E",
-    "to": "#A86F3E"
-   },
-   "launcherIcon": "ic_scheme_beige",
-   "iconBackground": "#F6F0E7"
-  },
-  "vanilla": {
-   "mode": "light",
+  "amber": {
    "name": {
     "ru": "Янтарь",
-    "en": "Amber",
-    "kk": "Кәріптас"
+    "kk": "Кәріптас",
+    "en": "Amber"
    },
-   "tokens": {
-    "bg": "#FFF8E6",
-    "card": "#FFFFFF",
-    "cardBorder": "#F2E4BC",
-    "cardStrong": "#FBEEC6",
-    "track": "#F0E0AE",
-    "text": "#3B3216",
-    "textMuted": "#776839",
-    "primary": "#F4C95A",
-    "onPrimary": "#3E2D00",
-    "primaryStrong": "#A87C00",
-    "warn": "#B9471B",
-    "outline": "#776839"
+   "light": {
+    "accent": "#E5A33A",
+    "onAccent": "#2E1D00",
+    "tonal": "#FBEFD8",
+    "onTonal": "#7A4F00",
+    "mark": {
+     "from": "#FFC83D",
+     "to": "#F0702A"
+    }
    },
-   "mark": {
-    "from": "#FFC83D",
-    "to": "#F0702A"
-   },
-   "launcherIcon": "ic_scheme_vanilla",
-   "iconBackground": "#FFF8E6"
+   "dark": {
+    "accent": "#F2B45E",
+    "onAccent": "#2E1D00",
+    "tonal": "#3A2E1C",
+    "onTonal": "#F6D29E",
+    "mark": {
+     "from": "#FFE07A",
+     "to": "#FF9A55"
+    }
+   }
   },
-  "peach": {
-   "mode": "light",
+  "green": {
    "name": {
-    "ru": "Персик",
-    "en": "Peach",
-    "kk": "Шабдалы"
+    "ru": "Зелёный",
+    "kk": "Жасыл",
+    "en": "Green"
    },
-   "tokens": {
-    "bg": "#FFF3EC",
-    "card": "#FFFFFF",
-    "cardBorder": "#F5DECF",
-    "cardStrong": "#FCE6D8",
-    "track": "#F2D8C8",
-    "text": "#3D2219",
-    "textMuted": "#80574A",
-    "primary": "#F8AB85",
-    "onPrimary": "#4A1E0C",
-    "primaryStrong": "#C2582C",
-    "warn": "#B0401A",
-    "outline": "#80574A"
+   "light": {
+    "accent": "#2E9D6A",
+    "onAccent": "#FFFFFF",
+    "tonal": "#DDF2E6",
+    "onTonal": "#1B6644",
+    "mark": {
+     "from": "#6FD3A0",
+     "to": "#1F8A57"
+    }
    },
-   "mark": {
-    "from": "#FFA24C",
-    "to": "#E8403A"
-   },
-   "launcherIcon": "ic_scheme_peach",
-   "iconBackground": "#FFF3EC"
+   "dark": {
+    "accent": "#5CC995",
+    "onAccent": "#062B1A",
+    "tonal": "#1B3328",
+    "onTonal": "#A6E3C4",
+    "mark": {
+     "from": "#8CE6B8",
+     "to": "#2FAF78"
+    }
+   }
   },
-  "mint": {
-   "mode": "light",
+  "teal": {
    "name": {
-    "ru": "Мята",
-    "en": "Mint",
-    "kk": "Жалбыз"
+    "ru": "Бирюза",
+    "kk": "Бирюза",
+    "en": "Teal"
    },
-   "tokens": {
-    "bg": "#EDF8F3",
-    "card": "#FFFFFF",
-    "cardBorder": "#D2ECE2",
-    "cardStrong": "#DCF2E9",
-    "track": "#CCE8DD",
-    "text": "#12352B",
-    "textMuted": "#4A7466",
-    "primary": "#6BD3B0",
-    "onPrimary": "#04342C",
-    "primaryStrong": "#18946D",
-    "warn": "#C2521F",
-    "outline": "#4A7466"
+   "light": {
+    "accent": "#0E8C80",
+    "onAccent": "#FFFFFF",
+    "tonal": "#DBF0EE",
+    "onTonal": "#0A6158",
+    "mark": {
+     "from": "#4CC9BC",
+     "to": "#0B7A70"
+    }
    },
-   "mark": {
-    "from": "#3DD6A6",
-    "to": "#0B7F7A"
-   },
-   "launcherIcon": "ic_scheme_mint",
-   "iconBackground": "#EDF8F3"
+   "dark": {
+    "accent": "#4DB6AC",
+    "onAccent": "#03292A",
+    "tonal": "#173231",
+    "onTonal": "#9ADAD3",
+    "mark": {
+     "from": "#8CF0E3",
+     "to": "#2BB8A8"
+    }
+   }
   },
-  "sky": {
-   "mode": "light",
+  "coral": {
    "name": {
-    "ru": "Небо",
-    "en": "Sky",
-    "kk": "Аспан"
+    "ru": "Коралл",
+    "kk": "Маржан",
+    "en": "Coral"
    },
-   "tokens": {
-    "bg": "#EEF5FC",
-    "card": "#FFFFFF",
-    "cardBorder": "#D5E5F6",
-    "cardStrong": "#DEEBF9",
-    "track": "#D2E2F4",
-    "text": "#13283F",
-    "textMuted": "#4B6785",
-    "primary": "#86B8F5",
-    "onPrimary": "#0C2A52",
-    "primaryStrong": "#2F6FCB",
-    "warn": "#C2521F",
-    "outline": "#4B6785"
+   "light": {
+    "accent": "#DD6046",
+    "onAccent": "#FFFFFF",
+    "tonal": "#FBE5DF",
+    "onTonal": "#A13B26",
+    "mark": {
+     "from": "#FF9A7F",
+     "to": "#D9502F"
+    }
    },
-   "mark": {
-    "from": "#8CC2F7",
-    "to": "#2F6FCB"
-   },
-   "launcherIcon": "ic_scheme_sky",
-   "iconBackground": "#EEF5FC"
+   "dark": {
+    "accent": "#F28B78",
+    "onAccent": "#3A1209",
+    "tonal": "#3A2420",
+    "onTonal": "#F8BCB0",
+    "mark": {
+     "from": "#FFB3A3",
+     "to": "#F06F57"
+    }
+   }
   },
-  "night": {
-   "mode": "dark",
+  "lilac": {
    "name": {
-    "ru": "Ночь",
-    "en": "Night",
-    "kk": "Түн"
+    "ru": "Сирень",
+    "kk": "Күлгін",
+    "en": "Lilac"
    },
-   "tokens": {
-    "bg": "#1B1740",
-    "card": "#2A2560",
-    "cardBorder": "#2A2560",
-    "cardStrong": "#3C3489",
-    "track": "#3C3489",
-    "text": "#FFFFFF",
-    "textMuted": "#AFA9EC",
-    "primary": "#1EC8F2",
-    "onPrimary": "#04253A",
-    "primaryStrong": "#1EC8F2",
-    "warn": "#F0997B",
-    "outline": "#AFA9EC"
+   "light": {
+    "accent": "#7B68D8",
+    "onAccent": "#FFFFFF",
+    "tonal": "#ECE8FB",
+    "onTonal": "#5240A8",
+    "mark": {
+     "from": "#A898F0",
+     "to": "#6650D0"
+    }
    },
-   "mark": {
-    "from": "#1EC8F2",
-    "to": "#2433F5"
-   },
-   "launcherIcon": "ic_scheme_night",
-   "iconBackground": "#1B1740"
+   "dark": {
+    "accent": "#A898F0",
+    "onAccent": "#1D1442",
+    "tonal": "#2A2640",
+    "onTonal": "#D3CAFB",
+    "mark": {
+     "from": "#C6B8FF",
+     "to": "#7B63F0"
+    }
+   }
   },
-  "dusk": {
-   "mode": "dark",
+  "pink": {
    "name": {
-    "ru": "Сумерки",
-    "en": "Dusk",
-    "kk": "Ымырт"
+    "ru": "Розовый",
+    "kk": "Қызғылт",
+    "en": "Pink"
    },
-   "tokens": {
-    "bg": "#2B2840",
-    "card": "#38344F",
-    "cardBorder": "#38344F",
-    "cardStrong": "#47425F",
-    "track": "#4D4868",
-    "text": "#F4F2FF",
-    "textMuted": "#BEB8DB",
-    "primary": "#A898F7",
-    "onPrimary": "#1E1640",
-    "primaryStrong": "#A898F7",
-    "warn": "#FFA07A",
-    "outline": "#BEB8DB"
+   "light": {
+    "accent": "#D6638D",
+    "onAccent": "#FFFFFF",
+    "tonal": "#FAE4EC",
+    "onTonal": "#9E3A61",
+    "mark": {
+     "from": "#F59AB8",
+     "to": "#C94C7A"
+    }
    },
-   "mark": {
-    "from": "#C6B8FF",
-    "to": "#7B63F0"
-   },
-   "launcherIcon": "ic_scheme_dusk",
-   "iconBackground": "#2B2840"
+   "dark": {
+    "accent": "#EE93B4",
+    "onAccent": "#3A0F20",
+    "tonal": "#3A2230",
+    "onTonal": "#F6C0D4",
+    "mark": {
+     "from": "#FFB3CB",
+     "to": "#E6709A"
+    }
+   }
   },
   "graphite": {
-   "mode": "dark",
    "name": {
     "ru": "Графит",
-    "en": "Graphite",
-    "kk": "Графит"
+    "kk": "Графит",
+    "en": "Graphite"
    },
-   "tokens": {
-    "bg": "#262A33",
-    "card": "#323743",
-    "cardBorder": "#323743",
-    "cardStrong": "#3E4452",
-    "track": "#4A5162",
-    "text": "#F2F4F8",
-    "textMuted": "#AAB2C3",
-    "primary": "#5DCAA5",
-    "onPrimary": "#04342C",
-    "primaryStrong": "#5DCAA5",
-    "warn": "#FFA07A",
-    "outline": "#AAB2C3"
+   "light": {
+    "accent": "#4A4A52",
+    "onAccent": "#FFFFFF",
+    "tonal": "#E4E4E8",
+    "onTonal": "#2C2C31",
+    "mark": {
+     "from": "#8A8A94",
+     "to": "#3A3A42"
+    }
    },
-   "mark": {
-    "from": "#86E6C8",
-    "to": "#2FAF8A"
-   },
-   "launcherIcon": "ic_scheme_graphite",
-   "iconBackground": "#262A33"
-  },
-  "sea": {
-   "mode": "dark",
-   "name": {
-    "ru": "Глубокое море",
-    "en": "Deep sea",
-    "kk": "Терең теңіз"
-   },
-   "tokens": {
-    "bg": "#1E3236",
-    "card": "#284045",
-    "cardBorder": "#284045",
-    "cardStrong": "#335158",
-    "track": "#3D5D64",
-    "text": "#EEF8F7",
-    "textMuted": "#A2C5C0",
-    "primary": "#55D6BD",
-    "onPrimary": "#053A31",
-    "primaryStrong": "#55D6BD",
-    "warn": "#FFA07A",
-    "outline": "#A2C5C0"
-   },
-   "mark": {
-    "from": "#8CF0CF",
-    "to": "#2BB8A8"
-   },
-   "launcherIcon": "ic_scheme_sea",
-   "iconBackground": "#1E3236"
-  },
-  "emerald": {
-   "mode": "dark",
-   "name": {
-    "ru": "Изумруд",
-    "en": "Emerald",
-    "kk": "Зүбаржат"
-   },
-   "tokens": {
-    "bg": "#17332B",
-    "card": "#204238",
-    "cardBorder": "#204238",
-    "cardStrong": "#2A5246",
-    "track": "#335C50",
-    "text": "#ECFBF5",
-    "textMuted": "#A3D3C1",
-    "primary": "#45DA9E",
-    "onPrimary": "#053B26",
-    "primaryStrong": "#45DA9E",
-    "warn": "#FFA07A",
-    "outline": "#A3D3C1"
-   },
-   "mark": {
-    "from": "#8CF0CF",
-    "to": "#2BB8A8"
-   },
-   "launcherIcon": "ic_scheme_emerald",
-   "iconBackground": "#17332B"
-  },
-  "berry": {
-   "mode": "dark",
-   "name": {
-    "ru": "Ягода",
-    "en": "Berry",
-    "kk": "Жидек"
-   },
-   "tokens": {
-    "bg": "#33232E",
-    "card": "#43303D",
-    "cardBorder": "#43303D",
-    "cardStrong": "#533C4C",
-    "track": "#5D4455",
-    "text": "#FFF2F7",
-    "textMuted": "#D8B1C4",
-    "primary": "#F59AC0",
-    "onPrimary": "#4A1426",
-    "primaryStrong": "#F59AC0",
-    "warn": "#FFB08A",
-    "outline": "#D8B1C4"
-   },
-   "mark": {
-    "from": "#FFB3A8",
-    "to": "#FF6B9B"
-   },
-   "launcherIcon": "ic_scheme_berry",
-   "iconBackground": "#33232E"
-  },
-  "cocoa": {
-   "mode": "dark",
-   "name": {
-    "ru": "Какао",
-    "en": "Cocoa",
-    "kk": "Какао"
-   },
-   "tokens": {
-    "bg": "#2F2722",
-    "card": "#3E342E",
-    "cardBorder": "#3E342E",
-    "cardStrong": "#4C413A",
-    "track": "#574A41",
-    "text": "#FBF4EC",
-    "textMuted": "#CFBBA7",
-    "primary": "#EDBA72",
-    "onPrimary": "#3E2600",
-    "primaryStrong": "#EDBA72",
-    "warn": "#FFA07A",
-    "outline": "#CFBBA7"
-   },
-   "mark": {
-    "from": "#FFE07A",
-    "to": "#FF9A55"
-   },
-   "launcherIcon": "ic_scheme_cocoa",
-   "iconBackground": "#2F2722"
+   "dark": {
+    "accent": "#C8C8D0",
+    "onAccent": "#1A1A1E",
+    "tonal": "#2C2C31",
+    "onTonal": "#E2E2E8",
+    "mark": {
+     "from": "#E0E0E6",
+     "to": "#9A9AA4"
+    }
+   }
   }
+ },
+ "tokenMapping": {
+  "primary": "accent — мелкие элементы: «+», флажок, переключатель, полосы прогресса",
+  "onPrimary": "onAccent — значок на них",
+  "primaryStrong": "onTonal — акцентный текст: активная вкладка, заголовки разделов, ссылки, рамка выбранного",
+  "tonal / onTonal (новые)": "большие кнопки: «Готово», «Сохранить», «Блюда», «В магазин» — подложка и текст"
+ },
+ "nativeSplash": {
+  "light": "#F2F2F4",
+  "dark": "#121214"
+ },
+ "migration": {
+  "note": "старый schemeSetting → [themeMode, accent]. Для «system» (0.7.4: свои lightScheme/darkScheme) — themeMode system, accent по таблице от lightScheme (по умолчанию vanilla → amber). Так же читаются старые резервные копии.",
+  "system": [
+   "system",
+   "amber"
+  ],
+  "white": [
+   "light",
+   "blue"
+  ],
+  "powder": [
+   "light",
+   "pink"
+  ],
+  "beige": [
+   "light",
+   "amber"
+  ],
+  "vanilla": [
+   "light",
+   "amber"
+  ],
+  "peach": [
+   "light",
+   "coral"
+  ],
+  "mint": [
+   "light",
+   "teal"
+  ],
+  "sky": [
+   "light",
+   "blue"
+  ],
+  "night": [
+   "dark",
+   "blue"
+  ],
+  "dusk": [
+   "dark",
+   "lilac"
+  ],
+  "graphite": [
+   "dark",
+   "graphite"
+  ],
+  "sea": [
+   "dark",
+   "teal"
+  ],
+  "emerald": [
+   "dark",
+   "green"
+  ],
+  "berry": [
+   "dark",
+   "pink"
+  ],
+  "cocoa": [
+   "dark",
+   "amber"
+  ]
  },
  "goalColors": [
   {

@@ -105,6 +105,15 @@ export async function addMany(
   });
 }
 
+// Категория товара одним касанием; параметры запоминаются, в следующий раз категория подставится сама.
+export async function setItemCategory(item: Item, categoryId: number, rememberOn: boolean): Promise<void> {
+  await saveItem(
+    item.id,
+    { title: item.title, qty: item.qty, unit: item.unit, price: item.price, note: item.note, categoryId, plannedDate: item.plannedDate, remind: item.remind },
+    rememberOn,
+  );
+}
+
 // Быстрая правка количества и цены товара прямо в списке.
 export async function setItemQtyPrice(item: Item, v: QuickQty, rememberOn: boolean): Promise<void> {
   await saveItem(

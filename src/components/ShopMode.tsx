@@ -65,7 +65,7 @@ export function ShopMode({ title, items, categories, symbol, bottomPad, onToggle
         accessibilityState={{ checked: done }}
         accessibilityLabel={`${item.title} ${qty}`.trim()}
       >
-        <View style={[styles.check, done && styles.checkDone]}>{done ? <Ionicons name="checkmark" size={22} color={colors.bg} /> : null}</View>
+        <View style={[styles.check, done && styles.checkDone]}>{done ? <Ionicons name="checkmark" size={22} color={colors.onPrimary} /> : null}</View>
         <Text style={[styles.itemTitle, done && styles.itemDone]} numberOfLines={2}>{item.title}</Text>
         {qty ? <Text style={styles.qty}>{qty}</Text> : null}
       </Pressable>
@@ -169,7 +169,7 @@ const createStyles = (colors: Palette) =>
     progressText: { color: colors.text, fontSize: 20, fontWeight: '700' },
     progressPrice: { color: colors.textMuted, fontSize: 16 },
     track: { height: 10, borderRadius: 5, backgroundColor: colors.track, marginTop: 8, overflow: 'hidden' },
-    fill: { height: 10, borderRadius: 5, backgroundColor: colors.primaryStrong },
+    fill: { height: 10, borderRadius: 5, backgroundColor: colors.primary },
     listContent: { paddingHorizontal: 16, paddingBottom: 24 },
     catHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingTop: 14, paddingBottom: 6 },
     catDot: { width: 12, height: 12, borderRadius: 6 },
@@ -187,7 +187,7 @@ const createStyles = (colors: Palette) =>
       borderColor: colors.cardBorder,
     },
     check: { width: 32, height: 32, borderRadius: 9, borderWidth: 3, borderColor: colors.outline, alignItems: 'center', justifyContent: 'center' },
-    checkDone: { backgroundColor: colors.primaryStrong, borderColor: colors.primaryStrong },
+    checkDone: { backgroundColor: colors.primary, borderColor: colors.primary },
     itemTitle: { flex: 1, color: colors.text, fontSize: 20 },
     itemDone: { color: colors.textMuted, textDecorationLine: 'line-through' },
     qty: { color: colors.textMuted, fontSize: 17 },

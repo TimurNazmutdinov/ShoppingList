@@ -30,7 +30,7 @@ export function ScheduledRow({ item, last, onToggle, onOpen }: Props) {
           accessibilityState={{ checked: done }}
           accessibilityLabel={done ? t('a11y.uncheckItem') : t('a11y.checkItem')}
         >
-          <View style={[styles.check, done && styles.checkDone]}>{done ? <Ionicons name="checkmark" size={16} color={colors.bg} /> : null}</View>
+          <View style={[styles.check, done && styles.checkDone]}>{done ? <Ionicons name="checkmark" size={16} color={colors.onPrimary} /> : null}</View>
         </Pressable>
         <Text style={[styles.title, done && styles.done]} numberOfLines={2}>{item.title}</Text>
         {qty ? <Text style={styles.qty}>{qty}</Text> : null}
@@ -56,7 +56,7 @@ const createStyles = (colors: Palette) =>
     },
     checkHit: { width: 52, height: 52, alignItems: 'center', justifyContent: 'center' },
     check: { width: 26, height: 26, borderRadius: 8, borderWidth: 2, borderColor: colors.outline, alignItems: 'center', justifyContent: 'center' },
-    checkDone: { backgroundColor: colors.primaryStrong, borderColor: colors.primaryStrong },
+    checkDone: { backgroundColor: colors.primary, borderColor: colors.primary },
     title: { flex: 1, color: colors.text, fontSize: 17, paddingVertical: 8 },
     done: { color: colors.textMuted, textDecorationLine: 'line-through' },
     qty: { color: colors.textMuted, fontSize: 15, marginLeft: 10 },

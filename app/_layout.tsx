@@ -11,6 +11,7 @@ import { AppSettingsProvider } from '@/AppSettings';
 import { useReminderSync } from '@/notifications';
 import { UpdatesProvider, useUpdates } from '@/Updates';
 import { isShortcutUrl } from '@/logic/shortcuts';
+import { FirstRunGate } from '@/components/FirstRunGate';
 import { UpdateScreen } from '@/components/UpdateScreen';
 import { SplashScreen } from '@/components/SplashScreen';
 import { PrimaryButton } from '@/components/PrimaryButton';
@@ -50,7 +51,7 @@ export default function RootLayout() {
   const onSplashFinished = useCallback(() => setSplashDone(true), []);
   // Вход через ярлык на иконке — без заставки (null — ещё не знаем, с чего открыли).
   const [viaShortcut, setViaShortcut] = useState<boolean | null>(null);
-  const skipSplash = viaShortcut === true;
+  const skipSplash = viaShortcut === true || appearance?.showSplash === false;
 
   useEffect(() => {
     Linking.getInitialURL()
@@ -86,9 +87,11 @@ export default function RootLayout() {
 
   return (
     <AppSettingsProvider initial={appearance}>
-      <UpdatesProvider>
-        <RootStack />
-      </UpdatesProvider>
+      <FirstRunGate languageSet={appearance.languageSet} termsAccepted={appearance.termsAccepted}>
+        <UpdatesProvider>
+          <RootStack />
+        </UpdatesProvider>
+      </FirstRunGate>
     </AppSettingsProvider>
   );
 }
@@ -96,8 +99,8 @@ export default function RootLayout() {
 function RootStack() {
   const colors = useTheme();
   useReminderSync();
-  const { required } = useUpdates();
-  if (required) return <UpdateScreen info={required} />;
+  const { required, canDefer, deadline, postpone } = useUpdates();
+  if (required) return <UpdateScreen info={required} canDefer={canDefer} deadline={deadline} onLater={postpone} />;
   return <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }} />;
 }
 

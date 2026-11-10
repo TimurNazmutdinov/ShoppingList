@@ -109,7 +109,7 @@ export const CATALOG: readonly Entry[] = [
   ['other', 'Зубная паста', 'Тіс пастасы', 'Toothpaste'],
   ['other', 'Зубная щётка', 'Тіс щеткасы', 'Toothbrush'],
   ['other', 'Дезодорант', 'Дезодорант', 'Deodorant'],
-  ['other', 'Подгузники', 'Памперс', 'Diapers'],
+  ['other', 'Подгузники', 'Жөргек', 'Diapers'],
   ['other', 'Корм для кошек', 'Мысық азығы', 'Cat food'],
   ['other', 'Корм для собак', 'Ит азығы', 'Dog food'],
 ];

@@ -3,15 +3,14 @@ import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { ApplyScope, Palette, Scheme, SchemeKey, SchemeSetting, darkSchemeKeys, lightSchemeKeys, radius, schemeDefs, useTheme } from '@/theme';
-import { SystemPicks, iconChange } from '@/logic/schemes';
+import { AccentKey, ApplyScope, Palette, ThemeMode, accentColors, accentKeys, accentNames, brandAccent, radius, useTheme } from '@/theme';
+import { iconChange } from '@/logic/schemes';
 import { CUSTOM_MAX, CurrencyKind } from '@/logic/money';
 import { TextField } from '@/components/FormField';
 import { backupAll } from '@/logic/sharing';
 import { useImportFlow } from '@/useImportFlow';
 import { LanguageSetting, languageNames, languages, t } from '@/i18n';
 import { AppSwitch } from '@/components/AppSwitch';
-import { SchemeThumb } from '@/components/SchemeThumb';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { BottomSheet } from '@/components/BottomSheet';
 import { useSettings } from '@/AppSettings';
@@ -29,31 +28,23 @@ export default function SettingsScreen() {
   const styles = useMemo(() => createStyles(colors), [colors]);
   const s = useSettings();
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [open, setOpen] = useState<string | null>(null); // раскрытая группа настроек
+  const toggleGroup = (key: string) => setOpen((o) => (o === key ? null : key));
   const [clearOpen, setClearOpen] = useState(false);
   const [pendingIcon, setPendingIcon] = useState<string | null>(null);
-  const [pickMode, setPickMode] = useState<Scheme | null>(null); // окно выбора профиля для «Как в системе»
   const restoreFlow = useImportFlow(() => {});
 
-  // После смены профиля или охвата: нужна ли смена иконки рабочего стола и спросить ли об этом.
-  const applyChoice = (setting: SchemeSetting, scope: ApplyScope, picks: SystemPicks = s.systemPicks) => {
+  // После смены цвета или охвата: нужна ли смена иконки рабочего стола и спросить ли об этом.
+  const applyChoice = (accent: AccentKey, scope: ApplyScope) => {
     if (scope === 'screens' && s.iconDeclined) s.setIconDeclined(false);
-    const r = iconChange(scope, setting, s.launcherIcon, scope === 'screens' ? false : s.iconDeclined, picks);
+    const r = iconChange(scope, accent, s.launcherIcon, scope === 'screens' ? false : s.iconDeclined);
     if (r.ask) setPendingIcon(r.target);
     else if (r.target !== s.launcherIcon) s.setLauncherIcon(r.target);
   };
-  const pickScheme = (setting: SchemeSetting) => {
-    s.setSchemeSetting(setting);
-    applyChoice(setting, s.applyScope);
+  const pickAccent = (accent: AccentKey) => {
+    s.setAccent(accent);
+    applyChoice(accent, s.applyScope);
   };
-  const pickSystemScheme = (mode: Scheme, key: SchemeKey) => {
-    s.setSystemPick(mode, key);
-    applyChoice(s.schemeSetting, s.applyScope, mode === 'light' ? { ...s.systemPicks, light: key } : { ...s.systemPicks, dark: key });
-    setPickMode(null);
-  };
-  const systemRows: { mode: Scheme; label: string }[] = [
-    { mode: 'light', label: t('theme.systemLight') },
-    { mode: 'dark', label: t('theme.systemDark') },
-  ];
   const { checkNow } = useUpdates();
   const [checkValue, setCheckValue] = useState<string | null>(null);
 
@@ -86,66 +77,56 @@ export default function SettingsScreen() {
     <SafeAreaView style={styles.root} edges={['top']}>
       <ScreenHeader title={t('settings.title')} />
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Text style={styles.section}>{t('theme.profile')}</Text>
+        <Pressable style={styles.groupHeader} onPress={() => toggleGroup('look')} accessibilityRole="button" accessibilityState={{ expanded: open === 'look' }}>
+          <Text style={styles.groupTitle}>{t('theme.profile')}</Text>
+          <Ionicons name={open === 'look' ? 'chevron-up' : 'chevron-down'} size={20} color={colors.textMuted} />
+        </Pressable>
+        {open === 'look' ? (
         <View style={styles.block}>
-          <Pressable
-            style={styles.row}
-            onPress={() => pickScheme('system')}
-            accessibilityRole="radio"
-            accessibilityState={{ selected: s.schemeSetting === 'system' }}
-            accessibilityLabel={t('theme.system')}
-          >
-            <Ionicons name="phone-portrait-outline" size={22} color={colors.textMuted} />
-            <View style={styles.rowBody}>
-              <Text style={styles.rowTitleText}>{t('theme.system')}</Text>
-              <Text style={styles.hint}>{t('theme.systemHint')}</Text>
-            </View>
-            {s.schemeSetting === 'system' ? <Ionicons name="checkmark-circle" size={24} color={colors.primaryStrong} /> : null}
-          </Pressable>
-
-          {s.schemeSetting === 'system'
-            ? systemRows.map(({ mode, label }) => {
-                const name = schemeDefs[mode === 'light' ? s.systemPicks.light : s.systemPicks.dark].name[s.language];
-                return (
-                  <Pressable
-                    key={mode}
-                    style={[styles.row, styles.divider]}
-                    onPress={() => setPickMode(mode)}
-                    accessibilityRole="button"
-                    accessibilityLabel={`${label}: ${name}`}
-                  >
-                    <Text style={styles.rowTitle}>{label}</Text>
-                    <Text style={styles.rowValue}>{name}</Text>
-                    <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
-                  </Pressable>
-                );
-              })
-            : null}
-
-          <Text style={styles.label}>{t('theme.light')}</Text>
-          <View style={styles.grid}>
-            {lightSchemeKeys.map((k) => (
-              <SchemeThumb
-                key={k}
-                schemeKey={k}
-                selected={s.schemeSetting === k}
-                onPress={() => pickScheme(k)}
-                badge={s.schemeSetting === 'system' && s.systemPicks.light === k ? t('theme.badgeDay') : undefined}
-              />
-            ))}
+          <Text style={styles.label}>{t('theme.mode')}</Text>
+          <View style={styles.segments}>
+            {(['light', 'dark', 'system'] as ThemeMode[]).map((m) => {
+              const active = s.themeMode === m;
+              const label = m === 'light' ? t('theme.modeLight') : m === 'dark' ? t('theme.modeDark') : t('theme.modeSystem');
+              return (
+                <Pressable
+                  key={m}
+                  style={[styles.segment, active && styles.segmentActive]}
+                  onPress={() => s.setThemeMode(m)}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected: active }}
+                  accessibilityLabel={label}
+                >
+                  <Text style={[styles.segmentText, active && styles.segmentTextActive]}>{label}</Text>
+                </Pressable>
+              );
+            })}
           </View>
-          <Text style={styles.label}>{t('theme.dark')}</Text>
-          <View style={styles.grid}>
-            {darkSchemeKeys.map((k) => (
-              <SchemeThumb
-                key={k}
-                schemeKey={k}
-                selected={s.schemeSetting === k}
-                onPress={() => pickScheme(k)}
-                badge={s.schemeSetting === 'system' && s.systemPicks.dark === k ? t('theme.badgeNight') : undefined}
-              />
-            ))}
+          <Text style={[styles.hint, styles.hintPad]}>{t('theme.modeHint')}</Text>
+
+          <Text style={styles.label}>{t('theme.accent')}</Text>
+          <View style={styles.dots}>
+            {accentKeys.map((k) => {
+              const c = accentColors(k, s.mode);
+              const selected = s.accent === k;
+              const name = accentNames[k][s.language];
+              return (
+                <Pressable
+                  key={k}
+                  style={styles.dotCell}
+                  onPress={() => pickAccent(k)}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected }}
+                  accessibilityLabel={name}
+                >
+                  <View style={[styles.dot, { backgroundColor: c.accent }, selected && styles.dotSelected]}>
+                    {selected ? <Ionicons name="checkmark" size={22} color={c.onAccent} /> : null}
+                  </View>
+                </Pressable>
+              );
+            })}
           </View>
+          <Text style={[styles.hint, styles.hintPad]}>{s.accent === brandAccent ? t('theme.accentBrand') : accentNames[s.accent][s.language]}</Text>
 
           <Text style={styles.label}>{t('theme.scope')}</Text>
           <View style={styles.segments}>
@@ -158,7 +139,7 @@ export default function SettingsScreen() {
                   style={[styles.segment, active && styles.segmentActive]}
                   onPress={() => {
                     s.setApplyScope(scope);
-                    applyChoice(s.schemeSetting, scope);
+                    applyChoice(s.accent, scope);
                   }}
                   accessibilityRole="radio"
                   accessibilityState={{ selected: active }}
@@ -172,8 +153,26 @@ export default function SettingsScreen() {
 
           {s.applyScope === 'all' && s.iconDeclined ? <Text style={[styles.hint, styles.hintPad]}>{t('theme.iconBrand')}</Text> : null}
         </View>
+        ) : null}
 
-        <Text style={styles.section}>{t('settings.currency')}</Text>
+        <Pressable style={styles.groupHeader} onPress={() => toggleGroup('splash')} accessibilityRole="button" accessibilityState={{ expanded: open === 'splash' }}>
+          <Text style={styles.groupTitle}>{t('settings.splash')}</Text>
+          <Ionicons name={open === 'splash' ? 'chevron-up' : 'chevron-down'} size={20} color={colors.textMuted} />
+        </Pressable>
+        {open === 'splash' ? (
+          <View style={styles.block}>
+            <View style={styles.row}>
+              <Ionicons name="sparkles-outline" size={22} color={colors.textMuted} />
+              <Text style={styles.rowTitle}>{t('settings.splashShow')}</Text>
+              <AppSwitch value={s.showSplash} onValueChange={s.setShowSplash} accessibilityLabel={t('settings.splashShow')} />
+            </View>
+          </View>
+        ) : null}
+        <Pressable style={styles.groupHeader} onPress={() => toggleGroup('money')} accessibilityRole="button" accessibilityState={{ expanded: open === 'money' }}>
+          <Text style={styles.groupTitle}>{t('settings.currency')}</Text>
+          <Ionicons name={open === 'money' ? 'chevron-up' : 'chevron-down'} size={20} color={colors.textMuted} />
+        </Pressable>
+        {open === 'money' ? (
         <View style={styles.block}>
           <View style={[styles.segments, styles.segmentsTop]}>
             {(['KZT', 'RUB', 'CUSTOM'] as CurrencyKind[]).map((kind) => {
@@ -229,8 +228,13 @@ export default function SettingsScreen() {
             <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
           </Pressable>
         </View>
+        ) : null}
 
-        <Text style={styles.section}>{t('settings.hints')}</Text>
+        <Pressable style={styles.groupHeader} onPress={() => toggleGroup('hints')} accessibilityRole="button" accessibilityState={{ expanded: open === 'hints' }}>
+          <Text style={styles.groupTitle}>{t('settings.hints')}</Text>
+          <Ionicons name={open === 'hints' ? 'chevron-up' : 'chevron-down'} size={20} color={colors.textMuted} />
+        </Pressable>
+        {open === 'hints' ? (
         <View style={styles.block}>
           <View style={styles.row}>
             <Ionicons name="bulb-outline" size={22} color={colors.textMuted} />
@@ -246,8 +250,13 @@ export default function SettingsScreen() {
             <Text style={styles.rowTitle}>{t('settings.clearHistory')}</Text>
           </Pressable>
         </View>
+        ) : null}
 
-        <Text style={styles.section}>{t('settings.updates')}</Text>
+        <Pressable style={styles.groupHeader} onPress={() => toggleGroup('updates')} accessibilityRole="button" accessibilityState={{ expanded: open === 'updates' }}>
+          <Text style={styles.groupTitle}>{t('settings.updates')}</Text>
+          <Ionicons name={open === 'updates' ? 'chevron-up' : 'chevron-down'} size={20} color={colors.textMuted} />
+        </Pressable>
+        {open === 'updates' ? (
         <View style={styles.block}>
           <Pressable style={styles.row} onPress={() => onCheckNow().catch((e) => console.warn(e))} accessibilityRole="button" accessibilityLabel={`${t('settings.checkNow')}${checkValue ? `: ${checkValue}` : ''}`}>
             <Ionicons name="refresh-outline" size={22} color={colors.textMuted} />
@@ -255,8 +264,13 @@ export default function SettingsScreen() {
             <Text style={styles.rowValue}>{checkValue ?? ''}</Text>
           </Pressable>
         </View>
+        ) : null}
 
-        <Text style={styles.section}>{t('backup.title')}</Text>
+        <Pressable style={styles.groupHeader} onPress={() => toggleGroup('backup')} accessibilityRole="button" accessibilityState={{ expanded: open === 'backup' }}>
+          <Text style={styles.groupTitle}>{t('backup.title')}</Text>
+          <Ionicons name={open === 'backup' ? 'chevron-up' : 'chevron-down'} size={20} color={colors.textMuted} />
+        </Pressable>
+        {open === 'backup' ? (
         <View style={styles.block}>
           <Pressable
             style={styles.row}
@@ -283,14 +297,20 @@ export default function SettingsScreen() {
             </View>
           </Pressable>
         </View>
+        ) : null}
         {restoreFlow.dialog}
 
-        <Text style={styles.section}>{t('settings.about')}</Text>
+        <Pressable style={styles.groupHeader} onPress={() => toggleGroup('about')} accessibilityRole="button" accessibilityState={{ expanded: open === 'about' }}>
+          <Text style={styles.groupTitle}>{t('settings.about')}</Text>
+          <Ionicons name={open === 'about' ? 'chevron-up' : 'chevron-down'} size={20} color={colors.textMuted} />
+        </Pressable>
+        {open === 'about' ? (
         <View style={[styles.block, styles.lastBlock]}>
           <Text style={styles.version}>
             {t(IS_PROTOTYPE ? 'settings.versionProto' : 'settings.version', { version: appVersion, code: appVersionCodeLabel })}
           </Text>
         </View>
+        ) : null}
       </ScrollView>
 
       <ConfirmDialog
@@ -323,19 +343,6 @@ export default function SettingsScreen() {
           setClearOpen(false);
         }}
       />
-      <BottomSheet visible={pickMode !== null} onClose={() => setPickMode(null)}>
-        <Text style={styles.sheetTitle}>{pickMode === 'dark' ? t('theme.systemDark') : t('theme.systemLight')}</Text>
-        <View style={styles.sheetGrid}>
-          {(pickMode === 'dark' ? darkSchemeKeys : lightSchemeKeys).map((k) => (
-            <SchemeThumb
-              key={k}
-              schemeKey={k}
-              selected={(pickMode === 'dark' ? s.systemPicks.dark : s.systemPicks.light) === k}
-              onPress={() => pickSystemScheme(pickMode === 'dark' ? 'dark' : 'light', k)}
-            />
-          ))}
-        </View>
-      </BottomSheet>
       <BottomSheet visible={sheetOpen} onClose={() => setSheetOpen(false)}>
         <Text style={styles.sheetTitle}>Язык / Тіл / Language</Text>
         {langOptions.map((o, i) => {
@@ -369,6 +376,8 @@ export default function SettingsScreen() {
 const createStyles = (colors: Palette) =>
   StyleSheet.create({
     root: { flex: 1, backgroundColor: colors.bg, padding: 20, paddingBottom: 0 },
+    groupHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 48, marginTop: 10 },
+    groupTitle: { color: colors.primaryStrong, fontSize: 15, fontWeight: '700' },
     section: { color: colors.primaryStrong, fontSize: 14, fontWeight: '700', marginTop: 22, marginBottom: 8 },
     // Группа настроек: один блок с рамкой, строки внутри разделены линией.
     block: { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.card, overflow: 'hidden' },
@@ -378,13 +387,17 @@ const createStyles = (colors: Palette) =>
     hint: { color: colors.textMuted, fontSize: 13, marginTop: 4, flexShrink: 1 },
     hintPad: { paddingHorizontal: 14, paddingBottom: 14 },
     fieldPad: { paddingHorizontal: 14, paddingBottom: 14 },
-    grid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 14 },
+    // 8 цветов: 4 в ряд, 2 ряда; выбранный — с галочкой и кольцом
+    dots: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 14 },
+    dotCell: { width: '25%', height: 56, alignItems: 'center', justifyContent: 'center' },
+    dot: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: 'transparent' },
+    dotSelected: { borderColor: colors.text },
     segments: { flexDirection: 'row', backgroundColor: colors.cardStrong, borderRadius: radius.button, padding: 4, gap: 4, marginHorizontal: 14, marginBottom: 14 },
     segmentsTop: { marginTop: 14 },
     segment: { flex: 1, minHeight: 48, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4, borderRadius: radius.button - 3 },
-    segmentActive: { backgroundColor: colors.primary, borderWidth: 1, borderColor: colors.outline },
+    segmentActive: { backgroundColor: colors.tonal },
     segmentText: { color: colors.text, fontSize: 14, textAlign: 'center' },
-    segmentTextActive: { color: colors.onPrimary, fontWeight: '600' },
+    segmentTextActive: { color: colors.onTonal, fontWeight: '600' },
     row: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -399,7 +412,6 @@ const createStyles = (colors: Palette) =>
     rowValue: { color: colors.textMuted, fontSize: 16, flexShrink: 1, textAlign: 'right' },
     version: { color: colors.textMuted, fontSize: 14, padding: 14 },
     sheetTitle: { color: colors.text, fontSize: 20, fontWeight: '600', marginBottom: 8 },
-    sheetGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingTop: 8 },
     option: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 56, paddingVertical: 10 },
     optionDivider: { borderTopWidth: 1, borderTopColor: colors.border },
     optionTitle: { color: colors.text, fontSize: 17 },
