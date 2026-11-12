@@ -1,7 +1,7 @@
 // Действия «Поделиться», резервная копия и импорт: собирают данные, форматируют и передают в системное меню.
 import { StringKey, t } from '@/i18n';
 import { loadExportDishes, loadExportHistory, loadExportLists, importExchange } from '@/db/exchange';
-import { loadSystemPicks } from '@/db/appearance';
+import { loadSchemeChoice } from '@/db/appearance';
 import { pickFileText, shareFile, sharePdf, shareText } from '@/sharing';
 import { ExchangeFile, ExportCategory, FormatContext, buildFile, fileSafeName, listToHtml, listToText, parseFile } from './exchange';
 import { formatLong } from './dates';
@@ -31,11 +31,11 @@ export async function shareList(listId: number, kind: ShareKind, symbol: string)
   else await shareFile(`ShoppingList-${name}.json`, JSON.stringify(buildFile('list', [list], [], new Date())), 'application/json');
 }
 
-// Резервная копия: все списки (с бюджетами), история покупок, свои блюда и профили «Как в системе» одним файлом.
+// Резервная копия: все списки (с бюджетами), история покупок, свои блюда, выбранный профиль и профили «Как в системе» одним файлом.
 export async function backupAll(): Promise<void> {
-  const [lists, history, dishes, picks] = await Promise.all([loadExportLists(), loadExportHistory(), loadExportDishes(), loadSystemPicks()]);
+  const [lists, history, dishes, choice] = await Promise.all([loadExportLists(), loadExportHistory(), loadExportDishes(), loadSchemeChoice()]);
   const day = new Date().toISOString().slice(0, 10);
-  const settings = { systemLight: picks.light, systemDark: picks.dark };
+  const settings = { scheme: choice.scheme, systemLight: choice.systemPicks.light, systemDark: choice.systemPicks.dark };
   await shareFile(`ShoppingList-backup-${day}.json`, JSON.stringify(buildFile('backup', lists, history, new Date(), dishes, settings)), 'application/json');
 }
 

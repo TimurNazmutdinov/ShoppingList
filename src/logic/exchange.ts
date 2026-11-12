@@ -1,6 +1,6 @@
 // Обмен списками: файл приложения (один список или резервная копия), текст для мессенджеров, .txt и HTML для PDF.
 // Чистая логика: разбор и проверка файла, форматирование. Чтение и запись БД — в db/exchange.ts.
-import { DEFAULT_LIST_COLOR, SchemeKey, SchemeSetting, isListColorKey } from '@/theme';
+import { DEFAULT_LIST_COLOR, SchemeKey, SchemeSetting, isListColorKey, isSchemeSetting } from '@/theme';
 import { UNITS, formatQty } from './history';
 import { formatMoney } from './money';
 import { isPickFor, schemeFrom075 } from './schemes';
@@ -36,7 +36,7 @@ export type ExportDishProduct = { title: string; qty: number | null; unit: strin
 export type ExportDish = { title: string; products: ExportDishProduct[] };
 
 // Настройки в резервной копии: профили «Как в системе» для светлой и тёмной темы телефона.
-// scheme бывает только при чтении копии 0.7.5 (тема + цвет): записывается копия в формате 0.7.4.
+// scheme — выбранный профиль (с 0.7.6); из копии 0.7.5 (тема + цвет) он получается переводом по таблице.
 export type ExportSettings = { systemLight?: SchemeKey; systemDark?: SchemeKey; scheme?: SchemeSetting };
 
 export type ExchangeFile = {
@@ -120,7 +120,8 @@ function cleanSettings(v: unknown): ExportSettings {
   const out: ExportSettings = {};
   if (isPickFor('light', o.systemLight)) out.systemLight = o.systemLight;
   if (isPickFor('dark', o.systemDark)) out.systemDark = o.systemDark;
-  const from075 = out.systemLight || out.systemDark ? null : schemeFrom075(o.themeMode, o.accent);
+  if (isSchemeSetting(o.scheme)) out.scheme = o.scheme;
+  const from075 = out.systemLight || out.systemDark || out.scheme ? null : schemeFrom075(o.themeMode, o.accent);
   if (from075) {
     out.scheme = from075.setting;
     if (o.themeMode !== 'dark') out.systemLight = from075.picks.light;

@@ -63,4 +63,4 @@ Expo (React Native) + TypeScript + expo-router + expo-sqlite. Всё офлай�
 `android.package` = `com.timurnazmutdinov.shoppinglist` (навсегда).
 
 ## Идеи
-- Пересчитанные цвета знака в схемах («Ко всему») — проверить глазами.
+- Язык при первом запуске: у тестировщицы на русском телефоне всё открылось на казахском — выяснить (см. `docs/STATUS.md`).

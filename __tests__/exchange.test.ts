@@ -85,9 +85,9 @@ describe('файл приложения', () => {
   });
 
   it('резервная копия: профили «Как в системе» в файле; в старых файлах и в списке их нет', () => {
-    const withPicks = buildFile('backup', [list], [], new Date('2026-11-08T10:00:00.000Z'), [], { systemLight: 'powder', systemDark: 'berry' });
+    const withPicks = buildFile('backup', [list], [], new Date('2026-11-08T10:00:00.000Z'), [], { scheme: 'night', systemLight: 'powder', systemDark: 'berry' });
     const r = parseFile(JSON.stringify(withPicks));
-    expect(r.ok && r.file.settings).toEqual({ systemLight: 'powder', systemDark: 'berry' });
+    expect(r.ok && r.file.settings).toEqual({ scheme: 'night', systemLight: 'powder', systemDark: 'berry' });
     expect(buildFile('backup', [list], [], new Date()).settings).toBeUndefined();
     const oldBackup = parseFile(JSON.stringify({ app: 'ShoppingList', format: 1, kind: 'backup', lists: [{ title: 'Список', items: [] }] }));
     expect(oldBackup.ok && oldBackup.file.settings).toBeUndefined();
