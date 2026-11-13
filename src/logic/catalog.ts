@@ -134,18 +134,29 @@ const rowFor = (e: Entry, lang: Lang, categories: readonly Category[]): HistoryR
 
 // Подсказки из каталога по началу названия или любого слова в нём («масло» → «Масло сливочное»).
 // Сначала совпадения с начала названия, потом по слову. Названия из exclude (уже есть в истории) пропускаются.
+// Казахские буквы приводим к русским для сравнения: «сут» находит «Сүт», «кант» — «Қант».
+const KK_FOLD: Record<string, string> = { ә: 'а', ө: 'о', ү: 'у', ұ: 'у', қ: 'к', ғ: 'г', ң: 'н', һ: 'х', і: 'и' };
+const foldKey = (s: string): string => normTitle(s).replace(/[әөүұқғңһі]/g, (c) => KK_FOLD[c]);
+
+// Ищет и по названию на языке приложения, и по названиям на других языках (подсказка — на языке приложения).
+// Порядок: начало названия на своём языке, начало на другом, слово на своём, слово на другом.
 export function matchCatalog(query: string, lang: Lang, categories: readonly Category[], exclude: ReadonlySet<string> = new Set(), limit = 5): HistoryRow[] {
-  const q = normTitle(query);
+  const q = foldKey(query);
   if (!q) return [];
-  const starts: HistoryRow[] = [];
-  const words: HistoryRow[] = [];
+  const others = (Object.keys(LANG_INDEX) as Lang[]).filter((l) => l !== lang);
+  const groups: HistoryRow[][] = [[], [], [], []];
   for (const e of CATALOG) {
-    const norm = normTitle(nameOf(e, lang));
-    if (exclude.has(norm)) continue;
-    if (norm.startsWith(q)) starts.push(rowFor(e, lang, categories));
-    else if (norm.split(' ').some((w) => w.startsWith(q))) words.push(rowFor(e, lang, categories));
+    if (exclude.has(normTitle(nameOf(e, lang)))) continue;
+    const own = foldKey(nameOf(e, lang));
+    const alt = others.map((l) => foldKey(nameOf(e, l)));
+    const starts = (n: string) => n.startsWith(q);
+    const word = (n: string) => n.split(' ').some((w) => w.startsWith(q));
+    if (starts(own)) groups[0].push(rowFor(e, lang, categories));
+    else if (alt.some(starts)) groups[1].push(rowFor(e, lang, categories));
+    else if (word(own)) groups[2].push(rowFor(e, lang, categories));
+    else if (alt.some(word)) groups[3].push(rowFor(e, lang, categories));
   }
-  return [...starts, ...words].slice(0, limit);
+  return groups.flat().slice(0, limit);
 }
 
 // Точное совпадение с названием из каталога: подставляем категорию.

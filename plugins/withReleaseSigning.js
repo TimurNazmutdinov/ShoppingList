@@ -1,12 +1,15 @@
 const { withAppBuildGradle } = require('expo/config-plugins');
 
+// Магазинная сборка берёт другой ключ (свойства SHOPPINGLIST_PLAY_*), прототип — прежний.
+const P = process.env.EXPO_PUBLIC_STORE_BUILD === '1' ? 'SHOPPINGLIST_PLAY_' : 'SHOPPINGLIST_';
+
 const SIGNING = `
         release {
-            if (project.hasProperty('SHOPPINGLIST_STORE_FILE')) {
-                storeFile file(project.property('SHOPPINGLIST_STORE_FILE'))
-                storePassword project.property('SHOPPINGLIST_STORE_PASSWORD')
-                keyAlias project.property('SHOPPINGLIST_KEY_ALIAS')
-                keyPassword project.property('SHOPPINGLIST_KEY_PASSWORD')
+            if (project.hasProperty('${P}STORE_FILE')) {
+                storeFile file(project.property('${P}STORE_FILE'))
+                storePassword project.property('${P}STORE_PASSWORD')
+                keyAlias project.property('${P}KEY_ALIAS')
+                keyPassword project.property('${P}KEY_PASSWORD')
             }
         }`;
 
@@ -15,7 +18,7 @@ const GUARD = `
 // Release without our own key is refused: a debug-signed APK could not be updated in place.
 gradle.taskGraph.whenReady { graph ->
     def wantsRelease = graph.allTasks.any { it.name == 'assembleRelease' || it.name == 'bundleRelease' }
-    def keys = ['SHOPPINGLIST_STORE_FILE', 'SHOPPINGLIST_STORE_PASSWORD', 'SHOPPINGLIST_KEY_ALIAS', 'SHOPPINGLIST_KEY_PASSWORD']
+    def keys = ['${P}STORE_FILE', '${P}STORE_PASSWORD', '${P}KEY_ALIAS', '${P}KEY_PASSWORD']
     def missing = keys.findAll { !project.hasProperty(it) }
     if (wantsRelease && !missing.isEmpty()) {
         throw new GradleException('Signing properties are missing in your user gradle.properties (.gradle folder in user home): ' + missing.join(', '))
@@ -27,7 +30,7 @@ gradle.taskGraph.whenReady { graph ->
 module.exports = function withReleaseSigning(config) {
   return withAppBuildGradle(config, (cfg) => {
     let src = cfg.modResults.contents;
-    if (src.includes('SHOPPINGLIST_STORE_FILE')) return cfg;
+    if (src.includes(`${P}STORE_FILE`)) return cfg;
 
     const signingAt = src.indexOf('signingConfigs {');
     if (signingAt < 0) throw new Error('withReleaseSigning: нет блока signingConfigs в build.gradle');

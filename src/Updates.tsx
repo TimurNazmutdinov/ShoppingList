@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { AppState } from 'react-native';
-import { UPDATE_TIMEOUT_MS, UPDATE_URL } from '@/config';
+import { UPDATES_ENABLED, UPDATE_TIMEOUT_MS, UPDATE_URL } from '@/config';
 import { loadUpdateSeen, saveUpdateSeen } from '@/db/updateSeen';
 import { CheckResult, UpdateInfo, evaluate } from '@/logic/updates';
 import { canDefer, deadlineLabel, registerSeen, shouldShowUpdate } from '@/logic/updateDefer';
@@ -70,6 +70,7 @@ export function UpdatesProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (!UPDATES_ENABLED) return;
     const run = () => {
       if (busy.current) return;
       busy.current = true;

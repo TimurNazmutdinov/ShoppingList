@@ -49,6 +49,10 @@ describe('matchCatalog', () => {
   it('язык учитывается; регистр и ё не важны', () => {
     expect(matchCatalog('сү', 'kk', cats)[0].title).toBe('Сүт');
     expect(matchCatalog('MIL', 'en', cats)[0].title).toBe('Milk');
+    // русские буквы вместо казахских и поиск по названию на другом языке
+    expect(matchCatalog('сут', 'kk', cats)[0].title).toBe('Сүт');
+    expect(matchCatalog('молоко', 'kk', cats)[0].title).toBe('Сүт');
+    expect(matchCatalog('milk', 'ru', cats)[0].title).toBe('Молоко');
     expect(matchCatalog('свекл', 'ru', cats)).toHaveLength(1);
     expect(matchCatalog('свёкл', 'ru', cats)[0].title).toBe('Свёкла');
   });

@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const { withDangerousMod } = require('expo/config-plugins');
 
-// Название приложения на телефоне — одно на всех языках.
-const NAMES = { ru: 'ShoppingList', kk: 'ShoppingList', en: 'ShoppingList' };
+// Подпись под значком по языку телефона. Остальные языки — expo.name («Shopping List»).
+const NAMES = { ru: 'Умный список', kk: 'Smart Tizim' };
 
 module.exports = function withAppNameLocales(config) {
   return withDangerousMod(config, [

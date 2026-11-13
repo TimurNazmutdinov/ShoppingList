@@ -20,7 +20,7 @@ import { getPermissionState } from '@/notifications';
 import { clearHistory } from '@/logic/shopping';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { useUpdates } from '@/Updates';
-import { DEVELOPER_EMAIL, DEVELOPER_NAME, IS_PROTOTYPE } from '@/config';
+import { DEVELOPER_EMAIL, DEVELOPER_NAME, IS_PROTOTYPE, UPDATES_ENABLED } from '@/config';
 import { LegalDoc, LegalSheet } from '@/components/LegalSheet';
 import { appVersion, appVersionCodeLabel } from '@/version';
 
@@ -240,6 +240,8 @@ export default function SettingsScreen() {
         </View>
         ) : null}
 
+        {UPDATES_ENABLED ? (
+        <>
         <Pressable style={styles.groupHeader} onPress={() => toggleGroup('updates')} accessibilityRole="button" accessibilityState={{ expanded: open === 'updates' }}>
           <Text style={styles.groupTitle}>{t('settings.updates')}</Text>
           <Ionicons name={open === 'updates' ? 'chevron-up' : 'chevron-down'} size={20} color={colors.textMuted} />
@@ -252,6 +254,8 @@ export default function SettingsScreen() {
             <Text style={styles.rowValue}>{checkValue ?? ''}</Text>
           </Pressable>
         </View>
+        ) : null}
+        </>
         ) : null}
 
         <Pressable style={styles.groupHeader} onPress={() => toggleGroup('backup')} accessibilityRole="button" accessibilityState={{ expanded: open === 'backup' }}>

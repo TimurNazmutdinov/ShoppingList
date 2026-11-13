@@ -1,6 +1,9 @@
 # Build a signed APK: checks -> prebuild -> gradle -> release\ShoppingList-<version>.apk
 # Messages are ASCII on purpose: Windows PowerShell 5.1 reads a UTF-8 file without BOM as ANSI.
+param([switch]$Store)  # -Store: Google Play build (AAB, other package and key, no self-update)
 $ErrorActionPreference = 'Stop'
+if ($Store) { $env:EXPO_PUBLIC_STORE_BUILD = '1' } else { Remove-Item Env:EXPO_PUBLIC_STORE_BUILD -ErrorAction SilentlyContinue }
+$prefix = if ($Store) { 'SHOPPINGLIST_PLAY_' } else { 'SHOPPINGLIST_' }
 Set-Location (Split-Path $PSScriptRoot -Parent)
 
 function Step($name, $block) {
@@ -12,8 +15,8 @@ function Step($name, $block) {
 if (-not $env:JAVA_HOME) { $env:JAVA_HOME = 'C:\Program Files\Android\Android Studio\jbr' }
 if (-not $env:ANDROID_HOME) { $env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk" }
 $props = Join-Path $env:USERPROFILE '.gradle\gradle.properties'
-if (-not (Select-String -Path $props -Pattern '^SHOPPINGLIST_STORE_FILE=' -Quiet -ErrorAction SilentlyContinue)) {
-    throw "No SHOPPINGLIST_STORE_FILE and other signing properties in $props (see docs/RELEASE.md)."
+if (-not (Select-String -Path $props -Pattern "^${prefix}STORE_FILE=" -Quiet -ErrorAction SilentlyContinue)) {
+    throw "No ${prefix}STORE_FILE and other signing properties in $props (see docs/RELEASE.md)."
 }
 
 Step 'tsc'    { npx.cmd tsc --noEmit }
@@ -26,14 +29,15 @@ $pkgBackup = Join-Path $env:TEMP 'shoppinglist-package.json'
 Copy-Item package.json $pkgBackup -Force
 Step 'prebuild' { npx.cmd expo prebuild --platform android --clean }
 Copy-Item $pkgBackup package.json -Force
-Step 'gradle' { Push-Location android; try { .\gradlew.bat assembleRelease } finally { Pop-Location } }
+Step 'gradle' { Push-Location android; try { if ($Store) { .\gradlew.bat bundleRelease } else { .\gradlew.bat assembleRelease } } finally { Pop-Location } }
 
 $version = (Get-Content app.json -Raw | ConvertFrom-Json).expo.version
-$apk = Get-ChildItem android\app\build\outputs\apk\release\*.apk | Select-Object -First 1
-if (-not $apk) { throw 'APK not found after the build.' }
+if ($Store) { $built = Get-ChildItem android\app\build\outputs\bundle\release\*.aab | Select-Object -First 1; $ext = 'aab'; $name = 'SmartShoppingList' }
+else { $built = Get-ChildItem android\app\build\outputs\apk\release\*.apk | Select-Object -First 1; $ext = 'apk'; $name = 'ShoppingList' }
+if (-not $built) { throw 'Build output not found.' }
 New-Item -ItemType Directory -Force release | Out-Null
-$out = "release\ShoppingList-$version.apk"
-Copy-Item $apk.FullName $out -Force
+$out = "release\$name-$version.$ext"
+Copy-Item $built.FullName $out -Force
 $size = [math]::Round((Get-Item $out).Length / 1MB, 1)
 $hash = (Get-FileHash $out -Algorithm SHA256).Hash
 Write-Host "Done: $out ($size MB)"
