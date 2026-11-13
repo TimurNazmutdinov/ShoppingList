@@ -20,7 +20,8 @@ import { getPermissionState } from '@/notifications';
 import { clearHistory } from '@/logic/shopping';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { useUpdates } from '@/Updates';
-import { IS_PROTOTYPE } from '@/config';
+import { DEVELOPER_EMAIL, DEVELOPER_NAME, IS_PROTOTYPE } from '@/config';
+import { LegalDoc, LegalSheet } from '@/components/LegalSheet';
 import { appVersion, appVersionCodeLabel } from '@/version';
 
 export default function SettingsScreen() {
@@ -31,6 +32,7 @@ export default function SettingsScreen() {
   const [open, setOpen] = useState<string | null>(null); // раскрытая группа настроек
   const toggleGroup = (key: string) => setOpen((o) => (o === key ? null : key));
   const [clearOpen, setClearOpen] = useState(false);
+  const [legalDoc, setLegalDoc] = useState<LegalDoc | null>(null);
   const [pickMode, setPickMode] = useState<Scheme | null>(null); // окно выбора профиля для «Как в системе»
   const restoreFlow = useImportFlow(() => {});
 
@@ -292,6 +294,24 @@ export default function SettingsScreen() {
         </Pressable>
         {open === 'about' ? (
         <View style={[styles.block, styles.lastBlock]}>
+          <View style={styles.aboutHead}>
+            <Text style={styles.rowTitleText}>{t('splash.name')}</Text>
+            <Text style={styles.hint}>{t('about.description')}</Text>
+          </View>
+          <View style={[styles.row, styles.divider]}>
+            <Text style={styles.rowTitle}>{t('about.developer')}</Text>
+            <Text style={styles.rowValue}>{DEVELOPER_NAME}</Text>
+          </View>
+          <View style={[styles.row, styles.divider]}>
+            <Text style={styles.rowTitle}>{t('about.contact')}</Text>
+            <Text style={styles.rowValue} selectable>{DEVELOPER_EMAIL}</Text>
+          </View>
+          {(['terms', 'privacy'] as LegalDoc[]).map((d) => (
+            <Pressable key={d} style={[styles.row, styles.divider]} onPress={() => setLegalDoc(d)} accessibilityRole="button" accessibilityLabel={d === 'terms' ? t('terms.docTerms') : t('terms.docPrivacy')}>
+              <Text style={styles.rowTitle}>{d === 'terms' ? t('terms.docTerms') : t('terms.docPrivacy')}</Text>
+              <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+            </Pressable>
+          ))}
           <Text style={styles.version}>
             {t(IS_PROTOTYPE ? 'settings.versionProto' : 'settings.version', { version: appVersion, code: appVersionCodeLabel })}
           </Text>
@@ -299,6 +319,7 @@ export default function SettingsScreen() {
         ) : null}
       </ScrollView>
 
+      <LegalSheet doc={legalDoc} onClose={() => setLegalDoc(null)} />
       <ConfirmDialog
         visible={clearOpen}
         title={t('settings.clearHistoryTitle')}
@@ -387,6 +408,7 @@ const createStyles = (colors: Palette) =>
       paddingHorizontal: 14,
       paddingVertical: 10,
     },
+    aboutHead: { padding: 14, gap: 4 },
     rowBody: { flex: 1 },
     rowTitleText: { color: colors.text, fontSize: 17 },
     rowTitle: { color: colors.text, fontSize: 17, flex: 1 },

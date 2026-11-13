@@ -6,10 +6,8 @@ import { Palette, radius, useTheme } from '@/theme';
 import { Lang, languageNames, languages, t } from '@/i18n';
 import { useSettings } from '@/AppSettings';
 import { saveTermsAccepted } from '@/db/appearance';
-import { BottomSheet } from './BottomSheet';
+import { LegalDoc, LegalSheet } from './LegalSheet';
 import { PrimaryButton } from './PrimaryButton';
-
-type Doc = 'terms' | 'privacy';
 
 // Первый запуск: сначала выбор языка, затем принятие соглашения и политики конфиденциальности; потом само приложение.
 export function FirstRunGate({ languageSet, termsAccepted, children }: { languageSet: boolean; termsAccepted: boolean; children: ReactNode }) {
@@ -19,7 +17,7 @@ export function FirstRunGate({ languageSet, termsAccepted, children }: { languag
   const [langDone, setLangDone] = useState(languageSet);
   const [accepted, setAccepted] = useState(termsAccepted);
   const [checked, setChecked] = useState(false);
-  const [doc, setDoc] = useState<Doc | null>(null);
+  const [doc, setDoc] = useState<LegalDoc | null>(null);
 
   if (!langDone) {
     return (
@@ -53,7 +51,7 @@ export function FirstRunGate({ languageSet, termsAccepted, children }: { languag
       <SafeAreaView style={styles.root}>
         <Text style={styles.title} accessibilityRole="header">{t('terms.title')}</Text>
         <Text style={styles.intro}>{t('terms.intro')}</Text>
-        {(['terms', 'privacy'] as Doc[]).map((d) => (
+        {(['terms', 'privacy'] as LegalDoc[]).map((d) => (
           <Pressable key={d} style={styles.option} onPress={() => setDoc(d)} accessibilityRole="button">
             <Text style={styles.optionText}>{d === 'terms' ? t('terms.docTerms') : t('terms.docPrivacy')}</Text>
             <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
@@ -73,10 +71,7 @@ export function FirstRunGate({ languageSet, termsAccepted, children }: { languag
             }}
           />
         </View>
-        <BottomSheet visible={doc !== null} onClose={() => setDoc(null)}>
-          <Text style={styles.docTitle}>{doc === 'privacy' ? t('terms.docPrivacy') : t('terms.docTerms')}</Text>
-          <Text style={styles.docBody}>{doc === 'privacy' ? t('terms.privacyBody') : t('terms.termsBody')}</Text>
-        </BottomSheet>
+        <LegalSheet doc={doc} onClose={() => setDoc(null)} />
       </SafeAreaView>
     );
   }
@@ -97,6 +92,4 @@ const createStyles = (colors: Palette) =>
     boxOn: { backgroundColor: colors.primary, borderColor: colors.primary },
     checkText: { color: colors.text, fontSize: 15, flex: 1 },
     button: { marginTop: 10 },
-    docTitle: { color: colors.text, fontSize: 20, fontWeight: '600', marginBottom: 8 },
-    docBody: { color: colors.text, fontSize: 15, lineHeight: 22, paddingBottom: 12 },
   });
