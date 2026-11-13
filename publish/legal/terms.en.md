@@ -29,7 +29,7 @@ To the maximum extent permitted by law, the Developer is not liable for indirect
 The Developer may update the App and these terms; for material changes the new version will be shown in the App and continued use means you accept it. You may stop using the App at any time by uninstalling it. The Developer may end support or distribution of the App.
 
 ## 9. Governing law
-These terms are governed by the laws of the Republic of Kazakhstan. The parties will try to resolve disputes by negotiation and otherwise as provided by law. If a provision is invalid, the rest remains in force. If you are a consumer, mandatory consumer-protection rules of your country continue to apply.
+These terms are governed by the laws of the Republic of Kazakhstan. The parties will try to resolve disputes by negotiation and otherwise as provided by law. If a provision is invalid, the rest remains in force. If you are a consumer, mandatory consumer-protection rules of your country continue to apply. For users in the Russian Federation these include, in particular, the Law of the Russian Federation of 7 February 1992 No. 2300-1 "On Protection of Consumer Rights"; personal data is covered by the Privacy Policy, with regard to Federal Law No. 152-FZ of 27 July 2006 "On Personal Data".
 
 ## 10. Contact
 quiteusefulapp · quiteusefulapp@gmail.com
