@@ -14,7 +14,7 @@ It is deleted when you uninstall the App or clear its data in Android settings (
 
 ## 3. Permissions and why
 - **Notifications and exact alarms** — to show the shopping reminders you set, at the time you choose. Reminders are created and run on the device; nothing is sent anywhere.
-- **Microphone / speech recognition** (only when you tap the voice-input button) — to turn speech into item text. Recognition is performed by your phone's speech-recognition service, which on many devices is provided by Google and depends on your Android settings. That service is separate from the Developer and is governed by its own terms and privacy policy. The Developer does not receive the audio or the recognized text. Voice input is optional; every feature works with the keyboard.
+- **Microphone / speech recognition** (only when you tap the voice-input button) — to turn speech into item text. Recognition is performed by Google's speech-recognition service: the recording of your voice is sent to Google's servers and handled under Google's terms and privacy policy (on some phones it may be the manufacturer's service, depending on your Android settings). That service is separate from the Developer. The Developer does not record, receive, store or use either the audio or the recognized text. Voice input is optional; every feature works with the keyboard.
 The App does **not** request access to contacts, location, camera, photos, files, accounts, SMS or calls.
 
 ## 4. Internet

@@ -12,6 +12,7 @@
 - Название под значком: ru «Умный список», kk «Smart Tizim», иначе «Shopping List» (`plugins/withAppNameLocales.js`).
 - Поиск подсказок по каталогу: и на других языках, и русскими буквами вместо казахских (`src/logic/catalog.ts`).
 - Магазинная сборка: `scripts\build-apk.ps1 -Store` → AAB `release\SmartShoppingList-<версия>.aab`; пакет `com.quiteusefulapp.shoppinglist` (`app.config.js`), без `REQUEST_INSTALL_PACKAGES`, без самообновления и «Прототипа» (флаг `IS_STORE` в `src/config.ts`; в Настройках скрыт блок «Обновления»). Новый ключ `ShoppingList_keys\smartshoppinglist-play-upload.jks`, пароль в `ПАРОЛЬ-play.txt`, свойства `SHOPPINGLIST_PLAY_*` в `~\.gradle\gradle.properties`. AAB ещё не собирали. Версию 0.8.0 в `app.json` не менял.
+**План закрытого теста и продакшна:** `publish/closed-test-plan.md` (12+ тестеров на 14 дней, 3 сборки, лог отзывов; нужно уточнить тип аккаунта разработчика).
 **Следующий шаг:** собрать AAB (`-Store`), заполнить Play Console. Остальное из прежнего списка: поиск по товарам на ru и kk; 3) публичная сборка: новый пакет и ключ, без самообновления и `REQUEST_INSTALL_PACKAGES`, `IS_PROTOTYPE=false`, AAB (`publish/README.md`, `docs/PUBLISH.md`). Перед любым изменением интерфейса — эскиз.
 Версия в `app.json` — 0.8.0 / versionCode 11. kk-тексты проверены носителем. Ждёт: сборка AAB (`-Store`) пользователем; страница политики на GitHub Pages (аккаунт `quiteusefulapp`, в `gh` не подключён — делает пользователь); проверка названий в Play Console.
 
