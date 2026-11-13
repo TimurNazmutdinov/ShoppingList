@@ -1,0 +1,11 @@
+{
+  "ru": [
+    "Название под значком по языку телефона; подсказки ищут и на других языках, и русскими буквами вместо казахских"
+  ],
+  "kk": [
+    "Белгіше астындағы атау телефон тіліне байланысты; ұсыныстар басқа тілдерде де, қазақ әріптерінің орнына орыс әріптерімен де іздейді"
+  ],
+  "en": [
+    "App name under the icon follows the phone language; suggestions also search other languages and accept Russian letters for Kazakh ones"
+  ]
+}
