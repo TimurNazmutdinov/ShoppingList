@@ -10,7 +10,7 @@
     "backgroundColor": "#2F2722",
     "android": {
       "package": "com.timurnazmutdinov.shoppinglist",
-      "versionCode": 11,
+      "versionCode": 12,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon-foreground.png",
         "backgroundColor": "#FFFFFF",
