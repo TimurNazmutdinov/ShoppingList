@@ -15,6 +15,12 @@
 - Для РК опора — Закон № 94-V «О персональных данных и их защите»; текст политики написан по общим принципам (хранение на устройстве, без сбора). Актуальность закона и конкретные нормы проверить на adilet.zan.kz.
 - `REQUEST_INSTALL_PACKAGES` и самообновление из GitHub в Play-версии нельзя — убрать в публичной сборке.
 
+## Опубликованные ссылки (проверены 2026-11-14, все отвечают 200, тексты совпадают с `legal/`)
+Файлы лежат в корне репозитория `quiteusefulapp/smart-shopping-list`, база — `https://quiteusefulapp.github.io/smart-shopping-list/`:
+- Политика: `privacy-policy.ru.html`, `privacy-policy.kk.html`, `privacy-policy.en.html` (в Play Console — английская).
+- Соглашение: `terms.ru.html`, `terms.kk.html`, `terms.en.html`.
+Если правим тексты в `publish/legal/`, их надо заново залить в тот репозиторий.
+
 ## Как опубликовать страницы документов (GitHub Pages)
 1. На аккаунте `quiteusefulapp` создать публичный репозиторий (например `smart-shopping-list`), положить туда файлы из `legal/`.
 2. Settings → Pages → Branch: `main`, `/ (root)`. Адреса вида `https://quiteusefulapp.github.io/smart-shopping-list/legal/privacy-policy.en`.
