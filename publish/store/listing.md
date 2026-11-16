@@ -21,7 +21,7 @@ Smart Shopping List is a simple, fast shopping list that works without internet 
 • Share a list as text or a file; save and restore a backup
 • 14 colour profiles, light and dark themes, a calm design
 • Languages: English, Russian, Kazakh
-• No ads, no tracking, no account; data never leaves your phone unless you share it
+• No ads, no tracking, no account; your lists stay on your phone unless you share them (optional voice input uses Google's speech recognition)
 
 ---
 ## Русский (ru-RU)
@@ -40,7 +40,7 @@ Smart Shopping List is a simple, fast shopping list that works without internet 
 • Поделиться списком текстом или файлом; резервная копия и восстановление
 • 14 цветовых профилей, светлая и тёмная темы, спокойный дизайн
 • Языки: русский, казахский, английский
-• Без рекламы, слежки и аккаунта; данные не покидают телефон, пока вы сами не поделитесь
+• Без рекламы, слежки и аккаунта; списки остаются на телефоне, пока вы сами не поделитесь (голосовой ввод по желанию использует распознавание речи Google)
 
 ---
 ## Қазақша (kk) — тексеру керек
@@ -59,7 +59,7 @@ Smart Tizim — интернетсіз және аккаунтсыз жұмыс 
 • Тізіммен мәтін немесе файл түрінде бөлісу; сақтық көшірме және қалпына келтіру
 • 14 түс профилі, ашық және қараңғы тақырып, байсалды дизайн
 • Тілдер: қазақша, орысша, ағылшынша
-• Жарнамасыз, бақылаусыз және аккаунтсыз; өзіңіз бөліспесеңіз, деректер телефоннан шықпайды
+• Жарнамасыз, бақылаусыз және аккаунтсыз; өзіңіз бөліспесеңіз, тізімдер телефонда қалады (дауыспен енгізу қалауыңыз бойынша Google сөйлеуді тану қызметін пайдаланады)
 
 ---
 ## Графика (нужно подготовить)
