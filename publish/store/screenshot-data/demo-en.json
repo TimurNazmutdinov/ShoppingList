@@ -1,0 +1,652 @@
+{
+  "app": "ShoppingList",
+  "format": 1,
+  "kind": "list",
+  "exportedAt": "2026-11-16T13:47:18.795763Z",
+  "lists": [
+    {
+      "title": "Weekly groceries",
+      "color": "green",
+      "plannedDate": "2026-11-17",
+      "budget": 15000,
+      "items": [
+        {
+          "title": "Milk",
+          "qty": 2,
+          "unit": "l",
+          "price": 900,
+          "note": null,
+          "category": {
+            "key": "dairy"
+          },
+          "plannedDate": null,
+          "bought": true
+        },
+        {
+          "title": "Bread",
+          "qty": 1,
+          "unit": "pcs",
+          "price": 180,
+          "note": null,
+          "category": {
+            "key": "bread"
+          },
+          "plannedDate": null,
+          "bought": true
+        },
+        {
+          "title": "Potatoes",
+          "qty": 2,
+          "unit": "kg",
+          "price": 600,
+          "note": null,
+          "category": {
+            "key": "veg"
+          },
+          "plannedDate": null,
+          "bought": true
+        },
+        {
+          "title": "Tomatoes",
+          "qty": 1,
+          "unit": "kg",
+          "price": 1200,
+          "note": null,
+          "category": {
+            "key": "veg"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Chicken",
+          "qty": 1.5,
+          "unit": "kg",
+          "price": 3300,
+          "note": null,
+          "category": {
+            "key": "meat"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Buckwheat",
+          "qty": 1,
+          "unit": "kg",
+          "price": 950,
+          "note": null,
+          "category": {
+            "key": "grocery"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Eggs",
+          "qty": 10,
+          "unit": "pcs",
+          "price": 1100,
+          "note": null,
+          "category": {
+            "key": "dairy"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Tea",
+          "qty": 1,
+          "unit": "pack",
+          "price": 1400,
+          "note": null,
+          "category": {
+            "key": "drinks"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Apples",
+          "qty": 1,
+          "unit": "kg",
+          "price": 800,
+          "note": null,
+          "category": {
+            "key": "veg"
+          },
+          "plannedDate": null,
+          "bought": false
+        }
+      ]
+    },
+    {
+      "title": "Saturday dinner",
+      "color": "amber",
+      "plannedDate": "2026-11-20",
+      "budget": 10000,
+      "items": [
+        {
+          "title": "Beef",
+          "qty": 1,
+          "unit": "kg",
+          "price": 4200,
+          "note": null,
+          "category": {
+            "key": "meat"
+          },
+          "plannedDate": null,
+          "bought": true
+        },
+        {
+          "title": "Carrots",
+          "qty": 1,
+          "unit": "kg",
+          "price": 350,
+          "note": null,
+          "category": {
+            "key": "veg"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Onions",
+          "qty": 1,
+          "unit": "kg",
+          "price": 300,
+          "note": null,
+          "category": {
+            "key": "veg"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Rice",
+          "qty": 1,
+          "unit": "kg",
+          "price": 1100,
+          "note": null,
+          "category": {
+            "key": "grocery"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Greens",
+          "qty": 1,
+          "unit": "pack",
+          "price": 400,
+          "note": null,
+          "category": {
+            "key": "veg"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Juice",
+          "qty": 1,
+          "unit": "l",
+          "price": 650,
+          "note": null,
+          "category": {
+            "key": "drinks"
+          },
+          "plannedDate": null,
+          "bought": false
+        }
+      ]
+    },
+    {
+      "title": "Household supplies",
+      "color": "sky",
+      "plannedDate": "2026-11-23",
+      "budget": 8000,
+      "items": [
+        {
+          "title": "Laundry powder",
+          "qty": 1,
+          "unit": "pack",
+          "price": 2900,
+          "note": null,
+          "category": {
+            "key": "household"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Dish sponges",
+          "qty": 1,
+          "unit": "pack",
+          "price": 500,
+          "note": null,
+          "category": {
+            "key": "household"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Trash bags",
+          "qty": 1,
+          "unit": "pack",
+          "price": 700,
+          "note": null,
+          "category": {
+            "key": "household"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Toothpaste",
+          "qty": 2,
+          "unit": "pcs",
+          "price": 1800,
+          "note": null,
+          "category": {
+            "key": "other"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Toilet paper",
+          "qty": 1,
+          "unit": "pack",
+          "price": 1600,
+          "note": null,
+          "category": {
+            "key": "household"
+          },
+          "plannedDate": null,
+          "bought": false
+        }
+      ]
+    },
+    {
+      "title": "Birthday party",
+      "color": "pink",
+      "plannedDate": "2026-11-26",
+      "budget": 20000,
+      "items": [
+        {
+          "title": "Cake",
+          "qty": 1,
+          "unit": "pcs",
+          "price": 6500,
+          "note": null,
+          "category": {
+            "key": "bread"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Lemonade",
+          "qty": 3,
+          "unit": "l",
+          "price": 1500,
+          "note": null,
+          "category": {
+            "key": "drinks"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Candies",
+          "qty": 1,
+          "unit": "kg",
+          "price": 2800,
+          "note": null,
+          "category": {
+            "key": "grocery"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Candles",
+          "qty": 1,
+          "unit": "pack",
+          "price": 600,
+          "note": null,
+          "category": {
+            "key": "household"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Napkins",
+          "qty": 2,
+          "unit": "pack",
+          "price": 700,
+          "note": null,
+          "category": {
+            "key": "household"
+          },
+          "plannedDate": null,
+          "bought": false
+        }
+      ]
+    }
+  ],
+  "history": [
+    {
+      "title": "Milk",
+      "qty": 2,
+      "unit": "l",
+      "price": 900,
+      "category": {
+        "key": "dairy"
+      },
+      "usedCount": 3
+    },
+    {
+      "title": "Bread",
+      "qty": 1,
+      "unit": "pcs",
+      "price": 180,
+      "category": {
+        "key": "bread"
+      },
+      "usedCount": 4
+    },
+    {
+      "title": "Potatoes",
+      "qty": 2,
+      "unit": "kg",
+      "price": 600,
+      "category": {
+        "key": "veg"
+      },
+      "usedCount": 5
+    },
+    {
+      "title": "Tomatoes",
+      "qty": 1,
+      "unit": "kg",
+      "price": 1200,
+      "category": {
+        "key": "veg"
+      },
+      "usedCount": 6
+    },
+    {
+      "title": "Chicken",
+      "qty": 1.5,
+      "unit": "kg",
+      "price": 3300,
+      "category": {
+        "key": "meat"
+      },
+      "usedCount": 7
+    },
+    {
+      "title": "Buckwheat",
+      "qty": 1,
+      "unit": "kg",
+      "price": 950,
+      "category": {
+        "key": "grocery"
+      },
+      "usedCount": 3
+    },
+    {
+      "title": "Eggs",
+      "qty": 10,
+      "unit": "pcs",
+      "price": 1100,
+      "category": {
+        "key": "dairy"
+      },
+      "usedCount": 4
+    },
+    {
+      "title": "Tea",
+      "qty": 1,
+      "unit": "pack",
+      "price": 1400,
+      "category": {
+        "key": "drinks"
+      },
+      "usedCount": 5
+    },
+    {
+      "title": "Apples",
+      "qty": 1,
+      "unit": "kg",
+      "price": 800,
+      "category": {
+        "key": "veg"
+      },
+      "usedCount": 6
+    },
+    {
+      "title": "Beef",
+      "qty": 1,
+      "unit": "kg",
+      "price": 4200,
+      "category": {
+        "key": "meat"
+      },
+      "usedCount": 7
+    },
+    {
+      "title": "Carrots",
+      "qty": 1,
+      "unit": "kg",
+      "price": 350,
+      "category": {
+        "key": "veg"
+      },
+      "usedCount": 3
+    },
+    {
+      "title": "Onions",
+      "qty": 1,
+      "unit": "kg",
+      "price": 300,
+      "category": {
+        "key": "veg"
+      },
+      "usedCount": 4
+    },
+    {
+      "title": "Rice",
+      "qty": 1,
+      "unit": "kg",
+      "price": 1100,
+      "category": {
+        "key": "grocery"
+      },
+      "usedCount": 5
+    },
+    {
+      "title": "Greens",
+      "qty": 1,
+      "unit": "pack",
+      "price": 400,
+      "category": {
+        "key": "veg"
+      },
+      "usedCount": 6
+    },
+    {
+      "title": "Juice",
+      "qty": 1,
+      "unit": "l",
+      "price": 650,
+      "category": {
+        "key": "drinks"
+      },
+      "usedCount": 7
+    },
+    {
+      "title": "Laundry powder",
+      "qty": 1,
+      "unit": "pack",
+      "price": 2900,
+      "category": {
+        "key": "household"
+      },
+      "usedCount": 3
+    },
+    {
+      "title": "Dish sponges",
+      "qty": 1,
+      "unit": "pack",
+      "price": 500,
+      "category": {
+        "key": "household"
+      },
+      "usedCount": 4
+    },
+    {
+      "title": "Trash bags",
+      "qty": 1,
+      "unit": "pack",
+      "price": 700,
+      "category": {
+        "key": "household"
+      },
+      "usedCount": 5
+    },
+    {
+      "title": "Toothpaste",
+      "qty": 2,
+      "unit": "pcs",
+      "price": 1800,
+      "category": {
+        "key": "other"
+      },
+      "usedCount": 6
+    },
+    {
+      "title": "Toilet paper",
+      "qty": 1,
+      "unit": "pack",
+      "price": 1600,
+      "category": {
+        "key": "household"
+      },
+      "usedCount": 7
+    },
+    {
+      "title": "Cake",
+      "qty": 1,
+      "unit": "pcs",
+      "price": 6500,
+      "category": {
+        "key": "bread"
+      },
+      "usedCount": 3
+    },
+    {
+      "title": "Lemonade",
+      "qty": 3,
+      "unit": "l",
+      "price": 1500,
+      "category": {
+        "key": "drinks"
+      },
+      "usedCount": 4
+    },
+    {
+      "title": "Candies",
+      "qty": 1,
+      "unit": "kg",
+      "price": 2800,
+      "category": {
+        "key": "grocery"
+      },
+      "usedCount": 5
+    },
+    {
+      "title": "Candles",
+      "qty": 1,
+      "unit": "pack",
+      "price": 600,
+      "category": {
+        "key": "household"
+      },
+      "usedCount": 6
+    },
+    {
+      "title": "Napkins",
+      "qty": 2,
+      "unit": "pack",
+      "price": 700,
+      "category": {
+        "key": "household"
+      },
+      "usedCount": 7
+    }
+  ],
+  "dishes": [
+    {
+      "title": "Borscht",
+      "products": [
+        {
+          "title": "Beetroot",
+          "qty": 0.5,
+          "unit": "kg",
+          "price": 400
+        },
+        {
+          "title": "Cabbage",
+          "qty": 0.5,
+          "unit": "kg",
+          "price": 250
+        },
+        {
+          "title": "Beef",
+          "qty": 0.5,
+          "unit": "kg",
+          "price": 2100
+        },
+        {
+          "title": "Potatoes",
+          "qty": 0.5,
+          "unit": "kg",
+          "price": 150
+        }
+      ]
+    },
+    {
+      "title": "Pilaf",
+      "products": [
+        {
+          "title": "Rice",
+          "qty": 0.5,
+          "unit": "kg",
+          "price": 550
+        },
+        {
+          "title": "Beef",
+          "qty": 0.5,
+          "unit": "kg",
+          "price": 2100
+        },
+        {
+          "title": "Carrots",
+          "qty": 0.5,
+          "unit": "kg",
+          "price": 175
+        },
+        {
+          "title": "Onions",
+          "qty": 0.3,
+          "unit": "kg",
+          "price": 90
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,652 @@
+{
+  "app": "ShoppingList",
+  "format": 1,
+  "kind": "list",
+  "exportedAt": "2026-11-16T13:47:18.795300Z",
+  "lists": [
+    {
+      "title": "Апталық азық-түлік",
+      "color": "green",
+      "plannedDate": "2026-11-17",
+      "budget": 15000,
+      "items": [
+        {
+          "title": "Сүт",
+          "qty": 2,
+          "unit": "l",
+          "price": 900,
+          "note": null,
+          "category": {
+            "key": "dairy"
+          },
+          "plannedDate": null,
+          "bought": true
+        },
+        {
+          "title": "Нан",
+          "qty": 1,
+          "unit": "pcs",
+          "price": 180,
+          "note": null,
+          "category": {
+            "key": "bread"
+          },
+          "plannedDate": null,
+          "bought": true
+        },
+        {
+          "title": "Картоп",
+          "qty": 2,
+          "unit": "kg",
+          "price": 600,
+          "note": null,
+          "category": {
+            "key": "veg"
+          },
+          "plannedDate": null,
+          "bought": true
+        },
+        {
+          "title": "Қызанақ",
+          "qty": 1,
+          "unit": "kg",
+          "price": 1200,
+          "note": null,
+          "category": {
+            "key": "veg"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Тауық еті",
+          "qty": 1.5,
+          "unit": "kg",
+          "price": 3300,
+          "note": null,
+          "category": {
+            "key": "meat"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Қарақұмық",
+          "qty": 1,
+          "unit": "kg",
+          "price": 950,
+          "note": null,
+          "category": {
+            "key": "grocery"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Жұмыртқа",
+          "qty": 10,
+          "unit": "pcs",
+          "price": 1100,
+          "note": null,
+          "category": {
+            "key": "dairy"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Шай",
+          "qty": 1,
+          "unit": "pack",
+          "price": 1400,
+          "note": null,
+          "category": {
+            "key": "drinks"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Алма",
+          "qty": 1,
+          "unit": "kg",
+          "price": 800,
+          "note": null,
+          "category": {
+            "key": "veg"
+          },
+          "plannedDate": null,
+          "bought": false
+        }
+      ]
+    },
+    {
+      "title": "Сенбідегі кешкі ас",
+      "color": "amber",
+      "plannedDate": "2026-11-20",
+      "budget": 10000,
+      "items": [
+        {
+          "title": "Сиыр еті",
+          "qty": 1,
+          "unit": "kg",
+          "price": 4200,
+          "note": null,
+          "category": {
+            "key": "meat"
+          },
+          "plannedDate": null,
+          "bought": true
+        },
+        {
+          "title": "Сәбіз",
+          "qty": 1,
+          "unit": "kg",
+          "price": 350,
+          "note": null,
+          "category": {
+            "key": "veg"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Пияз",
+          "qty": 1,
+          "unit": "kg",
+          "price": 300,
+          "note": null,
+          "category": {
+            "key": "veg"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Күріш",
+          "qty": 1,
+          "unit": "kg",
+          "price": 1100,
+          "note": null,
+          "category": {
+            "key": "grocery"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Көкөніс",
+          "qty": 1,
+          "unit": "pack",
+          "price": 400,
+          "note": null,
+          "category": {
+            "key": "veg"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Шырын",
+          "qty": 1,
+          "unit": "l",
+          "price": 650,
+          "note": null,
+          "category": {
+            "key": "drinks"
+          },
+          "plannedDate": null,
+          "bought": false
+        }
+      ]
+    },
+    {
+      "title": "Үй тауарлары",
+      "color": "sky",
+      "plannedDate": "2026-11-23",
+      "budget": 8000,
+      "items": [
+        {
+          "title": "Кір жуғыш ұнтақ",
+          "qty": 1,
+          "unit": "pack",
+          "price": 2900,
+          "note": null,
+          "category": {
+            "key": "household"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Ыдыс жуатын губка",
+          "qty": 1,
+          "unit": "pack",
+          "price": 500,
+          "note": null,
+          "category": {
+            "key": "household"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Қоқыс пакеттері",
+          "qty": 1,
+          "unit": "pack",
+          "price": 700,
+          "note": null,
+          "category": {
+            "key": "household"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Тіс пастасы",
+          "qty": 2,
+          "unit": "pcs",
+          "price": 1800,
+          "note": null,
+          "category": {
+            "key": "other"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Дәрет қағазы",
+          "qty": 1,
+          "unit": "pack",
+          "price": 1600,
+          "note": null,
+          "category": {
+            "key": "household"
+          },
+          "plannedDate": null,
+          "bought": false
+        }
+      ]
+    },
+    {
+      "title": "Туған күн",
+      "color": "pink",
+      "plannedDate": "2026-11-26",
+      "budget": 20000,
+      "items": [
+        {
+          "title": "Торт",
+          "qty": 1,
+          "unit": "pcs",
+          "price": 6500,
+          "note": null,
+          "category": {
+            "key": "bread"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Лимонад",
+          "qty": 3,
+          "unit": "l",
+          "price": 1500,
+          "note": null,
+          "category": {
+            "key": "drinks"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Кәмпиттер",
+          "qty": 1,
+          "unit": "kg",
+          "price": 2800,
+          "note": null,
+          "category": {
+            "key": "grocery"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Шамдар",
+          "qty": 1,
+          "unit": "pack",
+          "price": 600,
+          "note": null,
+          "category": {
+            "key": "household"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Майлықтар",
+          "qty": 2,
+          "unit": "pack",
+          "price": 700,
+          "note": null,
+          "category": {
+            "key": "household"
+          },
+          "plannedDate": null,
+          "bought": false
+        }
+      ]
+    }
+  ],
+  "history": [
+    {
+      "title": "Сүт",
+      "qty": 2,
+      "unit": "l",
+      "price": 900,
+      "category": {
+        "key": "dairy"
+      },
+      "usedCount": 3
+    },
+    {
+      "title": "Нан",
+      "qty": 1,
+      "unit": "pcs",
+      "price": 180,
+      "category": {
+        "key": "bread"
+      },
+      "usedCount": 4
+    },
+    {
+      "title": "Картоп",
+      "qty": 2,
+      "unit": "kg",
+      "price": 600,
+      "category": {
+        "key": "veg"
+      },
+      "usedCount": 5
+    },
+    {
+      "title": "Қызанақ",
+      "qty": 1,
+      "unit": "kg",
+      "price": 1200,
+      "category": {
+        "key": "veg"
+      },
+      "usedCount": 6
+    },
+    {
+      "title": "Тауық еті",
+      "qty": 1.5,
+      "unit": "kg",
+      "price": 3300,
+      "category": {
+        "key": "meat"
+      },
+      "usedCount": 7
+    },
+    {
+      "title": "Қарақұмық",
+      "qty": 1,
+      "unit": "kg",
+      "price": 950,
+      "category": {
+        "key": "grocery"
+      },
+      "usedCount": 3
+    },
+    {
+      "title": "Жұмыртқа",
+      "qty": 10,
+      "unit": "pcs",
+      "price": 1100,
+      "category": {
+        "key": "dairy"
+      },
+      "usedCount": 4
+    },
+    {
+      "title": "Шай",
+      "qty": 1,
+      "unit": "pack",
+      "price": 1400,
+      "category": {
+        "key": "drinks"
+      },
+      "usedCount": 5
+    },
+    {
+      "title": "Алма",
+      "qty": 1,
+      "unit": "kg",
+      "price": 800,
+      "category": {
+        "key": "veg"
+      },
+      "usedCount": 6
+    },
+    {
+      "title": "Сиыр еті",
+      "qty": 1,
+      "unit": "kg",
+      "price": 4200,
+      "category": {
+        "key": "meat"
+      },
+      "usedCount": 7
+    },
+    {
+      "title": "Сәбіз",
+      "qty": 1,
+      "unit": "kg",
+      "price": 350,
+      "category": {
+        "key": "veg"
+      },
+      "usedCount": 3
+    },
+    {
+      "title": "Пияз",
+      "qty": 1,
+      "unit": "kg",
+      "price": 300,
+      "category": {
+        "key": "veg"
+      },
+      "usedCount": 4
+    },
+    {
+      "title": "Күріш",
+      "qty": 1,
+      "unit": "kg",
+      "price": 1100,
+      "category": {
+        "key": "grocery"
+      },
+      "usedCount": 5
+    },
+    {
+      "title": "Көкөніс",
+      "qty": 1,
+      "unit": "pack",
+      "price": 400,
+      "category": {
+        "key": "veg"
+      },
+      "usedCount": 6
+    },
+    {
+      "title": "Шырын",
+      "qty": 1,
+      "unit": "l",
+      "price": 650,
+      "category": {
+        "key": "drinks"
+      },
+      "usedCount": 7
+    },
+    {
+      "title": "Кір жуғыш ұнтақ",
+      "qty": 1,
+      "unit": "pack",
+      "price": 2900,
+      "category": {
+        "key": "household"
+      },
+      "usedCount": 3
+    },
+    {
+      "title": "Ыдыс жуатын губка",
+      "qty": 1,
+      "unit": "pack",
+      "price": 500,
+      "category": {
+        "key": "household"
+      },
+      "usedCount": 4
+    },
+    {
+      "title": "Қоқыс пакеттері",
+      "qty": 1,
+      "unit": "pack",
+      "price": 700,
+      "category": {
+        "key": "household"
+      },
+      "usedCount": 5
+    },
+    {
+      "title": "Тіс пастасы",
+      "qty": 2,
+      "unit": "pcs",
+      "price": 1800,
+      "category": {
+        "key": "other"
+      },
+      "usedCount": 6
+    },
+    {
+      "title": "Дәрет қағазы",
+      "qty": 1,
+      "unit": "pack",
+      "price": 1600,
+      "category": {
+        "key": "household"
+      },
+      "usedCount": 7
+    },
+    {
+      "title": "Торт",
+      "qty": 1,
+      "unit": "pcs",
+      "price": 6500,
+      "category": {
+        "key": "bread"
+      },
+      "usedCount": 3
+    },
+    {
+      "title": "Лимонад",
+      "qty": 3,
+      "unit": "l",
+      "price": 1500,
+      "category": {
+        "key": "drinks"
+      },
+      "usedCount": 4
+    },
+    {
+      "title": "Кәмпиттер",
+      "qty": 1,
+      "unit": "kg",
+      "price": 2800,
+      "category": {
+        "key": "grocery"
+      },
+      "usedCount": 5
+    },
+    {
+      "title": "Шамдар",
+      "qty": 1,
+      "unit": "pack",
+      "price": 600,
+      "category": {
+        "key": "household"
+      },
+      "usedCount": 6
+    },
+    {
+      "title": "Майлықтар",
+      "qty": 2,
+      "unit": "pack",
+      "price": 700,
+      "category": {
+        "key": "household"
+      },
+      "usedCount": 7
+    }
+  ],
+  "dishes": [
+    {
+      "title": "Борщ",
+      "products": [
+        {
+          "title": "Қызылша",
+          "qty": 0.5,
+          "unit": "kg",
+          "price": 400
+        },
+        {
+          "title": "Қырыққабат",
+          "qty": 0.5,
+          "unit": "kg",
+          "price": 250
+        },
+        {
+          "title": "Сиыр еті",
+          "qty": 0.5,
+          "unit": "kg",
+          "price": 2100
+        },
+        {
+          "title": "Картоп",
+          "qty": 0.5,
+          "unit": "kg",
+          "price": 150
+        }
+      ]
+    },
+    {
+      "title": "Палау",
+      "products": [
+        {
+          "title": "Күріш",
+          "qty": 0.5,
+          "unit": "kg",
+          "price": 550
+        },
+        {
+          "title": "Сиыр еті",
+          "qty": 0.5,
+          "unit": "kg",
+          "price": 2100
+        },
+        {
+          "title": "Сәбіз",
+          "qty": 0.5,
+          "unit": "kg",
+          "price": 175
+        },
+        {
+          "title": "Пияз",
+          "qty": 0.3,
+          "unit": "kg",
+          "price": 90
+        }
+      ]
+    }
+  ]
+}

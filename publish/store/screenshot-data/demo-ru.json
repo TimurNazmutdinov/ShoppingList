@@ -1,0 +1,652 @@
+{
+  "app": "ShoppingList",
+  "format": 1,
+  "kind": "list",
+  "exportedAt": "2026-11-16T13:47:18.794781Z",
+  "lists": [
+    {
+      "title": "Продукты на неделю",
+      "color": "green",
+      "plannedDate": "2026-11-17",
+      "budget": 15000,
+      "items": [
+        {
+          "title": "Молоко",
+          "qty": 2,
+          "unit": "l",
+          "price": 900,
+          "note": null,
+          "category": {
+            "key": "dairy"
+          },
+          "plannedDate": null,
+          "bought": true
+        },
+        {
+          "title": "Хлеб",
+          "qty": 1,
+          "unit": "pcs",
+          "price": 180,
+          "note": null,
+          "category": {
+            "key": "bread"
+          },
+          "plannedDate": null,
+          "bought": true
+        },
+        {
+          "title": "Картофель",
+          "qty": 2,
+          "unit": "kg",
+          "price": 600,
+          "note": null,
+          "category": {
+            "key": "veg"
+          },
+          "plannedDate": null,
+          "bought": true
+        },
+        {
+          "title": "Помидоры",
+          "qty": 1,
+          "unit": "kg",
+          "price": 1200,
+          "note": null,
+          "category": {
+            "key": "veg"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Курица",
+          "qty": 1.5,
+          "unit": "kg",
+          "price": 3300,
+          "note": null,
+          "category": {
+            "key": "meat"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Гречка",
+          "qty": 1,
+          "unit": "kg",
+          "price": 950,
+          "note": null,
+          "category": {
+            "key": "grocery"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Яйца",
+          "qty": 10,
+          "unit": "pcs",
+          "price": 1100,
+          "note": null,
+          "category": {
+            "key": "dairy"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Чай",
+          "qty": 1,
+          "unit": "pack",
+          "price": 1400,
+          "note": null,
+          "category": {
+            "key": "drinks"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Яблоки",
+          "qty": 1,
+          "unit": "kg",
+          "price": 800,
+          "note": null,
+          "category": {
+            "key": "veg"
+          },
+          "plannedDate": null,
+          "bought": false
+        }
+      ]
+    },
+    {
+      "title": "Ужин в субботу",
+      "color": "amber",
+      "plannedDate": "2026-11-20",
+      "budget": 10000,
+      "items": [
+        {
+          "title": "Говядина",
+          "qty": 1,
+          "unit": "kg",
+          "price": 4200,
+          "note": null,
+          "category": {
+            "key": "meat"
+          },
+          "plannedDate": null,
+          "bought": true
+        },
+        {
+          "title": "Морковь",
+          "qty": 1,
+          "unit": "kg",
+          "price": 350,
+          "note": null,
+          "category": {
+            "key": "veg"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Лук",
+          "qty": 1,
+          "unit": "kg",
+          "price": 300,
+          "note": null,
+          "category": {
+            "key": "veg"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Рис",
+          "qty": 1,
+          "unit": "kg",
+          "price": 1100,
+          "note": null,
+          "category": {
+            "key": "grocery"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Зелень",
+          "qty": 1,
+          "unit": "pack",
+          "price": 400,
+          "note": null,
+          "category": {
+            "key": "veg"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Сок",
+          "qty": 1,
+          "unit": "l",
+          "price": 650,
+          "note": null,
+          "category": {
+            "key": "drinks"
+          },
+          "plannedDate": null,
+          "bought": false
+        }
+      ]
+    },
+    {
+      "title": "Хозяйственные товары",
+      "color": "sky",
+      "plannedDate": "2026-11-23",
+      "budget": 8000,
+      "items": [
+        {
+          "title": "Стиральный порошок",
+          "qty": 1,
+          "unit": "pack",
+          "price": 2900,
+          "note": null,
+          "category": {
+            "key": "household"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Губки для посуды",
+          "qty": 1,
+          "unit": "pack",
+          "price": 500,
+          "note": null,
+          "category": {
+            "key": "household"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Мусорные пакеты",
+          "qty": 1,
+          "unit": "pack",
+          "price": 700,
+          "note": null,
+          "category": {
+            "key": "household"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Зубная паста",
+          "qty": 2,
+          "unit": "pcs",
+          "price": 1800,
+          "note": null,
+          "category": {
+            "key": "other"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Туалетная бумага",
+          "qty": 1,
+          "unit": "pack",
+          "price": 1600,
+          "note": null,
+          "category": {
+            "key": "household"
+          },
+          "plannedDate": null,
+          "bought": false
+        }
+      ]
+    },
+    {
+      "title": "День рождения",
+      "color": "pink",
+      "plannedDate": "2026-11-26",
+      "budget": 20000,
+      "items": [
+        {
+          "title": "Торт",
+          "qty": 1,
+          "unit": "pcs",
+          "price": 6500,
+          "note": null,
+          "category": {
+            "key": "bread"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Лимонад",
+          "qty": 3,
+          "unit": "l",
+          "price": 1500,
+          "note": null,
+          "category": {
+            "key": "drinks"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Конфеты",
+          "qty": 1,
+          "unit": "kg",
+          "price": 2800,
+          "note": null,
+          "category": {
+            "key": "grocery"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Свечи",
+          "qty": 1,
+          "unit": "pack",
+          "price": 600,
+          "note": null,
+          "category": {
+            "key": "household"
+          },
+          "plannedDate": null,
+          "bought": false
+        },
+        {
+          "title": "Салфетки",
+          "qty": 2,
+          "unit": "pack",
+          "price": 700,
+          "note": null,
+          "category": {
+            "key": "household"
+          },
+          "plannedDate": null,
+          "bought": false
+        }
+      ]
+    }
+  ],
+  "history": [
+    {
+      "title": "Молоко",
+      "qty": 2,
+      "unit": "l",
+      "price": 900,
+      "category": {
+        "key": "dairy"
+      },
+      "usedCount": 3
+    },
+    {
+      "title": "Хлеб",
+      "qty": 1,
+      "unit": "pcs",
+      "price": 180,
+      "category": {
+        "key": "bread"
+      },
+      "usedCount": 4
+    },
+    {
+      "title": "Картофель",
+      "qty": 2,
+      "unit": "kg",
+      "price": 600,
+      "category": {
+        "key": "veg"
+      },
+      "usedCount": 5
+    },
+    {
+      "title": "Помидоры",
+      "qty": 1,
+      "unit": "kg",
+      "price": 1200,
+      "category": {
+        "key": "veg"
+      },
+      "usedCount": 6
+    },
+    {
+      "title": "Курица",
+      "qty": 1.5,
+      "unit": "kg",
+      "price": 3300,
+      "category": {
+        "key": "meat"
+      },
+      "usedCount": 7
+    },
+    {
+      "title": "Гречка",
+      "qty": 1,
+      "unit": "kg",
+      "price": 950,
+      "category": {
+        "key": "grocery"
+      },
+      "usedCount": 3
+    },
+    {
+      "title": "Яйца",
+      "qty": 10,
+      "unit": "pcs",
+      "price": 1100,
+      "category": {
+        "key": "dairy"
+      },
+      "usedCount": 4
+    },
+    {
+      "title": "Чай",
+      "qty": 1,
+      "unit": "pack",
+      "price": 1400,
+      "category": {
+        "key": "drinks"
+      },
+      "usedCount": 5
+    },
+    {
+      "title": "Яблоки",
+      "qty": 1,
+      "unit": "kg",
+      "price": 800,
+      "category": {
+        "key": "veg"
+      },
+      "usedCount": 6
+    },
+    {
+      "title": "Говядина",
+      "qty": 1,
+      "unit": "kg",
+      "price": 4200,
+      "category": {
+        "key": "meat"
+      },
+      "usedCount": 7
+    },
+    {
+      "title": "Морковь",
+      "qty": 1,
+      "unit": "kg",
+      "price": 350,
+      "category": {
+        "key": "veg"
+      },
+      "usedCount": 3
+    },
+    {
+      "title": "Лук",
+      "qty": 1,
+      "unit": "kg",
+      "price": 300,
+      "category": {
+        "key": "veg"
+      },
+      "usedCount": 4
+    },
+    {
+      "title": "Рис",
+      "qty": 1,
+      "unit": "kg",
+      "price": 1100,
+      "category": {
+        "key": "grocery"
+      },
+      "usedCount": 5
+    },
+    {
+      "title": "Зелень",
+      "qty": 1,
+      "unit": "pack",
+      "price": 400,
+      "category": {
+        "key": "veg"
+      },
+      "usedCount": 6
+    },
+    {
+      "title": "Сок",
+      "qty": 1,
+      "unit": "l",
+      "price": 650,
+      "category": {
+        "key": "drinks"
+      },
+      "usedCount": 7
+    },
+    {
+      "title": "Стиральный порошок",
+      "qty": 1,
+      "unit": "pack",
+      "price": 2900,
+      "category": {
+        "key": "household"
+      },
+      "usedCount": 3
+    },
+    {
+      "title": "Губки для посуды",
+      "qty": 1,
+      "unit": "pack",
+      "price": 500,
+      "category": {
+        "key": "household"
+      },
+      "usedCount": 4
+    },
+    {
+      "title": "Мусорные пакеты",
+      "qty": 1,
+      "unit": "pack",
+      "price": 700,
+      "category": {
+        "key": "household"
+      },
+      "usedCount": 5
+    },
+    {
+      "title": "Зубная паста",
+      "qty": 2,
+      "unit": "pcs",
+      "price": 1800,
+      "category": {
+        "key": "other"
+      },
+      "usedCount": 6
+    },
+    {
+      "title": "Туалетная бумага",
+      "qty": 1,
+      "unit": "pack",
+      "price": 1600,
+      "category": {
+        "key": "household"
+      },
+      "usedCount": 7
+    },
+    {
+      "title": "Торт",
+      "qty": 1,
+      "unit": "pcs",
+      "price": 6500,
+      "category": {
+        "key": "bread"
+      },
+      "usedCount": 3
+    },
+    {
+      "title": "Лимонад",
+      "qty": 3,
+      "unit": "l",
+      "price": 1500,
+      "category": {
+        "key": "drinks"
+      },
+      "usedCount": 4
+    },
+    {
+      "title": "Конфеты",
+      "qty": 1,
+      "unit": "kg",
+      "price": 2800,
+      "category": {
+        "key": "grocery"
+      },
+      "usedCount": 5
+    },
+    {
+      "title": "Свечи",
+      "qty": 1,
+      "unit": "pack",
+      "price": 600,
+      "category": {
+        "key": "household"
+      },
+      "usedCount": 6
+    },
+    {
+      "title": "Салфетки",
+      "qty": 2,
+      "unit": "pack",
+      "price": 700,
+      "category": {
+        "key": "household"
+      },
+      "usedCount": 7
+    }
+  ],
+  "dishes": [
+    {
+      "title": "Борщ",
+      "products": [
+        {
+          "title": "Свёкла",
+          "qty": 0.5,
+          "unit": "kg",
+          "price": 400
+        },
+        {
+          "title": "Капуста",
+          "qty": 0.5,
+          "unit": "kg",
+          "price": 250
+        },
+        {
+          "title": "Говядина",
+          "qty": 0.5,
+          "unit": "kg",
+          "price": 2100
+        },
+        {
+          "title": "Картофель",
+          "qty": 0.5,
+          "unit": "kg",
+          "price": 150
+        }
+      ]
+    },
+    {
+      "title": "Плов",
+      "products": [
+        {
+          "title": "Рис",
+          "qty": 0.5,
+          "unit": "kg",
+          "price": 550
+        },
+        {
+          "title": "Говядина",
+          "qty": 0.5,
+          "unit": "kg",
+          "price": 2100
+        },
+        {
+          "title": "Морковь",
+          "qty": 0.5,
+          "unit": "kg",
+          "price": 175
+        },
+        {
+          "title": "Лук",
+          "qty": 0.3,
+          "unit": "kg",
+          "price": 90
+        }
+      ]
+    }
+  ]
+}
