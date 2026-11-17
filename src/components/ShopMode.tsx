@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { BackHandler, Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useKeepAwake } from 'expo-keep-awake';
 import { Palette, listColor, useTheme } from '@/theme';
 import { t, tn } from '@/i18n';
@@ -27,6 +28,7 @@ type Section = { key: string; kind: 'cat' | 'bought'; category: Category | null;
 // Режим «В магазине»: крупные строки, нажатие на товар — «куплено». Экран не гаснет, пока режим открыт; режим не запоминается.
 export function ShopMode({ title, items, categories, symbol, bottomPad, onToggle, onAdd, onClose }: Props) {
   useKeepAwake();
+  const insets = useSafeAreaInsets();
   const colors = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const [showBought, setShowBought] = useState(false);
@@ -74,7 +76,7 @@ export function ShopMode({ title, items, categories, symbol, bottomPad, onToggle
 
   return (
     <View style={styles.root}>
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 4 }]}>
         <Pressable style={styles.close} onPress={onClose} accessibilityRole="button" accessibilityLabel={t('shop.close')}>
           <Ionicons name="close" size={28} color={colors.text} />
         </Pressable>

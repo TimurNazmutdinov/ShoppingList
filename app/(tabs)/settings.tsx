@@ -401,9 +401,9 @@ const createStyles = (colors: Palette) =>
     segments: { flexDirection: 'row', backgroundColor: colors.cardStrong, borderRadius: radius.button, padding: 4, gap: 4, marginHorizontal: 14, marginBottom: 14 },
     segmentsTop: { marginTop: 14 },
     segment: { flex: 1, minHeight: 48, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4, borderRadius: radius.button - 3 },
-    segmentActive: { backgroundColor: colors.tonal },
+    segmentActive: { backgroundColor: colors.primary },
     segmentText: { color: colors.text, fontSize: 14, textAlign: 'center' },
-    segmentTextActive: { color: colors.onTonal, fontWeight: '600' },
+    segmentTextActive: { color: colors.onPrimary, fontWeight: '700' },
     row: {
       flexDirection: 'row',
       alignItems: 'center',

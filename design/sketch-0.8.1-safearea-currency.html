@@ -1,0 +1,46 @@
+<!doctype html><html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Эскиз 0.8.1: отступ шапки и валюта</title>
+<style>
+:root{--bg:#FFF8EC;--card:#FFFFFF;--strong:#F1E4CC;--text:#3B2A14;--muted:#8A7556;--amber:#C77800;--onamber:#fff;--tonal:#F6DDA8;--sys:#EADBBE}
+body{margin:0;padding:20px;background:#E9DFCB;font-family:system-ui,sans-serif;color:var(--text)}
+h1{font-size:16px;margin:0 0 14px}
+.row{display:flex;gap:28px;flex-wrap:wrap}
+.col{display:flex;flex-direction:column;gap:6px}
+.cap{font-size:13px;font-weight:600}
+.phone{width:260px;height:340px;background:var(--bg);border-radius:18px;border:2px solid #b9a77f;overflow:hidden;position:relative}
+.sys{height:26px;background:var(--sys);font-size:11px;display:flex;justify-content:space-between;align-items:center;padding:0 12px;color:var(--muted)}
+.hdr{display:flex;align-items:center;gap:8px;padding:6px 10px;font-weight:600}
+.x{width:36px;height:36px;border-radius:50%;background:var(--strong);display:flex;align-items:center;justify-content:center;font-size:20px}
+.bad .hdr{position:absolute;top:0;left:0;right:0;padding-top:4px}
+.bad .sys{position:absolute;top:0;left:0;right:0;background:transparent;z-index:1}
+.line{margin:10px 12px;padding:12px;background:var(--card);border-radius:12px;font-size:13px}
+.tag{font-size:12px;margin-top:4px}.bad-t{color:#B3261E}.ok-t{color:#2E7D32}
+.blk{background:var(--card);border-radius:14px;padding:14px;width:260px;box-sizing:border-box}
+.seg{display:flex;background:var(--strong);border-radius:12px;padding:4px;gap:4px;margin-top:8px}
+.seg div{flex:1;min-height:48px;display:flex;align-items:center;justify-content:center;border-radius:9px;font-size:16px}
+.old .on{background:var(--tonal);color:#7A5200;font-weight:600}
+.new .on{background:var(--amber);color:var(--onamber);font-weight:700}
+.new .off{color:var(--text)}
+</style>
+<h1>Эскиз 0.8.1 — светлая тёплая схема (Янтарь). Меняются два места.</h1>
+<h2 style="font-size:14px">П. 8 — режим «В магазин»: шапка и строка состояния</h2>
+<div class="row">
+<div class="col"><div class="cap">Сейчас</div>
+<div class="phone bad"><div class="sys"><span>10:00</span><span>▲ ▮▮▮</span></div>
+<div class="hdr"><div class="x">✕</div>Weekly groceries</div>
+<div style="height:60px"></div><div class="line">Молоко · 2 шт</div></div>
+<div class="tag bad-t">Крестик и название под часами и значками</div></div>
+<div class="col"><div class="cap">Станет</div>
+<div class="phone"><div class="sys"><span>10:00</span><span>▲ ▮▮▮</span></div>
+<div class="hdr"><div class="x">✕</div>Weekly groceries</div>
+<div class="line">Молоко · 2 шт</div></div>
+<div class="tag ok-t">Отступ сверху = высота строки состояния; остальное без изменений</div></div>
+</div>
+<h2 style="font-size:14px;margin-top:26px">П. 5 — Настройки → Валюта и язык: переключатель валюты</h2>
+<div class="row">
+<div class="col"><div class="cap">Сейчас</div><div class="blk old"><div class="seg"><div class="on">₸</div><div class="off">₽</div><div class="off">Своя</div></div></div>
+<div class="tag bad-t">Выбранный слабо отличается от фона</div></div>
+<div class="col"><div class="cap">Станет</div><div class="blk new"><div class="seg"><div class="on">₸</div><div class="off">₽</div><div class="off">Своя</div></div></div>
+<div class="tag ok-t">Выбранный — янтарная заливка и белый жирный текст (цвета primary/onPrimary из темы, во всех профилях)</div></div>
+</div>
+</html>
