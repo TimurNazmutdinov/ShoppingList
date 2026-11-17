@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Keyboard, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Palette, useTheme } from '@/theme';
 import { t } from '@/i18n';
@@ -18,6 +18,7 @@ type Props = {
   onChangeText: (text: string) => void;
   suggestions: HistoryRow[];
   frequent: HistoryRow[]; // «Часто:» — частые покупки, пока строка пуста и в ней курсор
+  canShop?: boolean; // в списке уже есть товары: подсказываем про «В магазин»
   autoFocus?: boolean; // курсор в строке сразу (ярлык «Добавить товар»)
   quick: QuickQty;
   symbol: string; // символ валюты
@@ -29,7 +30,7 @@ type Props = {
 };
 
 // Нижняя строка: подсказки и предпросмотр, поле названия, голос, количество с ценой и «+».
-export function AddBar({ text, onChangeText, suggestions, frequent, autoFocus, quick, symbol, preview, bottomPad, onAdd, onQtyPress, onTipMore }: Props) {
+export function AddBar({ text, onChangeText, suggestions, frequent, canShop, autoFocus, quick, symbol, preview, bottomPad, onAdd, onQtyPress, onTipMore }: Props) {
   const colors = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const [listening, setListening] = useState(false);
@@ -61,6 +62,12 @@ export function AddBar({ text, onChangeText, suggestions, frequent, autoFocus, q
       {showFrequent ? <FrequentRow rows={frequent} onPick={(row) => onAdd(row.title, row)} /> : null}
       {hasPreview ? <BulkPreview items={preview} symbol={symbol} /> : null}
       {listening ? <VoicePanel /> : null}
+      {showTip && focused && canShop ? (
+        <Pressable style={styles.shopHint} onPress={() => Keyboard.dismiss()} accessibilityRole="button" accessibilityLabel={t('shop.hint')}>
+          <Ionicons name="chevron-down" size={18} color={colors.textMuted} />
+          <Text style={styles.shopHintText}>{t('shop.hint')}</Text>
+        </Pressable>
+      ) : null}
       {showTip ? <BulkTip onMore={onTipMore} /> : null}
       <View style={styles.inputRow}>
         <TextInput
@@ -104,6 +111,8 @@ export function AddBar({ text, onChangeText, suggestions, frequent, autoFocus, q
 
 const createStyles = (colors: Palette) =>
   StyleSheet.create({
+    shopHint: { flexDirection: 'row', alignItems: 'center', gap: 6, minHeight: 48 },
+    shopHintText: { color: colors.textMuted, fontSize: 13, flexShrink: 1 },
     bar: { backgroundColor: colors.card, borderTopWidth: 1, borderTopColor: colors.cardBorder, paddingHorizontal: 12, paddingTop: 10 },
     chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 8 },
     chip: { minHeight: 48, justifyContent: 'center', paddingHorizontal: 14, borderRadius: 24, backgroundColor: colors.tonal },

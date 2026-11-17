@@ -130,6 +130,7 @@ export async function ensureSampleList(): Promise<boolean> {
   if ((await loadLists()).length > 0) return false;
   const categories = await loadCategories();
   const id = await createList(t('sample.listTitle'), 'green');
+  await setSetting('sampleHintListId', id);
   for (const ru of ['Молоко', 'Хлеб', 'Яйца', 'Яблоки']) {
     const row = catalogRow(ru, getLanguage(), categories);
     if (row) await addItem({ listId: id, title: row.title, qty: null, unit: null, categoryId: row.categoryId });

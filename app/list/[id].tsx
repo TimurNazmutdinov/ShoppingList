@@ -293,6 +293,7 @@ export default function ListScreen() {
         onChangeText={setText}
         suggestions={shownSuggestions}
         frequent={again}
+        canShop={items.length > 0}
         autoFocus={focus === '1'}
         quick={quick}
         symbol={sym}

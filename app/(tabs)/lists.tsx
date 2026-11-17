@@ -5,12 +5,15 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ListColorKey, Palette, listColor, radius, useTheme } from '@/theme';
 import { t } from '@/i18n';
-import { Item, ShoppingList, copyList, createList, deleteList, ensureSampleList, loadItems, loadLists, resetBought, updateList } from '@/logic/shopping';
+import { Item, ShoppingList, copyList, createList, deleteList, ensureSampleList, isFlagSet, setFlag, loadItems, loadLists, resetBought, updateList } from '@/logic/shopping';
 import { cardDateLabel } from '@/logic/schedule';
 import { daysLeft } from '@/logic/dates';
 import { currencySymbol, formatMoney } from '@/logic/money';
 import { budgetStatus } from '@/logic/budget';
 import { useSettings } from '@/AppSettings';
+import { getSetting } from '@/db';
+import { loadReminderSettings } from '@/db/reminders';
+import { formatHm } from '@/logic/reminders';
 import { ShareKind, shareList } from '@/logic/sharing';
 import { ShareSheet } from '@/components/ShareSheet';
 import { useImportFlow } from '@/useImportFlow';
@@ -33,7 +36,20 @@ export default function ListsScreen() {
   const [confirm, setConfirm] = useState<ShoppingList | null>(null);
   const [shareFor, setShareFor] = useState<ShoppingList | null>(null);
 
-  const reload = useCallback(async () => setLists(await loadLists()), []);
+  const [remindTime, setRemindTime] = useState('');
+  const [sampleId, setSampleId] = useState<number | null>(null); // список-пример с подсказкой про «⋮», пока её не закрыли
+
+  const reload = useCallback(async () => {
+    setLists(await loadLists());
+    setRemindTime(formatHm((await loadReminderSettings()).time));
+    const sid = await getSetting<number>('sampleHintListId');
+    setSampleId(sid !== null && !(await isFlagSet('sampleHintDone')) ? sid : null);
+  }, []);
+  const dismissHint = () => {
+    if (sampleId === null) return;
+    setSampleId(null);
+    setFlag('sampleHintDone').catch((e) => console.warn(e));
+  };
 
   // Открыли через ярлык «Новый список»: сразу окно создания; параметр сбрасываем, чтобы окно не открывалось снова.
   useFocusEffect(
@@ -71,7 +87,10 @@ export default function ListsScreen() {
     });
   };
 
-  const open = (list: ShoppingList) => router.push({ pathname: '/list/[id]', params: { id: String(list.id) } } as never);
+  const open = (list: ShoppingList) => {
+    if (list.id === sampleId) dismissHint();
+    router.push({ pathname: '/list/[id]', params: { id: String(list.id) } } as never);
+  };
 
   const startCopy = (list: ShoppingList) => {
     setMenu(null);
@@ -95,13 +114,15 @@ export default function ListsScreen() {
     const bs = budgetStatus(l.totalPrice, l.budget);
     const status = base;
     const moneyRight = bs ? t('budget.cardLabel', { budget: formatMoney(bs.budget, symbol) }) : t('budget.none');
+    const budgetNote = bs ? (bs.over > 0 ? t('budget.over', { over: formatMoney(bs.over, symbol) }) : t('budget.leftIn', { left: formatMoney(bs.left, symbol) })) : '';
+    const dateText = l.plannedDate ? `${cardDateLabel(l.plannedDate, t('date.today'), t('date.tomorrow'))}${l.remind && remindTime ? `, ${remindTime}` : ''}` : '';
     const money = bs || l.totalPrice > 0 ? `${formatMoney(l.totalPrice, symbol)}, ${moneyRight}` : '';
     return (
       <Pressable
         style={styles.card}
         onPress={() => open(l)}
         accessibilityRole="button"
-        accessibilityLabel={`${t('a11y.openList', { title: l.title })}. ${status}${money ? `. ${money}` : ''}`}
+        accessibilityLabel={`${t('a11y.openList', { title: l.title })}. ${status}${money ? `. ${money}` : ''}${budgetNote ? `. ${budgetNote}` : ''}`}
       >
         <View style={styles.cardTop}>
           <View style={[styles.dot, { backgroundColor: color }]} />
@@ -110,14 +131,19 @@ export default function ListsScreen() {
             <View style={styles.dateBadge}>
               <Ionicons name={l.remind ? 'notifications-outline' : 'calendar-outline'} size={14} color={daysLeft(l.plannedDate) < 0 ? colors.warn : colors.textMuted} />
               <Text style={[styles.dateText, daysLeft(l.plannedDate) < 0 && { color: colors.warn }]}>
-                {cardDateLabel(l.plannedDate, t('date.today'), t('date.tomorrow'))}
+                {dateText}
               </Text>
             </View>
           ) : null}
-          <Pressable style={styles.menu} onPress={() => setMenu(l)} accessibilityRole="button" accessibilityLabel={t('a11y.listMenu')}>
+          <Pressable style={styles.menu} onPress={() => { if (l.id === sampleId) dismissHint(); setMenu(l); }} accessibilityRole="button" accessibilityLabel={t('a11y.listMenu')}>
             <Ionicons name="ellipsis-vertical" size={20} color={colors.textMuted} />
           </Pressable>
         </View>
+        {l.id === sampleId ? (
+          <View style={styles.sampleHint}>
+            <Text style={styles.sampleHintText}>{t('sample.hint')}</Text>
+          </View>
+        ) : null}
         <Text style={styles.status}>{status}</Text>
         {money ? (
           <View style={styles.money}>
@@ -125,6 +151,7 @@ export default function ListsScreen() {
             <Text style={styles.moneyBudget}>{moneyRight}</Text>
           </View>
         ) : null}
+        {budgetNote && bs ? <Text style={[styles.budgetNote, bs.over > 0 && { color: colors.warn }]}>{budgetNote}</Text> : null}
         <View style={styles.track}>
           <View
             style={[
@@ -258,6 +285,9 @@ const createStyles = (colors: Palette) =>
     money: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 4, marginRight: 10 },
     moneyText: { color: colors.text, fontSize: 15 },
     moneyBudget: { color: colors.textMuted, fontSize: 13 },
+    budgetNote: { color: colors.text, fontSize: 13, fontWeight: '600', marginTop: 2 },
+    sampleHint: { alignSelf: 'flex-end', marginTop: 4, marginBottom: 2, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10, backgroundColor: colors.cardStrong },
+    sampleHintText: { color: colors.text, fontSize: 12, fontWeight: '600' },
     track: { height: 6, borderRadius: 3, backgroundColor: colors.track, marginTop: 10, marginRight: 10 },
     fill: { height: 6, borderRadius: 3 },
     fab: {
