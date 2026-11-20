@@ -14,7 +14,7 @@ import { useSettings } from '@/AppSettings';
 import { getSetting } from '@/db';
 import { loadReminderSettings } from '@/db/reminders';
 import { formatHm } from '@/logic/reminders';
-import { ShareKind, shareList } from '@/logic/sharing';
+import { ShareKind, boughtCounts, shareList } from '@/logic/sharing';
 import { ShareSheet } from '@/components/ShareSheet';
 import { useImportFlow } from '@/useImportFlow';
 import { ScreenHeader } from '@/components/ScreenHeader';
@@ -81,10 +81,25 @@ export default function ListsScreen() {
 
   const doShare = (list: ShoppingList, kind: ShareKind) => {
     setShareFor(null);
-    shareList(list.id, kind, currencySymbol(currency)).catch((e) => {
-      console.warn(e);
-      Alert.alert(t('share.failed'));
-    });
+    const send = (onlyOpen: boolean) =>
+      shareList(list.id, kind, currencySymbol(currency), onlyOpen).catch((e) => {
+        console.warn(e);
+        Alert.alert(t('share.failed'));
+      });
+    if (kind !== 'text' && kind !== 'txt') {
+      send(false);
+      return;
+    }
+    boughtCounts(list.id)
+      .then(({ bought, total }) => {
+        if (bought === 0 || bought === total) return send(false);
+        Alert.alert(t('share.askTitle'), t('share.askBody', { b: bought, n: total }), [
+          { text: t('common.cancel'), style: 'cancel' },
+          { text: t('share.all'), onPress: () => send(false) },
+          { text: t('share.onlyOpen'), onPress: () => send(true) },
+        ]);
+      })
+      .catch((e) => console.warn(e));
   };
 
   const open = (list: ShoppingList) => {

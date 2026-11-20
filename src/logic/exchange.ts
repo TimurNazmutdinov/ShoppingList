@@ -232,7 +232,7 @@ export function totalOf(list: ExportList): number | null {
 // Текст для мессенджеров и .txt: «☐ Молоко — 1 л — 450 ₸», купленное с «✓».
 export function listToText(list: ExportList, ctx: FormatContext): string {
   const head = ctx.dateLabel ? `${list.title} (${ctx.dateLabel})` : list.title;
-  const lines = [head, '', ...list.items.map((i) => `${i.bought ? '✓' : '☐'} ${itemLine(i, ctx)}`)];
+  const lines = [head, '', ...list.items.map((i) => `${i.bought ? '☑' : '☐'} ${itemLine(i, ctx)}`)];
   const total = totalOf(list);
   if (total !== null) lines.push('', `${ctx.totalLabel}: ${formatMoney(total, ctx.symbol)}`);
   return lines.join('\n');

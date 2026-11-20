@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>0.8.3 — отправка списка: купленное</title>
+<style>
+body{margin:0;padding:24px;background:#FBF3E4;font:16px system-ui,sans-serif;color:#3B2A1A;display:flex;gap:28px;flex-wrap:wrap;justify-content:center}
+.col{width:320px}h3{margin:0 0 10px;font-size:14px;color:#8A6A45;font-weight:600}
+.sheet{background:#FFFAF0;border-radius:20px 20px 0 0;padding:20px;box-shadow:0 2px 12px #0002}
+.sheet h2{margin:0 0 6px;font-size:20px;font-weight:600}
+.sub{color:#8A6A45;font-size:14px;margin-bottom:10px}
+.opt{display:block;width:100%;min-height:56px;margin-top:10px;border-radius:14px;border:1px solid #E2CFA8;background:#fff;padding:8px 14px;text-align:left;font-size:17px;color:#3B2A1A}
+.opt small{display:block;color:#8A6A45;font-size:13px}
+.opt.main{background:#E8A020;border-color:#E8A020;color:#2B1B08;font-weight:600}
+.opt.main small{color:#4B3410}
+.chat{background:#DCF8C6;border-radius:12px;padding:12px 14px;white-space:pre-line;line-height:1.5;font-size:15px}
+.note{font-size:13px;color:#8A6A45;margin-top:8px}
+</style>
+<div class="col"><h3>1. После выбора «Текстом в мессенджер» (только если в списке есть купленное)</h3>
+<div class="sheet"><h2>Что отправить?</h2><div class="sub">В списке 6 из 9 позиций уже куплено</div>
+<button class="opt main">Только некупленное<small>3 позиции</small></button>
+<button class="opt">Весь список<small>купленное будет отмечено ☑</small></button>
+<button class="opt">Отмена</button></div></div>
+
+<div class="col"><h3>2. «Весь список» в мессенджере</h3>
+<div class="chat">Продукты на неделю (17 ноября 2026)
+
+☑ Молоко — 2 л — 900 ₸
+☑ Хлеб — 1 шт — 180 ₸
+☑ Картофель — 2 кг — 600 ₸
+☐ Помидоры — 1 кг — 1 200 ₸
+☑ Курица — 1,5 кг — 3 300 ₸
+☑ Гречка — 1 кг — 950 ₸
+☐ Яйца — 10 шт — 1 100 ₸
+☑ Чай — 1 уп — 1 400 ₸
+☐ Яблоки — 1 кг — 800 ₸
+
+Итого: 10 430 ₸</div></div>
+
+<div class="col"><h3>3. «Только некупленное»</h3>
+<div class="chat">Продукты на неделю (17 ноября 2026)
+
+☐ Помидоры — 1 кг — 1 200 ₸
+☐ Яйца — 10 шт — 1 100 ₸
+☐ Яблоки — 1 кг — 800 ₸
+
+Итого: 3 100 ₸</div>
+<div class="note">Итог считается только по отправленным позициям.</div></div>
+</html>

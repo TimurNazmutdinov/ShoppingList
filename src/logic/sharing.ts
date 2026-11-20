@@ -20,9 +20,17 @@ export const formatContext = (symbol: string, plannedDate: string | null): Forma
   dateLabel: plannedDate ? formatLong(plannedDate) : '',
 });
 
-export async function shareList(listId: number, kind: ShareKind, symbol: string): Promise<void> {
+// Сколько позиций куплено и сколько всего (для вопроса «что отправить»).
+export async function boughtCounts(listId: number): Promise<{ bought: number; total: number }> {
   const [list] = await loadExportLists(listId);
-  if (!list) return;
+  const items = list?.items ?? [];
+  return { bought: items.filter((i) => i.bought).length, total: items.length };
+}
+
+export async function shareList(listId: number, kind: ShareKind, symbol: string, onlyOpen = false): Promise<void> {
+  const [full] = await loadExportLists(listId);
+  if (!full) return;
+  const list = onlyOpen ? { ...full, items: full.items.filter((i) => !i.bought) } : full;
   const ctx = formatContext(symbol, list.plannedDate);
   const name = fileSafeName(list.title);
   if (kind === 'text') await shareText(listToText(list, ctx));
