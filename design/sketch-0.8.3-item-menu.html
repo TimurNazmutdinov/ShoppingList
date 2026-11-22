@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>0.8.3 — «⋮» в строке товара</title>
+<style>
+body{margin:0;padding:24px;background:#FBF3E4;font:16px system-ui,sans-serif;color:#3B2A1A;display:flex;gap:28px;flex-wrap:wrap;justify-content:center}
+.col{width:340px}h3{margin:0 0 10px;font-size:14px;color:#8A6A45;font-weight:600}
+.cat{font-size:13px;color:#8A6A45;font-weight:600;margin:12px 4px 6px}
+.row{display:flex;align-items:center;min-height:56px;background:#FFFAF0;border:1px solid #E2CFA8;border-radius:14px;margin-bottom:6px}
+.chk{width:52px;display:flex;justify-content:center}.chk i{width:22px;height:22px;border:2px solid #B9A27A;border-radius:8px}
+.chk i.on{background:#E8A020;border-color:#E8A020}
+.ti{flex:1;padding:8px 0;font-size:17px}.ti.done{color:#8A6A45;text-decoration:line-through}
+.q{margin-left:6px;padding:12px 10px;border-radius:10px;font-size:15px;color:#8A6A45}
+.q.has{background:#F3E4C4;border-bottom:2px solid #E8A020}
+.dots{width:44px;height:48px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#8A6A45;font-weight:700}
+.note{font-size:13px;color:#8A6A45;margin-top:8px}
+.sheet{background:#FFFAF0;border-radius:20px 20px 0 0;padding:16px 20px;box-shadow:0 2px 12px #0002}
+.sheet h2{margin:0 0 10px;font-size:18px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 10px}
+.chips span{border:1px solid #E2CFA8;background:#fff;border-radius:18px;padding:8px 14px;font-size:15px}
+.chips span.sel{background:#E8A020;border-color:#E8A020;color:#2B1B08;font-weight:600}
+</style>
+<div class="col"><h3>1. Список: справа в каждой строке «⋮» (зона 44×48 dp)</h3>
+<div class="cat">Молочное</div>
+<div class="row"><div class="chk"><i></i></div><div class="ti">Молоко</div><div class="q has">2 л · 900 ₸</div><div class="dots">⋮</div></div>
+<div class="cat">Другое</div>
+<div class="row"><div class="chk"><i></i></div><div class="ti">Свечи для торта</div><div class="q">Цена</div><div class="dots">⋮</div></div>
+<div class="row"><div class="chk"><i class="on"></i></div><div class="ti done">Хлеб</div><div class="q has">1 шт</div><div class="dots">⋮</div></div>
+<div class="note">Строка целиком по-прежнему открывает правку; «⋮» — понятная подсказка и отдельная кнопка (подпись для TalkBack «Изменить товар»). Нажатие на количество и галочку — как сейчас.</div></div>
+
+<div class="col"><h3>2. Нажали «⋮» — то же окно правки, что открывается сейчас</h3>
+<div class="sheet"><h2>Свечи для торта</h2>
+<div style="font-size:13px;color:#8A6A45">Категория</div>
+<div class="chips"><span>Молочное</span><span>Овощи</span><span>Мясо</span><span class="sel">Другое</span><span>+ Добавить</span></div>
+<div class="note" style="margin:0">…количество, цена, дата, заметка, «Сохранить» — без изменений.</div></div></div>

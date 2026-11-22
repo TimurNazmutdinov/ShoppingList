@@ -60,6 +60,9 @@ export function ItemRow({ item, onToggle, onRemove, onOpen, onEditQty, onSwiped 
         >
           <Text style={[styles.qty, qty === '' && styles.qtyEmpty]}>{qty || t('list.addPrice')}</Text>
         </Pressable>
+        <Pressable style={styles.dotsHit} onPress={() => onOpen(item)} accessibilityRole="button" accessibilityLabel={t('a11y.editItem')}>
+          <Ionicons name="ellipsis-vertical" size={20} color={colors.textMuted} />
+        </Pressable>
       </Pressable>
     </SwipeRow>
   );
@@ -75,8 +78,9 @@ const createStyles = (colors: Palette) =>
       borderWidth: 1,
       borderColor: colors.cardBorder,
       borderRadius: radius.card,
-      paddingRight: 14,
+      paddingRight: 2,
     },
+    dotsHit: { width: 44, height: 48, alignItems: 'center', justifyContent: 'center' },
     checkHit: { width: 52, height: 56, alignItems: 'center', justifyContent: 'center' },
     check: { width: 26, height: 26, borderRadius: 8, borderWidth: 2, borderColor: colors.outline, alignItems: 'center', justifyContent: 'center' },
     checkDone: { backgroundColor: colors.primary, borderColor: colors.primary },

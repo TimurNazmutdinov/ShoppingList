@@ -357,6 +357,7 @@ const strings = {
   'a11y.today': 'Сегодня',
   'a11y.addItem': 'Добавить товар',
   'a11y.checkItem': 'Отметить купленным',
+  'a11y.editItem': 'Изменить товар',
   'a11y.uncheckItem': 'Вернуть в список',
   'a11y.suggestion': 'Подсказка: {text}',
   'a11y.listMenu': 'Параметры списка',

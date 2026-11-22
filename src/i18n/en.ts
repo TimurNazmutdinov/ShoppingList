@@ -349,6 +349,7 @@ export const en: Dictionary = {
     'a11y.today': 'Today',
     'a11y.addItem': 'Add item',
     'a11y.checkItem': 'Mark as bought',
+    'a11y.editItem': 'Edit item',
     'a11y.uncheckItem': 'Put back in the list',
     'a11y.suggestion': 'Suggestion: {text}',
     'a11y.listMenu': 'List options',

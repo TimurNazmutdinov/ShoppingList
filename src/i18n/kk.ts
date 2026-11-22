@@ -350,6 +350,7 @@ export const kk: Dictionary = {
     'a11y.today': 'Бүгін',
     'a11y.addItem': 'Тауар қосу',
     'a11y.checkItem': 'Сатып алынды деп белгілеу',
+    'a11y.editItem': 'Тауарды өзгерту',
     'a11y.uncheckItem': 'Тізімге қайтару',
     'a11y.suggestion': 'Кеңес: {text}',
     'a11y.listMenu': 'Тізім параметрлері',
