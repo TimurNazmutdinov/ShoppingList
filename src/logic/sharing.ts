@@ -2,6 +2,7 @@
 import { StringKey, t } from '@/i18n';
 import { loadExportDishes, loadExportHistory, loadExportLists, importExchange } from '@/db/exchange';
 import { loadSchemeChoice } from '@/db/appearance';
+import { setSetting } from '@/db';
 import { pickFileText, shareFile, sharePdf, shareText } from '@/sharing';
 import { ExchangeFile, ExportCategory, FormatContext, buildFile, fileSafeName, listToHtml, listToText, parseFile } from './exchange';
 import { formatLong } from './dates';
@@ -45,6 +46,7 @@ export async function backupAll(): Promise<void> {
   const day = new Date().toISOString().slice(0, 10);
   const settings = { scheme: choice.scheme, systemLight: choice.systemPicks.light, systemDark: choice.systemPicks.dark };
   await shareFile(`ShoppingList-backup-${day}.json`, JSON.stringify(buildFile('backup', lists, history, new Date(), dishes, settings)), 'application/json');
+  await setSetting('lastBackupAt', Date.now());
 }
 
 export type PickResult = { status: 'cancel' } | { status: 'error'; reason: 'invalid' | 'newer' | 'empty' } | { status: 'ok'; file: ExchangeFile };

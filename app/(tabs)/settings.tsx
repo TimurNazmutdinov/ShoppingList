@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -204,17 +204,19 @@ export default function SettingsScreen() {
             <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
           </Pressable>
 
-          <Pressable
-            style={[styles.row, styles.divider]}
-            onPress={() => router.push('/reminders' as never)}
-            accessibilityRole="button"
-            accessibilityLabel={`${t('reminders.title')}: ${remindersValue}`}
-          >
-            <Ionicons name="notifications-outline" size={22} color={colors.textMuted} />
-            <Text style={styles.rowTitle}>{t('reminders.title')}</Text>
-            <Text style={styles.rowValue}>{remindersValue}</Text>
-            <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
-          </Pressable>
+          {Platform.OS !== 'web' ? (
+            <Pressable
+              style={[styles.row, styles.divider]}
+              onPress={() => router.push('/reminders' as never)}
+              accessibilityRole="button"
+              accessibilityLabel={`${t('reminders.title')}: ${remindersValue}`}
+            >
+              <Ionicons name="notifications-outline" size={22} color={colors.textMuted} />
+              <Text style={styles.rowTitle}>{t('reminders.title')}</Text>
+              <Text style={styles.rowValue}>{remindersValue}</Text>
+              <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+            </Pressable>
+          ) : null}
         </View>
         ) : null}
 

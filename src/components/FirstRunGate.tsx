@@ -1,11 +1,13 @@
-import { ReactNode, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Palette, radius, useTheme } from '@/theme';
 import { Lang, languageNames, languages, t } from '@/i18n';
 import { useSettings } from '@/AppSettings';
 import { saveTermsAccepted } from '@/db/appearance';
+import { isFlagSet, setFlag } from '@/logic/shopping';
+import { InstallHint, isInstalledWeb } from './InstallHint';
 import { LegalDoc, LegalSheet } from './LegalSheet';
 import { PrimaryButton } from './PrimaryButton';
 
@@ -18,6 +20,28 @@ export function FirstRunGate({ languageSet, termsAccepted, children }: { languag
   const [accepted, setAccepted] = useState(termsAccepted);
   const [checked, setChecked] = useState(false);
   const [doc, setDoc] = useState<LegalDoc | null>(null);
+  // Веб в браузере (не со значка «Домой»): сначала инструкция по установке; null — ещё читаем флаг.
+  const [hint, setHint] = useState<boolean | null>(Platform.OS === 'web' && !languageSet && !isInstalledWeb() ? null : false);
+
+  useEffect(() => {
+    if (hint !== null) return;
+    isFlagSet('installHintDone')
+      .then((done) => setHint(!done))
+      .catch(() => setHint(false));
+  }, [hint]);
+
+  if (hint === null) return null;
+  if (hint) {
+    return (
+      <InstallHint
+        onContinue={() => setHint(false)}
+        onNever={() => {
+          setFlag('installHintDone').catch((e) => console.warn(e));
+          setHint(false);
+        }}
+      />
+    );
+  }
 
   if (!langDone) {
     return (

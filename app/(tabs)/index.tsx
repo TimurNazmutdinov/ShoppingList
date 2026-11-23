@@ -10,6 +10,7 @@ import { formatDayTitle, todayIso } from '@/logic/dates';
 import { groupByList, splitDue } from '@/logic/schedule';
 import { ListGroupFooter } from '@/components/ListGroupFooter';
 import { ListGroupHeader } from '@/components/ListGroupHeader';
+import { BackupReminder } from '@/components/BackupReminder';
 import { ScheduledRow } from '@/components/ScheduledRow';
 
 // Секция экрана: заголовок дня («Купить сегодня») без товаров или список с его товарами.
@@ -51,6 +52,7 @@ export default function TodayScreen() {
     <SafeAreaView style={styles.root} edges={['top']}>
       <Text style={styles.title}>{t('today.title')}</Text>
       <Text style={styles.date}>{formatDayTitle(today)}</Text>
+      <BackupReminder />
       <SectionList
         sections={sections}
         keyExtractor={(i, index) => `${i.id}-${index}`}
