@@ -258,7 +258,7 @@ export const kk: Dictionary = {
     'cat.household': 'Тұрмыстық химия',
     'cat.other': 'Басқа',
     'cat.none': 'Санатсыз',
-    'cat.add': 'Өзімдікі',
+    'cat.add': 'Өз санатым',
     'cat.addPlaceholder': 'Санат атауы',
     'item.category': 'Санаты',
     'field.date': 'Сатып алу күні',

@@ -257,7 +257,7 @@ export const en: Dictionary = {
     'cat.household': 'Household',
     'cat.other': 'Other',
     'cat.none': 'No category',
-    'cat.add': 'Custom',
+    'cat.add': 'Custom category',
     'cat.addPlaceholder': 'Category name',
     'item.category': 'Category',
     'field.date': 'Shopping date',

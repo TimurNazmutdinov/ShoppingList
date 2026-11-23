@@ -262,7 +262,7 @@ const strings = {
   'cat.household': 'Бытовая химия',
   'cat.other': 'Другое',
   'cat.none': 'Без категории',
-  'cat.add': 'Своя',
+  'cat.add': 'Своя категория',
   'cat.addPlaceholder': 'Название категории',
   'item.category': 'Категория',
   'field.date': 'Дата покупки',

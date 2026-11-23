@@ -1,0 +1,23 @@
+<!doctype html><html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>0.8.3 — своя категория</title>
+<style>
+body{margin:0;background:#f3ead9;font:14px system-ui,sans-serif;color:#3b2a14;display:flex;gap:20px;flex-wrap:wrap;padding:16px;justify-content:center}
+.col{width:330px}h3{margin:0 0 8px;font-size:13px;color:#8a6a3a}
+.sheet{background:#fffaf0;border-radius:18px;padding:16px;box-shadow:0 2px 10px #0002}
+.lab{font-size:12px;color:#8a6a3a;margin:10px 0 6px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid #e0cfa8;border-radius:16px;padding:9px 12px;min-height:20px;background:#fff}
+.on{background:#f2a516;border-color:#f2a516;color:#3b2a14;font-weight:600}
+.add{border:1.5px dashed #c98300;color:#8a5a00;font-weight:600;background:#fff3d6}
+.row{display:flex;gap:8px;margin-top:8px}
+.in{flex:1;border:1.5px solid #f2a516;border-radius:10px;padding:11px;background:#fff;color:#aaa}
+.ok{background:#f2a516;border-radius:10px;padding:11px 14px;font-weight:600}
+.note{font-size:12px;color:#8a6a3a;margin-top:8px}
+</style>
+<div class="col"><h3>БЫЛО: «+ Своя» в самом конце, под длинным списком</h3><div class="sheet">
+<div class="lab">Категория</div><div class="chips"><span class="chip">Овощи</span><span class="chip">Молочное</span><span class="chip">Мясо</span><span class="chip">Хлеб</span><span class="chip">Напитки</span><span class="chip">Бытовое</span><span class="chip">Другое</span><span class="chip">+ Своя</span></div>
+<div class="note">Кнопка выглядит как обычная категория и может уйти за край экрана.</div></div></div>
+<div class="col"><h3>СТАЛО: «+ Своя категория» первой, янтарная, пунктиром</h3><div class="sheet">
+<div class="lab">Категория</div><div class="chips"><span class="chip add">＋ Своя категория</span><span class="chip">Овощи</span><span class="chip on">Молочное</span><span class="chip">Мясо</span><span class="chip">Хлеб</span><span class="chip">Напитки</span><span class="chip">Бытовое</span><span class="chip">Другое</span></div>
+<div class="row"><div class="in">Название категории</div><div class="ok">Добавить</div></div>
+<div class="note">После нажатия поле появляется сразу под кнопкой; новая категория выбирается автоматически. Только окно правки товара (оно же открывается по «⋮»); других экранов не меняем.</div></div></div>

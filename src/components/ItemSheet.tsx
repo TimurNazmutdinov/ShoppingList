@@ -62,10 +62,10 @@ function ItemForm({ item, categories, onSave, onDelete, onCreateCategory }: Omit
     setAdding(false);
   };
 
-  const chip = (key: string, label: string, active: boolean, onPress: () => void) => (
+  const chip = (key: string, label: string, active: boolean, onPress: () => void, dashed = false) => (
     <Pressable
       key={key}
-      style={[styles.chip, active && styles.chipActive]}
+      style={[styles.chip, dashed && styles.chipDashed, active && styles.chipActive]}
       onPress={onPress}
       accessibilityRole="radio"
       accessibilityState={{ selected: active }}
@@ -98,8 +98,8 @@ function ItemForm({ item, categories, onSave, onDelete, onCreateCategory }: Omit
 
       <Text style={styles.label}>{t('item.category')}</Text>
       <View style={styles.chips}>
+        {chip('add', `＋ ${t('cat.add')}`, adding, () => setAdding((v) => !v), true)}
         {categories.map((c) => chip(String(c.id), categoryName(c), categoryId === c.id, () => setCategoryId(categoryId === c.id ? null : c.id)))}
-        {chip('add', `+ ${t('cat.add')}`, adding, () => setAdding((v) => !v))}
       </View>
       {adding ? (
         <View style={styles.addRow}>
@@ -152,6 +152,7 @@ const createStyles = (colors: Palette) =>
       borderWidth: 1,
       borderColor: colors.outline,
     },
+    chipDashed: { borderStyle: 'dashed', borderColor: colors.primaryStrong, borderWidth: 1.5 },
     chipActive: { backgroundColor: colors.tonal, borderColor: colors.tonal },
     chipText: { color: colors.text, fontSize: 15 },
     chipTextActive: { color: colors.onTonal, fontWeight: '700' },
