@@ -1,4 +1,4 @@
-// Сборка PWA для GitHub Pages: node scripts/build-web.js [базовый-путь] (по умолчанию /ShoppingList-android-apk/app).
+// Сборка PWA для GitHub Pages: node scripts/build-web.js [базовый-путь] (по умолчанию /smart-shopping-list/app).
 // Результат — папка dist-web. Магазинный режим (без «Прототипа» и самообновления).
 const { execSync } = require('child_process');
 const fs = require('fs');
@@ -7,7 +7,7 @@ const crypto = require('crypto');
 
 const root = path.resolve(__dirname, '..');
 const out = path.join(root, 'dist-web');
-const base = (process.argv[2] || '/ShoppingList-android-apk/app').replace(/\/$/, '');
+const base = (process.argv[2] || '/smart-shopping-list/app').replace(/\/$/, '');
 
 fs.rmSync(out, { recursive: true, force: true });
 execSync(`${process.platform === 'win32' ? 'npx.cmd' : 'npx'} expo export -p web --output-dir "${out}"`, {

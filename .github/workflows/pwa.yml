@@ -1,10 +1,10 @@
 name: PWA
 
 # Веб-версия (PWA для iPhone): при каждом обновлении ветки pwa (с main не сливается никогда) собирается и кладётся в папку app/
-# репозитория TimurNazmutdinov/ShoppingList-android-apk (GitHub Pages: ветка main, корень).
-# Адрес: https://timurnazmutdinov.github.io/ShoppingList-android-apk/app/
-# Один раз: создать fine-grained токен (репозиторий ShoppingList-android-apk, Contents: Read and write)
-# и добавить его в этот репозиторий как секрет PAGES_DEPLOY_TOKEN (Settings → Secrets and variables → Actions).
+# репозитория quiteusefulapp/smart-shopping-list (GitHub Pages: ветка main, корень).
+# Адрес: https://quiteusefulapp.github.io/smart-shopping-list/app/
+# Доступ — ключ выкладки (deploy key): приватная часть в секрете PAGES_DEPLOY_KEY этого репозитория,
+# публичная добавлена в quiteusefulapp/smart-shopping-list → Settings → Deploy keys (Allow write access).
 on:
   push:
     branches: [pwa]
@@ -27,18 +27,17 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: node scripts/build-web.js /ShoppingList-android-apk/app
+      - run: node scripts/build-web.js /smart-shopping-list/app
       - uses: actions/checkout@v4
         with:
-          repository: TimurNazmutdinov/ShoppingList-android-apk
-          token: ${{ secrets.PAGES_DEPLOY_TOKEN }}
+          repository: quiteusefulapp/smart-shopping-list
+          ssh-key: ${{ secrets.PAGES_DEPLOY_KEY }}
           path: pages
       - name: Publish to pages/app
         run: |
           rm -rf pages/app
           mkdir -p pages/app
           cp -r dist-web/. pages/app/
-          touch pages/.nojekyll
           cd pages
           git config user.name "pwa-deploy"
           git config user.email "pwa-deploy@users.noreply.github.com"
