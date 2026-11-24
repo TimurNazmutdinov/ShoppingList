@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Linking, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -20,7 +20,7 @@ import { getPermissionState } from '@/notifications';
 import { clearHistory } from '@/logic/shopping';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { useUpdates } from '@/Updates';
-import { DEVELOPER_EMAIL, DEVELOPER_NAME, IS_PROTOTYPE, UPDATES_ENABLED } from '@/config';
+import { DEVELOPER_EMAIL, DEVELOPER_NAME, IS_PROTOTYPE, PLAY_URL, UPDATES_ENABLED } from '@/config';
 import { LegalDoc, LegalSheet } from '@/components/LegalSheet';
 import { appVersion, appVersionCodeLabel } from '@/version';
 
@@ -310,6 +310,14 @@ export default function SettingsScreen() {
             <Text style={styles.rowTitle}>{t('about.contact')}</Text>
             <Text style={styles.rowValue} selectable>{DEVELOPER_EMAIL}</Text>
           </View>
+          <Pressable style={[styles.row, styles.divider]} onPress={() => { Share.share({ message: `${t('about.shareText')}\n${PLAY_URL}` }).catch(() => {}); }} accessibilityRole="button" accessibilityLabel={t('about.share')}>
+            <Text style={styles.rowTitle}>{t('about.share')}</Text>
+            <Ionicons name="share-outline" size={20} color={colors.textMuted} />
+          </Pressable>
+          <Pressable style={[styles.row, styles.divider]} onPress={() => { Linking.openURL(PLAY_URL).catch(() => {}); }} accessibilityRole="link" accessibilityLabel={t('about.rate')}>
+            <Text style={styles.rowTitle}>{t('about.rate')}</Text>
+            <Ionicons name="star-outline" size={20} color={colors.textMuted} />
+          </Pressable>
           {(['terms', 'privacy'] as LegalDoc[]).map((d) => (
             <Pressable key={d} style={[styles.row, styles.divider]} onPress={() => setLegalDoc(d)} accessibilityRole="button" accessibilityLabel={d === 'terms' ? t('terms.docTerms') : t('terms.docPrivacy')}>
               <Text style={styles.rowTitle}>{d === 'terms' ? t('terms.docTerms') : t('terms.docPrivacy')}</Text>

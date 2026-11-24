@@ -1,0 +1,14 @@
+{
+  "ru": [
+    "Настройки → «О приложении»: «Поделиться приложением» — ссылка на Google Play для друзей",
+    "Настройки → «О приложении»: «Оценить приложение» — открывает страницу в Google Play"
+  ],
+  "kk": [
+    "Баптаулар → «Қолданба туралы»: «Қолданбамен бөлісу» — достарға Google Play сілтемесі",
+    "Баптаулар → «Қолданба туралы»: «Қолданбаны бағалау» — Google Play бетін ашады"
+  ],
+  "en": [
+    "Settings → About: “Share the app” sends a Google Play link to friends",
+    "Settings → About: “Rate the app” opens the Google Play page"
+  ]
+}

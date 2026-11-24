@@ -1,0 +1,24 @@
+<!doctype html><html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>0.8.4 — Поделиться и Оценить</title>
+<style>
+body{margin:0;background:#f3ead9;font:15px system-ui,sans-serif;color:#3b2a14;padding:16px}
+h1{font-size:15px;text-align:center;margin:0 0 4px}
+.sub{font-size:12px;color:#8a6a3a;text-align:center;margin:0 auto 14px;max-width:700px}
+.wrap{display:flex;flex-wrap:wrap;gap:18px;justify-content:center}
+.ph{width:340px;background:#fff8ea;border-radius:22px;box-shadow:0 2px 10px #0002;padding:18px 0;box-sizing:border-box}
+.lang{font-size:11px;color:#8a6a3a;text-align:center;margin-bottom:8px}
+.gh{display:flex;justify-content:space-between;padding:10px 18px;font-weight:700;color:#8a6a3a}
+.blk{background:#fff;margin:0 12px;border-radius:14px;overflow:hidden}
+.hd{padding:12px 16px}.hd b{display:block}.hd span{font-size:12px;color:#7a5f35}
+.row{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-top:1px solid #f0e3c8;min-height:48px;box-sizing:border-box}
+.row i{color:#a88b5c;font-style:normal}
+.new{background:#fff1cf}
+.ver{padding:10px 16px;font-size:12px;color:#a88b5c;border-top:1px solid #f0e3c8}
+</style>
+<h1>Настройки → «О приложении»: две новые строки</h1>
+<div class="sub">«Поделиться приложением» — системное меню «Поделиться» со ссылкой на Google Play. «Оценить приложение» — открывает страницу в Google Play. Строки подсвечены. Ставим после «Связаться», до соглашения и политики. kk — на проверку носителем.</div>
+<div class="wrap" id="w"></div>
+<script>
+const D=[['Русский','О приложении','Поделиться приложением','Оценить приложение'],['Қазақша','Қолданба туралы','Қолданбамен бөлісу','Қолданбаны бағалау'],['English','About','Share the app','Rate the app']];
+document.getElementById('w').innerHTML=D.map(d=>`<div class="ph"><div class="lang">${d[0]}</div><div class="gh"><span>${d[1]}</span><span>⌃</span></div><div class="blk"><div class="hd"><b>Умный список покупок</b><span>…</span></div><div class="row"><span>Разработчик</span><i>quiteusefulapp</i></div><div class="row"><span>Связаться</span><i>…@gmail.com</i></div><div class="row new"><span>${d[2]}</span><i>↗</i></div><div class="row new"><span>${d[3]}</span><i>★</i></div><div class="row"><span>Пользовательское соглашение</span><i>›</i></div><div class="row"><span>Политика конфиденциальности</span><i>›</i></div><div class="ver">Версия 0.8.4</div></div></div>`).join('');
+</script>

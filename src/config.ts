@@ -13,4 +13,5 @@ export const UPDATE_TIMEOUT_MS = 8000;
 export const DEVELOPER_NAME = 'quiteusefulapp';
 export const DEVELOPER_EMAIL = 'quiteusefulapp@gmail.com';
 
-export const APP_PACKAGE = 'com.timurnazmutdinov.shoppinglist';
+export const PLAY_URL = 'https://play.google.com/store/apps/details?id=com.quiteusefulapp.shoppinglist';
+export const APP_PACKAGE ='com.timurnazmutdinov.shoppinglist';
