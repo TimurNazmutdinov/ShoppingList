@@ -1,0 +1,40 @@
+<!doctype html><html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>0.8.3 — обучение списком</title>
+<style>
+body{margin:0;background:#f3ead9;font:15px system-ui,sans-serif;color:#3b2a14;padding:16px}
+h1{font-size:15px;text-align:center;margin:0 0 4px}
+.sub{font-size:12px;color:#8a6a3a;text-align:center;margin:0 auto 14px;max-width:700px}
+.wrap{display:flex;flex-wrap:wrap;gap:18px;justify-content:center}
+.ph{width:340px;background:#fff8ea;border-radius:22px;box-shadow:0 2px 10px #0002;padding:22px 18px;box-sizing:border-box;display:flex;flex-direction:column}
+.lang{font-size:11px;color:#8a6a3a;text-align:center;margin-bottom:6px}
+h2{font-size:22px;text-align:center;margin:4px 0 16px}
+.it{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
+.ic{flex:none;width:44px;height:44px;border-radius:12px;background:#fde7b3;display:flex;align-items:center;justify-content:center;font-size:22px}
+.it b{display:block;font-size:15px}.it span{font-size:13px;color:#7a5f35}
+.btn{background:#f2a516;border-radius:12px;padding:13px;text-align:center;font-weight:700;margin-top:8px}
+</style>
+<h1>Обучение при первом запуске: один экран-список</h1>
+<div class="sub">После языка и соглашения, один раз. Одна кнопка «Начать», без свайпов. Настройки не упоминаем. Ниже три языка (kk — на проверку носителем).</div>
+<div class="wrap" id="w"></div>
+<script>
+const D=[
+{l:'Русский',h:'Что умеет приложение',b:'Начать',r:[
+['🛒','Создавайте списки покупок','Пишите несколько товаров сразу, через запятую'],
+['⏰','Ставьте напоминания','Приложение напомнит о покупках в нужный день'],
+['🍲','Добавляйте блюда','Выберите блюдо — продукты окажутся в списке'],
+['📅','Смотрите актуальные списки','В разделах «Сегодня» и «Календарь»'],
+['🧺','Режим «В магазин»','Отмечайте купленное, следите за бюджетом']]},
+{l:'Қазақша',h:'Қолданба не істей алады',b:'Бастау',r:[
+['🛒','Сатып алу тізімдерін жасаңыз','Бірнеше тауарды үтір арқылы бірден жазыңыз'],
+['⏰','Еске салуларды қойыңыз','Қолданба керекті күні еске салады'],
+['🍲','Тағамдарды қосыңыз','Тағамды таңдаңыз — өнімдер тізімге түседі'],
+['📅','Өзекті тізімдерді көріңіз','«Бүгін» және «Күнтізбе» бөлімдерінде'],
+['🧺','«Дүкенге» режимі','Сатып алынғанды белгілеңіз, бюджетті қадағалаңыз']]},
+{l:'English',h:'What the app can do',b:'Start',r:[
+['🛒','Create shopping lists','Type several items at once, separated by commas'],
+['⏰','Set reminders','The app reminds you on the right day'],
+['🍲','Add dishes','Pick a dish — its ingredients go into your list'],
+['📅','See your current lists','In the “Today” and “Calendar” sections'],
+['🧺','“In the store” mode','Tick off what you bought and track your budget']]}];
+document.getElementById('w').innerHTML=D.map(d=>`<div class="ph"><div class="lang">${d.l}</div><h2>${d.h}</h2>${d.r.map(x=>`<div class="it"><div class="ic">${x[0]}</div><div><b>${x[1]}</b><span>${x[2]}</span></div></div>`).join('')}<div class="btn">${d.b}</div></div>`).join('');
+</script>

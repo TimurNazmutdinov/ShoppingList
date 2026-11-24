@@ -6,6 +6,7 @@ import { Palette, radius, useTheme } from '@/theme';
 import { Lang, languageNames, languages, t } from '@/i18n';
 import { useSettings } from '@/AppSettings';
 import { saveTermsAccepted } from '@/db/appearance';
+import { FeaturesIntro } from './FeaturesIntro';
 import { LegalDoc, LegalSheet } from './LegalSheet';
 import { PrimaryButton } from './PrimaryButton';
 
@@ -16,6 +17,7 @@ export function FirstRunGate({ languageSet, termsAccepted, children }: { languag
   const s = useSettings();
   const [langDone, setLangDone] = useState(languageSet);
   const [accepted, setAccepted] = useState(termsAccepted);
+  const [introDone, setIntroDone] = useState(termsAccepted); // уже принявшие соглашение обучение не видят
   const [checked, setChecked] = useState(false);
   const [doc, setDoc] = useState<LegalDoc | null>(null);
 
@@ -75,6 +77,8 @@ export function FirstRunGate({ languageSet, termsAccepted, children }: { languag
       </SafeAreaView>
     );
   }
+
+  if (!introDone) return <FeaturesIntro onDone={() => setIntroDone(true)} />;
 
   return <>{children}</>;
 }
